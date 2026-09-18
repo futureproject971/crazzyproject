@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { CircleHelp, Grid2X2, Home, Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { CircleHelp, Grid2X2, Home, Menu, Search, ShieldAlert, ShoppingCart, Star, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
 import CartSheet from "@/components/CartSheet";
@@ -10,14 +10,16 @@ import { useCart } from "@/hooks/useCart";
 
 const links = [
   { label: "Início", to: "/", icon: Home },
-  { label: "Categorias", to: "#categorias", icon: Grid2X2 },
   { label: "Produtos", to: "/produtos", icon: Grid2X2 },
-  { label: "FAQ", to: "#faq", icon: CircleHelp },
+  { label: "Contas", to: "/contas", icon: Grid2X2 },
+  { label: "Status", to: "/status", icon: CircleHelp },
+  { label: "Avaliações", to: "/avaliacoes", icon: Star },
 ];
 
 export function CrazyHeader() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const location = useLocation();
+  const { user, isAdmin } = useAuth();
   const { totalItems, cartOpen, setCartOpen, requiresAuth, clearRequiresAuth } = useCart();
   const [authOpen, setAuthOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -30,6 +32,12 @@ export function CrazyHeader() {
     }
   }, [requiresAuth, clearRequiresAuth]);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  const isActive = (to: string) => (to === "/" ? location.pathname === "/" : location.pathname.startsWith(to));
+
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
     const value = query.trim();
@@ -38,12 +46,13 @@ export function CrazyHeader() {
   };
 
   const goTo = (to: string) => {
-    if (to.startsWith("#")) {
-      document.querySelector(to)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      setMenuOpen(false);
-      return;
-    }
     navigate(to);
+    setMenuOpen(false);
+  };
+
+  const openAccount = () => {
+    if (user) navigate("/dashboard");
+    else setAuthOpen(true);
     setMenuOpen(false);
   };
 
@@ -61,7 +70,7 @@ export function CrazyHeader() {
 
           <nav className="crazy-site-header__nav" aria-label="Navegação principal">
             {links.map(({ label, to, icon: Icon }) => (
-              <button key={label} type="button" onClick={() => goTo(to)} className={label === "Início" ? "is-active" : ""}>
+              <button key={label} type="button" onClick={() => goTo(to)} className={isActive(to) ? "is-active" : ""}>
                 <Icon aria-hidden="true" />
                 <span>{label}</span>
               </button>
@@ -80,11 +89,18 @@ export function CrazyHeader() {
 
           <div className="crazy-site-header__actions">
             <ThemeToggle />
-            <button
-              type="button"
-              className="crazy-site-header__account"
-              onClick={() => user ? navigate("/dashboard") : setAuthOpen(true)}
-            >
+            {isAdmin ? (
+              <button
+                type="button"
+                className="crazy-site-header__account"
+                onClick={() => goTo("/admin")}
+                title="Painel Admin"
+              >
+                <ShieldAlert aria-hidden="true" />
+                <span>Admin</span>
+              </button>
+            ) : null}
+            <button type="button" className="crazy-site-header__account" onClick={openAccount}>
               <UserRound aria-hidden="true" />
               <span>{user ? "Conta" : "Login"}</span>
             </button>
@@ -113,7 +129,7 @@ export function CrazyHeader() {
             initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: .2 }}
+            transition={{ duration: 0.2 }}
           >
             <form className="crazy-mobile-nav__search" onSubmit={submitSearch}>
               <Search aria-hidden="true" />
@@ -124,6 +140,14 @@ export function CrazyHeader() {
                 <Icon aria-hidden="true" /> {label}
               </button>
             ))}
+            <button type="button" onClick={openAccount}>
+              <UserRound aria-hidden="true" /> {user ? "Minha Conta" : "Entrar / Criar conta"}
+            </button>
+            {isAdmin ? (
+              <button type="button" onClick={() => goTo("/admin")}>
+                <ShieldAlert aria-hidden="true" /> Painel Admin
+              </button>
+            ) : null}
           </motion.div>
         ) : null}
       </AnimatePresence>
