@@ -3,6 +3,7 @@ import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import lightWallpaper from "@/assets/crazzy-wallpaper-light.webp";
 import darkWallpaper from "@/assets/crazzy-wallpaper-dark.webp";
+import { RainOverlay } from "./RainOverlay";
 
 /**
  * The supplied CRAZZY wallpaper is the environmental layer only.
@@ -58,6 +59,7 @@ export function FuturisticBackground() {
       <div className="crazy-scene__focus" />
       <div className="crazy-scene__grain" />
       <div className="crazy-scene__vignette" />
+      <RainOverlay />
     </div>
   );
 }
