@@ -1,0 +1,25 @@
+project_id = "teyqtfdeugldgtzkyybg"
+
+[functions.lzt-market]
+verify_jwt = false
+
+[functions.admin-users]
+verify_jwt = true
+
+[functions.track-login]
+verify_jwt = true
+
+[functions.generate-game-image]
+verify_jwt = true
+
+# Mixed endpoint: customer calls are validated with Supabase Auth inside the handler;
+# PurinCash webhooks are public at the transport layer and authenticated by HMAC-SHA256.
+[functions.purincash-payment]
+verify_jwt = false
+
+[functions.admin-config-status]
+verify_jwt = true
+
+# Public catalog + manually authenticated customer/admin actions.
+[functions.rewards]
+verify_jwt = false

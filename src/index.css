@@ -1,0 +1,193 @@
+@import url('@fontsource/space-grotesk/400.css');
+@import url('@fontsource/space-grotesk/500.css');
+@import url('@fontsource/space-grotesk/600.css');
+@import url('@fontsource/space-grotesk/700.css');
+
+@font-face {
+  font-family: 'Valorant';
+  src: url('@/assets/fonts/valorant.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,
+  .light {
+    color-scheme: light;
+    --background: 216 100% 98%;
+    --foreground: 222 62% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 62% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 62% 10%;
+
+    --primary: 240 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 216 55% 95%;
+    --secondary-foreground: 222 48% 18%;
+
+    --muted: 216 38% 94%;
+    --muted-foreground: 219 20% 42%;
+
+    --accent: 216 50% 92%;
+    --accent-foreground: 222 55% 13%;
+
+    --success: 240 100% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 68% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 218 32% 84%;
+    --input: 218 32% 84%;
+    --ring: 240 100% 50%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 216 100% 98%;
+    --sidebar-foreground: 222 45% 18%;
+    --sidebar-primary: 240 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 216 50% 93%;
+    --sidebar-accent-foreground: 222 50% 16%;
+    --sidebar-border: 218 32% 84%;
+    --sidebar-ring: 240 100% 50%;
+  }
+
+  .dark {
+    color-scheme: dark;
+    --background: 222 42% 6%;
+    --foreground: 216 33% 96%;
+
+    --card: 222 38% 9%;
+    --card-foreground: 216 33% 96%;
+
+    --popover: 222 38% 9%;
+    --popover-foreground: 216 33% 96%;
+
+    --primary: 224 100% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 222 28% 13%;
+    --secondary-foreground: 216 30% 90%;
+
+    --muted: 222 25% 15%;
+    --muted-foreground: 218 15% 62%;
+
+    --accent: 222 27% 17%;
+    --accent-foreground: 216 33% 96%;
+
+    --success: 224 100% 60%;
+    --success-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 220 24% 19%;
+    --input: 220 24% 19%;
+    --ring: 224 100% 60%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 222 42% 7%;
+    --sidebar-foreground: 216 28% 88%;
+    --sidebar-primary: 224 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 28% 13%;
+    --sidebar-accent-foreground: 216 30% 90%;
+    --sidebar-border: 220 24% 18%;
+    --sidebar-ring: 224 100% 60%;
+  }
+}
+
+@layer utilities {
+  @keyframes shine-sweep {
+    0% {
+      transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+      transform: translateX(200%) skewX(-15deg);
+    }
+  }
+
+  @keyframes text-shine {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsla(218, 100%, 60%, 0.25),
+      hsla(218, 100%, 70%, 0.4),
+      transparent
+    );
+    animation: shine-sweep 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Space Grotesk', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-chat {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--success) / 0.3) transparent;
+}
+.scrollbar-chat::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollbar-chat::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 999px;
+}
+.scrollbar-chat::-webkit-scrollbar-thumb {
+  background: hsl(var(--success) / 0.3);
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+.scrollbar-chat::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--success) / 0.5);
+}
