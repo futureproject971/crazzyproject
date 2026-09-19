@@ -84,10 +84,11 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
           if (offset < -count / 2) offset += count;
           const distance = Math.abs(offset);
           const visible = distance <= 2;
-          const scale = offset === 0 ? 1 : Math.max(0.62, 0.82 - (distance - 1) * 0.1);
+          const scale = offset === 0 ? 1 : distance === 1 ? 0.8 : 0.66;
+          const depth = offset === 0 ? 0 : -(distance * 120);
           const style: CSSProperties = {
-            transform: `translateX(calc(-50% + ${offset * 52}%)) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -22 : 22}deg)`,
-            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.72 : 0.38) : 0,
+            transform: `translateX(calc(-50% + ${offset * 50}%)) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -24 : 24}deg)`,
+            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.9 : 0.72) : 0,
             zIndex: 20 - distance,
             pointerEvents: visible ? "auto" : "none",
           };
