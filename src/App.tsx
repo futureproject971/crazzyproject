@@ -7,6 +7,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/hooks/useCart";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { FuturisticBackground } from "@/components/crazy-hero/FuturisticBackground";
+import { SiteCursor } from "@/components/SiteCursor";
 import Index from "./pages/Index";
 import Produtos from "./pages/Produtos";
 import ProdutoDetalhes from "./pages/ProdutoDetalhes";
@@ -36,6 +37,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <FuturisticBackground />
+          <SiteCursor />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
