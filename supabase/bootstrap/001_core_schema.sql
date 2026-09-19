@@ -282,7 +282,17 @@ ALTER TABLE public.ticket_messages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can view messages of own tickets" ON public.ticket_messages FOR SELECT
   USING (EXISTS (SELECT 1 FROM public.order_tickets WHERE id = ticket_id AND user_id = auth.uid()));
 CREATE POLICY "Users can insert messages on own tickets" ON public.ticket_messages FOR INSERT
-  WITH CHECK (EXISTS (SELECT 1 FROM public.order_tickets WHERE id = ticket_id AND user_id = auth.uid()));
+  TO authenticated
+  WITH CHECK (
+    sender_id = auth.uid()
+    AND sender_role = 'user'
+    AND EXISTS (
+      SELECT 1
+      FROM public.order_tickets
+      WHERE id = ticket_id
+        AND user_id = auth.uid()
+    )
+  );
 CREATE POLICY "Admins can manage all messages" ON public.ticket_messages FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
@@ -487,11 +497,15 @@ RETURNS void
 LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
-AS $$
+AS $
   UPDATE public.resellers
   SET total_purchases = total_purchases + 1
   WHERE id = _reseller_id;
-$$;
+$;
+
+REVOKE ALL ON FUNCTION public.increment_reseller_purchases(UUID) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.increment_reseller_purchases(UUID) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.increment_reseller_purchases(UUID) TO service_role;
 
 -- ============================================
 -- STORAGE BUCKET
@@ -499,6 +513,13 @@ $$;
 INSERT INTO storage.buckets (id, name, public) VALUES ('game-images', 'game-images', true);
 
 CREATE POLICY "Anyone can view game images" ON storage.objects FOR SELECT USING (bucket_id = 'game-images');
-CREATE POLICY "Authenticated can upload game images" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'game-images' AND auth.role() = 'authenticated');
-CREATE POLICY "Authenticated can update game images" ON storage.objects FOR UPDATE USING (bucket_id = 'game-images' AND auth.role() = 'authenticated');
-CREATE POLICY "Authenticated can delete game images" ON storage.objects FOR DELETE USING (bucket_id = 'game-images' AND auth.role() = 'authenticated');
+CREATE POLICY "Admins can upload game images" ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can update game images" ON storage.objects FOR UPDATE
+  TO authenticated
+  USING (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins can delete game images" ON storage.objects FOR DELETE
+  TO authenticated
+  USING (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
