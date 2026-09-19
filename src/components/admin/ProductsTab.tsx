@@ -314,29 +314,42 @@ const ProductsTab = () => {
         const { data, error } = await supabase.from("products").insert(insertPayload).select().single();
         if (error) throw error;
 
-        const plansToInsert = formPlans.filter(p => p.name.trim()).map((p, i) => ({
-          product_id: data.id, name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
-        }));
-        if (plansToInsert.length > 0) {
-          const { error: planErr } = await supabase.from("product_plans").insert(plansToInsert);
-          if (planErr) throw planErr;
+        // Child records are written after the product because the browser cannot open a
+        // database transaction. If any child write fails, delete the new product so
+        // ON DELETE CASCADE removes anything already inserted and no partial product is
+        // left visible in the catalog.
+        try {
+          const plansToInsert = formPlans.filter(p => p.name.trim()).map((p, i) => ({
+            product_id: data.id, name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
+          }));
+          if (plansToInsert.length > 0) {
+            const { error: planErr } = await supabase.from("product_plans").insert(plansToInsert);
+            if (planErr) throw planErr;
+          }
+
+          const mediaToInsert = formMedia.filter(m => m.url.trim()).map((m, i) => ({
+            product_id: data.id, media_type: m.media_type, url: m.url.trim(), sort_order: i,
+          }));
+          if (mediaToInsert.length > 0) {
+            const { error: mediaErr } = await supabase.from("product_media").insert(mediaToInsert);
+            if (mediaErr) throw mediaErr;
+          }
+
+          const featuresToInsert = formFeatures.filter(f => f.label.trim() && f.value.trim()).map((f, i) => ({
+            product_id: data.id, label: f.label.trim(), value: f.value.trim(), sort_order: i,
+          }));
+          if (featuresToInsert.length > 0) {
+            const { error: featErr } = await supabase.from("product_features").insert(featuresToInsert);
+            if (featErr) throw featErr;
+          }
+        } catch (childError) {
+          const { error: cleanupError } = await supabase.from("products").delete().eq("id", data.id);
+          if (cleanupError) {
+            console.error("[CRAZZY] Falha ao limpar produto parcial", cleanupError);
+          }
+          throw childError;
         }
-        // Save media
-        const mediaToInsert = formMedia.filter(m => m.url.trim()).map((m, i) => ({
-          product_id: data.id, media_type: m.media_type, url: m.url.trim(), sort_order: i,
-        }));
-        if (mediaToInsert.length > 0) {
-          const { error: mediaErr } = await supabase.from("product_media").insert(mediaToInsert);
-          if (mediaErr) throw mediaErr;
-        }
-        // Save features
-        const featuresToInsert = formFeatures.filter(f => f.label.trim() && f.value.trim()).map((f, i) => ({
-          product_id: data.id, label: f.label.trim(), value: f.value.trim(), sort_order: i,
-        }));
-        if (featuresToInsert.length > 0) {
-          const { error: featErr } = await supabase.from("product_features").insert(featuresToInsert);
-          if (featErr) throw featErr;
-        }
+
         toast({ title: "Produto criado!" });
       }
       resetForm();
