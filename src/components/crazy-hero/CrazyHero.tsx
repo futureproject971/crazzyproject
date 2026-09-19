@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowDown, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,6 +43,7 @@ const buildCategoryFromGame = (game: GameRow, index: number): HomeCategoryConfig
 
 export function CrazyHero() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [games, setGames] = useState<GameRow[]>([]);
   const [products, setProducts] = useState<HeroProduct[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,8 +78,15 @@ export function CrazyHero() {
   }, []);
 
   const categories = useMemo<HomeCategoryConfig[]>(() => {
-    if (games.length === 0) return DEFAULT_HOME_CATEGORIES;
-    return games.map(buildCategoryFromGame);
+    // A Home sempre preserva as categorias canonicas da referencia.
+    // Quando existir um registro equivalente em public.games, usamos o ID/nome
+    // real do banco sem deixar categorias extras alterarem a composicao da Home.
+    return DEFAULT_HOME_CATEGORIES.map((fallback, index) => {
+      const game = games.find(
+        (item) => normalizeSlug(item.slug || item.name) === fallback.slug,
+      );
+      return game ? buildCategoryFromGame(game, index) : fallback;
+    });
   }, [games]);
 
   const productCounts = useMemo(() => {
@@ -91,11 +99,17 @@ export function CrazyHero() {
   }, [games, products]);
 
   useEffect(() => {
+    const requestedSlug = normalizeSlug(searchParams.get("game") || "");
+    if (requestedSlug && categories.some((category) => category.slug === requestedSlug)) {
+      if (requestedSlug !== selectedSlug) setSelectedSlug(requestedSlug);
+      return;
+    }
+
     if (!loading && categories.length > 0 && !categories.some((category) => category.slug === selectedSlug)) {
       const preferred = categories.find((category) => category.slug === "valorant") || categories[0];
       setSelectedSlug(preferred?.slug || null);
     }
-  }, [categories, loading, selectedSlug]);
+  }, [categories, loading, searchParams, selectedSlug]);
 
   const selectedCategory = useMemo(
     () => categories.find((category) => category.slug === selectedSlug) || null,
@@ -119,6 +133,16 @@ export function CrazyHero() {
     }
 
     setSelectedSlug(category.slug);
+    const next = new URLSearchParams(searchParams);
+    next.set("game", category.slug);
+    setSearchParams(next, { replace: true });
+  };
+
+  const closeCategory = () => {
+    setSelectedSlug(null);
+    const next = new URLSearchParams(searchParams);
+    next.delete("game");
+    setSearchParams(next, { replace: true });
   };
 
   return (
@@ -154,7 +178,7 @@ export function CrazyHero() {
           categoryImage={selectedGame?.image_url}
           products={selectedProducts}
           loading={loading}
-          onClose={() => setSelectedSlug(null)}
+          onClose={closeCategory}
           onOpenProduct={(productId) => navigate(`/produto/${productId}`)}
           onOpenAll={() => selectedCategory && navigate(selectedCategory.action.destination)}
         />
