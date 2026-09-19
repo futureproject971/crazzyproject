@@ -190,3 +190,36 @@ Regras:
 - ela só pode ser produzida depois que todo o resto estiver concluído;
 - após qualquer alteração posterior, a auditoria anterior fica inválida e deve ser refeita;
 - o handoff final deve permitir que outra IA continue o projeto sem inferir estado, branch, schema, deploy, migrations ou decisões.
+
+
+## 13. FEATURE PARITY — REDESIGN NÃO REMOVE FUNCIONALIDADE
+
+A CRAZZY PROJECT está sendo redesenhada em cima de uma source funcional existente.
+
+Regra obrigatória:
+- preservar todas as funcionalidades úteis já existentes na source;
+- redesign pode mudar aparência, hierarquia, posição e organização;
+- redesign NÃO pode apagar rota, fluxo, painel, sistema ou recurso funcional sem solicitação explícita do usuário;
+- antes de remover qualquer componente antigo, confirmar se ele é apenas visual ou se representa uma função real;
+- rotas existentes devem continuar acessíveis mesmo quando saírem do menu principal;
+- sempre manter equivalência funcional entre source anterior e nova interface.
+
+Recursos atualmente preservados incluem, entre outros:
+- Produtos
+- Categorias
+- Contas
+- Status
+- Avaliações
+- Login/Conta
+- Dashboard
+- Meus Pedidos
+- Chat de pedido
+- Checkout
+- Rewards
+- Admin
+- Carrinho
+- Busca
+- FAQ
+- páginas específicas de contas/produtos
+
+Se uma função antiga precisar mudar de lugar para manter fidelidade visual, ela deve ser REORGANIZADA, não removida.
