@@ -106,7 +106,6 @@ CREATE TABLE public.games (
   name TEXT NOT NULL,
   slug TEXT UNIQUE,
   image_url TEXT,
-  is_new BOOLEAN NOT NULL DEFAULT false,
   active BOOLEAN NOT NULL DEFAULT true,
   sort_order INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -151,6 +150,7 @@ CREATE TABLE public.products (
   description TEXT,
   features_text TEXT,
   image_url TEXT,
+  is_new BOOLEAN NOT NULL DEFAULT false,
   active BOOLEAN NOT NULL DEFAULT true,
   sort_order INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'undetected',
