@@ -37,15 +37,20 @@ export function CategoryCloud({ categories, productCounts, selectedSlug, onActiv
         <div key={zone} className={`crazy-category-zone crazy-category-zone--${zone}`}>
           {grouped[zone || ""]?.map((category) => {
             const index = cardIndex++;
+            const selected = selectedSlug === category.slug;
             return (
-              <CategoryCard
+              <div
                 key={category.id}
-                category={category}
-                index={index}
-                productCount={productCounts[category.slug]}
-                selected={selectedSlug === category.slug}
-                onActivate={onActivate}
-              />
+                className={`crazy-category-slot crazy-category-slot--${zone} ${selected ? "is-selected" : ""}`}
+              >
+                <CategoryCard
+                  category={category}
+                  index={index}
+                  productCount={productCounts[category.slug]}
+                  selected={selected}
+                  onActivate={onActivate}
+                />
+              </div>
             );
           })}
         </div>
