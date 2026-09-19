@@ -64,7 +64,7 @@ const PedidoChat = () => {
   const [loadingReview, setLoadingReview] = useState(true);
   const [showReviewModal, setShowReviewModal] = useState(false);
 
-  // Only staff can close â€” chat is locked only on closed/banned/finished
+  // Only staff can close — chat is locked only on closed/banned/finished
   const isLocked = ticket && ["closed", "banned", "finished"].includes(ticket.status);
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const PedidoChat = () => {
       }
       if (messagesRes.data) setMessages(messagesRes.data as any[]);
 
-      // Valor pago e cupom: LZT usa price_paid, PIX usa payment_id â†’ payments
+      // Valor pago e cupom: LZT usa price_paid, PIX usa payment_id → payments
       const meta = (ticketData.metadata || {}) as Record<string, any>;
       if (meta.price_paid != null) {
         setValorPago(Number(meta.price_paid) / 100);
@@ -247,7 +247,7 @@ const PedidoChat = () => {
       const path = `ticket-files/${ticket.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.webm`;
       const { error: uploadError } = await supabase.storage.from("game-images").upload(path, blob, { upsert: false, contentType: blob.type });
       if (uploadError) {
-        toast({ title: "Erro no upload do Ã¡udio", description: uploadError.message, variant: "destructive" });
+        toast({ title: "Erro no upload do áudio", description: uploadError.message, variant: "destructive" });
         setUploadingFile(false);
         setSending(false);
         return;
@@ -265,7 +265,7 @@ const PedidoChat = () => {
         setMessages(prev => prev.some(m => m.id === insertedMsg.id) ? prev : [...prev, insertedMsg as Message]);
       }
     } catch (err: any) {
-      toast({ title: "Erro", description: err?.message || "Erro ao enviar Ã¡udio", variant: "destructive" });
+      toast({ title: "Erro", description: err?.message || "Erro ao enviar áudio", variant: "destructive" });
     } finally {
       setUploadingFile(false);
       setSending(false);
@@ -285,7 +285,7 @@ const PedidoChat = () => {
           for (const file of pendingFiles) {
             const url = await uploadFileToStorage(file);
             if (url) {
-              messageParts.push(file.type.startsWith("image/") ? `[IMAGE]${url}` : `ðŸ“Ž **Arquivo:** ${url}`);
+              messageParts.push(file.type.startsWith("image/") ? `[IMAGE]${url}` : `📎 **Arquivo:** ${url}`);
             } else {
               toast({ title: "Erro no upload", description: `Falha ao enviar ${file.name}`, variant: "destructive" });
             }
@@ -338,7 +338,7 @@ const PedidoChat = () => {
         toast({ title: "Erro", description: error.message, variant: "destructive" });
       } else {
         setExistingReview({ ...existingReview, rating: reviewRating, comment: reviewComment.trim() || null });
-        toast({ title: "AvaliaÃ§Ã£o atualizada!" });
+        toast({ title: "Avaliação atualizada!" });
       }
     } else {
       const { data, error } = await supabase
@@ -355,7 +355,7 @@ const PedidoChat = () => {
         toast({ title: "Erro", description: error.message, variant: "destructive" });
       } else if (data) {
         setExistingReview(data as any);
-        toast({ title: "AvaliaÃ§Ã£o enviada!" });
+        toast({ title: "Avaliação enviada!" });
       }
     }
     setSubmittingReview(false);
@@ -468,13 +468,13 @@ const PedidoChat = () => {
               {expandedSection === "riot" && (
                 <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground space-y-1.5 leading-relaxed">
                   <p>1ï¸âƒ£ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a></p>
-                  <p>2ï¸âƒ£ FaÃ§a login com o email e senha acima</p>
-                  <p>3ï¸âƒ£ VÃ¡ em <strong className="text-foreground">ConfiguraÃ§Ãµes da Conta</strong></p>
-                  <p>4ï¸âƒ£ Na seÃ§Ã£o <strong className="text-foreground">RIOT ID</strong>, clique em editar para alterar nome e tag</p>
-                  <p>5ï¸âƒ£ Na seÃ§Ã£o <strong className="text-foreground">SENHA</strong>, clique em "Alterar senha"</p>
-                  <p className="pl-4">â€¢ Coloque a senha atual (fornecida acima)</p>
-                  <p className="pl-4">â€¢ Defina sua nova senha</p>
-                  <p className="mt-2 text-amber-400 font-medium">âš ï¸ Altere a senha IMEDIATAMENTE para garantir a seguranÃ§a.</p>
+                  <p>2ï¸âƒ£ Faça login com o email e senha acima</p>
+                  <p>3ï¸âƒ£ Vá em <strong className="text-foreground">Configurações da Conta</strong></p>
+                  <p>4ï¸âƒ£ Na seção <strong className="text-foreground">RIOT ID</strong>, clique em editar para alterar nome e tag</p>
+                  <p>5ï¸âƒ£ Na seção <strong className="text-foreground">SENHA</strong>, clique em "Alterar senha"</p>
+                  <p className="pl-4">• Coloque a senha atual (fornecida acima)</p>
+                  <p className="pl-4">• Defina sua nova senha</p>
+                  <p className="mt-2 text-amber-400 font-medium">⚠️ï¸ Altere a senha IMEDIATAMENTE para garantir a segurança.</p>
                 </div>
               )}
             </div>
@@ -491,36 +491,36 @@ const PedidoChat = () => {
               </button>
               {expandedSection === "email" && (
                 <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground space-y-1.5 leading-relaxed">
-                  <p>1ï¸âƒ£ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a> e faÃ§a login</p>
-                  <p>2ï¸âƒ£ VÃ¡ em <strong className="text-foreground">ConfiguraÃ§Ãµes da Conta</strong> {'>'} <strong className="text-foreground">EMAIL</strong></p>
+                  <p>1ï¸âƒ£ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a> e faça login</p>
+                  <p>2ï¸âƒ£ Vá em <strong className="text-foreground">Configurações da Conta</strong> {'>'} <strong className="text-foreground">EMAIL</strong></p>
                   <p>3ï¸âƒ£ Clique em <strong className="text-foreground">"Alterar email"</strong></p>
-                  <p>4ï¸âƒ£ Um cÃ³digo serÃ¡ enviado para o email atual</p>
-                  <p className="pl-4">â€¢ Se nÃ£o tiver acesso, clique em "NÃ£o tenho acesso"</p>
+                  <p>4ï¸âƒ£ Um código será enviado para o email atual</p>
+                  <p className="pl-4">• Se não tiver acesso, clique em "Não tenho acesso"</p>
                   <p>5ï¸âƒ£ Digite o seu novo email pessoal</p>
-                  <p>6ï¸âƒ£ Confirme o cÃ³digo enviado ao seu novo email</p>
-                  <p className="mt-2 text-success font-medium">âœ… Pronto! A conta estarÃ¡ 100% no seu nome.</p>
+                  <p>6ï¸âƒ£ Confirme o código enviado ao seu novo email</p>
+                  <p className="mt-2 text-success font-medium">✅ Pronto! A conta estará 100% no seu nome.</p>
                 </div>
               )}
             </div>
 
-            {/* Button 3: Entrega ConcluÃ­da */}
+            {/* Button 3: Entrega Concluída */}
             <div className="rounded-xl border border-success/30 bg-success/5 overflow-hidden">
               <button
                 onClick={() => setExpandedSection(expandedSection === "done" ? null : "done")}
                 className="flex w-full items-center gap-2.5 px-4 py-3 text-left transition-colors hover:bg-success/10"
               >
                 <CheckCircle className="h-4 w-4 text-success shrink-0" />
-                <span className="flex-1 text-sm font-bold text-success">Entrega ConcluÃ­da</span>
+                <span className="flex-1 text-sm font-bold text-success">Entrega Concluída</span>
                 {expandedSection === "done" ? <ChevronUp className="h-4 w-4 text-success/60" /> : <ChevronDown className="h-4 w-4 text-success/60" />}
               </button>
               {expandedSection === "done" && (
                 <div className="border-t border-success/20 px-4 py-3 text-xs text-muted-foreground space-y-1.5 leading-relaxed">
-                  <p className="text-foreground font-medium">ðŸ“‹ Checklist de seguranÃ§a:</p>
-                  <p>â€¢ Alterar a senha da conta Riot</p>
-                  <p>â€¢ Trocar o email para o seu pessoal</p>
-                  <p>â€¢ Alterar o Riot ID (nome + tag)</p>
-                  <p>â€¢ Ativar verificaÃ§Ã£o em duas etapas</p>
-                  <p className="mt-2 text-muted-foreground">Se precisar de ajuda, envie uma mensagem aqui! ðŸ™Œ</p>
+                  <p className="text-foreground font-medium">📋 Checklist de segurança:</p>
+                  <p>• Alterar a senha da conta Riot</p>
+                  <p>• Trocar o email para o seu pessoal</p>
+                  <p>• Alterar o Riot ID (nome + tag)</p>
+                  <p>• Ativar verificação em duas etapas</p>
+                  <p className="mt-2 text-muted-foreground">Se precisar de ajuda, envie uma mensagem aqui! 🙌</p>
                 </div>
               )}
             </div>
@@ -543,7 +543,7 @@ const PedidoChat = () => {
     }
 
     // Combined pattern for [IMAGE], Tutorial, Arquivo
-    const combinedPattern = /(\[IMAGE\](https?:\/\/\S+))|(\[AUDIO\](https?:\/\/\S+))|((?:ðŸ“–\s*\*\*Tutorial:\*\*|ðŸ“Ž\s*\*\*Arquivo:\*\*)\s*(https?:\/\/\S+))/g;
+    const combinedPattern = /(\[IMAGE\](https?:\/\/\S+))|(\[AUDIO\](https?:\/\/\S+))|((?:📖\s*\*\*Tutorial:\*\*|📎\s*\*\*Arquivo:\*\*)\s*(https?:\/\/\S+))/g;
     const parts: { type: "text" | "file" | "image" | "audio"; content: string; label?: string; url?: string }[] = [];
     let lastIndex = 0;
     let match;
@@ -656,9 +656,9 @@ const PedidoChat = () => {
         <Header />
         <div className="mx-auto max-w-3xl px-6 pt-28 text-center">
           <Package className="mx-auto h-16 w-16 text-muted-foreground/20" />
-          <h1 className="mt-4 text-xl font-bold text-foreground">Pedido nÃ£o encontrado</h1>
+          <h1 className="mt-4 text-xl font-bold text-foreground">Pedido não encontrado</h1>
           <button onClick={() => navigate("/dashboard?tab=purchases")} className="mt-4 text-sm text-success hover:underline">
-            â† Voltar aos pedidos
+            ← Voltar aos pedidos
           </button>
         </div>
       </div>
@@ -678,7 +678,7 @@ const PedidoChat = () => {
             <ArrowLeft className="h-3.5 w-3.5" />
             Minhas Compras
           </button>
-          <span className="text-muted-foreground/40">â€º</span>
+          <span className="text-muted-foreground/40">›</span>
           <span className="text-foreground font-medium">Pedido #{ticket.id.slice(0, 8).toUpperCase()}</span>
         </div>
 
@@ -711,7 +711,7 @@ const PedidoChat = () => {
               <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Valor pago</p>
                 <p className="text-sm font-bold text-foreground truncate">
-                  {valorPago !== null ? `R$ ${valorPago.toFixed(2).replace(".", ",")}` : planPrice !== null ? `R$ ${planPrice.toFixed(2).replace(".", ",")}` : "â€”"}
+                  {valorPago !== null ? `R$ ${valorPago.toFixed(2).replace(".", ",")}` : planPrice !== null ? `R$ ${planPrice.toFixed(2).replace(".", ",")}` : "—"}
                 </p>
                 {couponCode && (
                   <p className="text-[10px] text-success font-medium">Cupom: {couponCode}</p>
@@ -752,7 +752,7 @@ const PedidoChat = () => {
                   <CheckCircle className="h-5 w-5 text-success" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-foreground">ParabÃ©ns! Seu produto foi entregue ðŸŽ‰</p>
+                  <p className="text-sm font-bold text-foreground">Parabéns! Seu produto foi entregue 🎉</p>
                   <p className="text-[10px] text-muted-foreground">Clique para ver sua chave, tutorial e arquivos</p>
                 </div>
                 <div className={`flex h-7 w-7 items-center justify-center rounded-lg border border-success/30 bg-success/10 transition-transform duration-300 shrink-0 ${expandedSection === "delivery" ? "rotate-180" : ""}`}>
@@ -776,7 +776,7 @@ const PedidoChat = () => {
                       </p>
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 rounded-xl border border-success/20 bg-card p-3">
                         <code className="flex-1 min-w-0 rounded-lg bg-secondary/50 px-3 py-2 text-sm font-mono text-foreground break-all">
-                          {showKey ? (typeof stockContent === "string" ? stockContent : JSON.stringify(stockContent)) : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"}
+                          {showKey ? (typeof stockContent === "string" ? stockContent : JSON.stringify(stockContent)) : "••••••••••••••••••••••••"}
                         </code>
                         <div className="flex items-center gap-1.5 shrink-0">
                           <button
@@ -900,7 +900,7 @@ const PedidoChat = () => {
                   </div>
                   <div className={`space-y-1 max-w-[80%]`}>
                     <p className={`text-[10px] font-semibold ${isStaff ? "text-right text-success" : "text-left text-muted-foreground"}`}>
-                      {isStaff ? "Staff" : "VocÃª"}
+                      {isStaff ? "Staff" : "Você"}
                     </p>
                     <div className={`rounded-2xl px-5 py-3 ${
                       isStaff
@@ -924,7 +924,7 @@ const PedidoChat = () => {
             <div className="border-t border-border px-5 py-4 flex items-center gap-2.5">
               <Lock className="h-4 w-4 text-muted-foreground/60" />
               <p className="text-sm text-muted-foreground">
-                Este pedido foi encerrado pelo staff â€” chat bloqueado.
+                Este pedido foi encerrado pelo staff — chat bloqueado.
               </p>
             </div>
           ) : (
@@ -962,7 +962,7 @@ const PedidoChat = () => {
                     <button onClick={cancelRecording} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all" title="Cancelar">
                       <Trash2 className="h-4 w-4" />
                     </button>
-                    <button onClick={handleSendAudio} disabled={sending || uploadingFile} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success text-success-foreground disabled:opacity-30 hover:brightness-110 transition-all" title="Enviar Ã¡udio">
+                    <button onClick={handleSendAudio} disabled={sending || uploadingFile} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success text-success-foreground disabled:opacity-30 hover:brightness-110 transition-all" title="Enviar áudio">
                       {sending || uploadingFile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
                     </button>
                   </div>
@@ -984,7 +984,7 @@ const PedidoChat = () => {
                       onClick={() => startRecording().catch(() => toast({ title: "Erro", description: "Permita o acesso ao microfone", variant: "destructive" }))}
                       disabled={sending || uploadingFile}
                       className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-all disabled:opacity-40"
-                      title="Gravar Ã¡udio"
+                      title="Gravar áudio"
                     >
                       <Mic className="h-[18px] w-[18px]" />
                     </button>
@@ -1012,7 +1012,7 @@ const PedidoChat = () => {
                 <h3 className="text-lg font-bold text-foreground">Avaliar Produto</h3>
               </div>
 
-              <p className="text-sm text-muted-foreground mb-4">Como foi sua experiÃªncia com <strong className="text-foreground">{productName}</strong>?</p>
+              <p className="text-sm text-muted-foreground mb-4">Como foi sua experiência com <strong className="text-foreground">{productName}</strong>?</p>
 
               <div className="flex items-center gap-1 mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -1040,7 +1040,7 @@ const PedidoChat = () => {
               <textarea
                 value={reviewComment}
                 onChange={(e) => setReviewComment(e.target.value)}
-                placeholder="Deixe um comentÃ¡rio (opcional)..."
+                placeholder="Deixe um comentário (opcional)..."
                 rows={3}
                 className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors focus:border-success/40 resize-none mb-4"
               />
