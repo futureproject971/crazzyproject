@@ -1841,3 +1841,22 @@
     -webkit-line-clamp: 2;
   }
 }
+
+
+@media (min-width: 1281px) and (max-height: 1000px) {
+  .crazy-home-featured {
+    bottom: 10.9rem;
+  }
+
+  .crazy-home-featured .crazy-featured__stage {
+    height: 238px;
+  }
+
+  .crazy-category-cloud {
+    inset-bottom: calc(10.9rem + 238px + .9rem);
+  }
+
+  .crazy-hero__center {
+    top: 30%;
+  }
+}
