@@ -1151,6 +1151,35 @@
 .dark .crazy-site-header__cart { filter: saturate(.82) brightness(.88); }
 .dark .crazy-site-header__menu { border-color: rgba(91,138,230,.14); background: rgba(9,21,44,.72); color: #d5e2f7; }
 
+@media (min-width: 1281px) and (max-width: 1600px) {
+  .crazy-site-header {
+    width: min(96vw, 1460px);
+  }
+
+  .crazy-site-header__inner {
+    gap: .5rem;
+  }
+
+  .crazy-site-header__brand {
+    min-width: 132px;
+  }
+
+  .crazy-site-header__nav button {
+    gap: .3rem;
+    padding-inline: .5rem;
+    font-size: .61rem;
+  }
+
+  .crazy-site-header__search {
+    min-width: 130px;
+  }
+
+  .crazy-site-header__account,
+  .crazy-site-header__cart {
+    padding-inline: .58rem;
+  }
+}
+
 @media (max-width: 1280px) {
   .crazy-site-header { width: min(94vw, 1100px); }
   .crazy-site-header__inner { grid-template-columns: auto 1fr auto; }
