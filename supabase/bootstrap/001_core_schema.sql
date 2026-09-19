@@ -106,6 +106,7 @@ CREATE TABLE public.games (
   name TEXT NOT NULL,
   slug TEXT UNIQUE,
   image_url TEXT,
+  is_new BOOLEAN NOT NULL DEFAULT false,
   active BOOLEAN NOT NULL DEFAULT true,
   sort_order INTEGER NOT NULL DEFAULT 0,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
@@ -127,16 +128,15 @@ VALUES
   ('BloodStrike', 'bloodstrike', true, 5),
   ('IA Universal', 'ia-universal', true, 6),
   ('AIM Universal', 'aim-universal', true, 7),
-  ('Aimbot Universal', 'aimbot-universal', true, 8),
-  ('Dead by Daylight', 'dead-by-daylight', true, 9),
-  ('ARC Raiders', 'arc-raiders', true, 10),
-  ('Vanguard Emulator', 'vanguard-emulator', true, 11),
-  ('Rust', 'rust', true, 12),
-  ('Hell Let Loose', 'hell-let-loose', true, 13),
-  ('SCUM', 'scum', true, 14),
-  ('Squad', 'squad', true, 15),
-  ('War Dogs', 'war-dogs', true, 16),
-  ('Counter-Strike 2', 'counter-strike-2', true, 17)
+  ('Dead by Daylight', 'dead-by-daylight', true, 8),
+  ('ARC Raiders', 'arc-raiders', true, 9),
+  ('Vanguard Emulator', 'vanguard-emulator', true, 10),
+  ('Rust', 'rust', true, 11),
+  ('Hell Let Loose', 'hell-let-loose', true, 12),
+  ('SCUM', 'scum', true, 13),
+  ('Squad', 'squad', true, 14),
+  ('War Dogs', 'war-dogs', true, 15),
+  ('Counter-Strike 2', 'counter-strike-2', true, 16)
 ON CONFLICT (slug) DO UPDATE
 SET name = EXCLUDED.name,
     active = true,
