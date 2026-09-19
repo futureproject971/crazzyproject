@@ -6,7 +6,7 @@ Regra de execução: fazer uma etapa por vez. Antes de cada etapa, ler o HEAD at
 
 - [x] 1. Criar backup do estado atual antes das mudanças sequenciais.
 - [x] 2. Definir as categorias oficiais da Home e preparar seed/bootstrap do banco.
-- [ ] 3. Ajustar o painel Admin > Produtos para usar as categorias oficiais do catálogo.
+- [x] 3. Ajustar o painel Admin > Produtos para usar as categorias oficiais do catálogo.
 - [ ] 4. Integrar clique/seleção das categorias da Home com os produtos da categoria.
 - [ ] 5. Restaurar a logo CRAZZY PROJECT ao centro e mover o coverflow para o dock de produtos.
 - [ ] 6. Fazer o carrossel rodar lentamente sozinho e pausar/retomar de forma correta após interação manual.
