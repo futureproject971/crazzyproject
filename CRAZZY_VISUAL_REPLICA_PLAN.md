@@ -71,7 +71,7 @@ o conteúdo por dados reais/admin.
 
 ## E. CATEGORIAS DA HOME — GEOMETRIA
 
-- [ ] E1. Manter exatamente as 18 categorias oficiais definidas no catálogo.
+- [ ] E1. Manter exatamente as 17 categorias oficiais definidas no catálogo; Aimbot Universal foi consolidado em IA Universal.
 - [ ] E2. Distribuir categorias de forma ASSIMÉTRICA ao redor da logo, não em grade comum.
 - [ ] E3. Grupo superior esquerdo com três cards.
 - [ ] E4. Grupo médio esquerdo com dois cards.
@@ -119,7 +119,7 @@ o conteúdo por dados reais/admin.
 - [ ] H5. Cards laterais devem usar scale menor + rotateY + menor opacidade/profundidade.
 - [ ] H6. Cards da esquerda inclinam para a direita; cards da direita inclinam para a esquerda.
 - [ ] H7. Card central ter borda cyan/azul forte e glow premium.
-- [ ] H8. Conteúdo do card central puxado do produto real: imagem, nome, descrição, status/badge permitido.
+- [ ] H8. Conteúdo do card central puxado de produto real marcado como NOVO: imagem, nome, descrição e badge NOVO.
 - [ ] H9. CTA "Ver agora" ou equivalente real, levando ao produto.
 - [ ] H10. Side cards também devem mostrar nome/resumo/CTA de forma mais compacta.
 - [ ] H11. Incluir setas circulares nas bordas esquerda/direita do card central.
@@ -129,7 +129,7 @@ o conteúdo por dados reais/admin.
 - [ ] H15. Selecionar um card lateral traz ele para o centro antes de abrir.
 - [ ] H16. Se existir apenas 1 produto, centralizar sem setas/dots inúteis.
 - [ ] H17. Se não houver produtos, usar estado vazio discreto ou esconder área, nunca um painel enorme "vazio".
-- [ ] H18. Carrossel não pode buscar catálogo por conta própria; recebe dados já carregados pela Home.
+- [ ] H18. Carrossel não pode depender da categoria selecionada nem buscar catálogo por conta própria; recebe somente produtos ativos marcados como NOVO pela Home.
 - [ ] H19. Todos os tons do carrossel seguem azul CRAZZY, sem roxo.
 - [ ] H20. Respeitar prefers-reduced-motion.
 
@@ -296,6 +296,26 @@ Somente depois deste passe:
 
 Regra de ouro: **nada de componente órfão**. Se aparece na tela, precisa ter origem, comportamento, persistência e permissão coerentes.
 
+
+## U. BLOCO ATUAL — NOVO / DESTAQUES DA HOME
+
+- [x] U1. Consolidar Aimbot Universal em IA Universal na configuração visual.
+- [x] U2. Definir `products.is_new` como fonte oficial do badge NOVO/destaque.
+- [x] U3. Atualizar bootstrap com `is_new`.
+- [x] U4. Criar migration idempotente para bases existentes.
+- [x] U5. Atualizar tipos TypeScript de products.
+- [x] U6. Adicionar toggle NOVO/destacar na Home no Admin.
+- [x] U7. Persistir `is_new` no create/update do produto quando a coluna existir.
+- [x] U8. Proteger o Admin para não quebrar enquanto a migration ainda não estiver aplicada.
+- [x] U9. Mostrar badge NOVO na listagem do Admin.
+- [x] U10. Desacoplar carrossel da categoria selecionada.
+- [x] U11. Carrossel passa a receber apenas produtos `is_new = true`.
+- [x] U12. Produto lateral passa a exibir nome/badge/CTA compacto.
+- [ ] U13. Aplicar migration no Supabase CRAZZY correto (`teyqtfdeugldgtzkyybg`) quando a conexão estiver disponível.
+- [ ] U14. Validar criação/edição real de um produto NOVO no Admin contra o banco correto.
+- [ ] U15. Validar que um produto NOVO aparece no carrossel de produção e um produto comum não aparece.
+- [ ] U16. Validar que clicar em categoria não altera mais o conteúdo do carrossel.
+- [ ] U17. Refinar escala/posição do coverflow comparando lado a lado com a referência.
 
 ## U. ITEM FINAL OBRIGATÓRIO — REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA
 
