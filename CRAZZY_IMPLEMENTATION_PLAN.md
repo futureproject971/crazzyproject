@@ -12,12 +12,13 @@ Regra de execução: fazer uma etapa por vez. Antes de cada etapa, ler o HEAD at
 - [x] 6. Fazer o carrossel rodar lentamente sozinho e pausar/retomar de forma correta após interação manual.
 - [x] 7. Reproduzir a inclinação e o destaque das categorias conforme a referência.
 - [x] 8. Eliminar sobreposições entre header, categorias, hero, carrossel, dock, trust bar e footer em desktop/ultrawide/tablet/mobile.
-- [ ] 9. Corrigir wallpaper e chuva da Home no tema claro sem quebrar a troca real de wallpaper no tema escuro.
-- [ ] 10. Implementar suporte a cursor personalizado do site com fallback seguro.
-- [ ] 11. Fazer revisão visual e funcional completa em light/dark, desktop, ultrawide, tablet e mobile.
-- [ ] 12. Implementar o EDITOR VISUAL ADMIN do site.
+- [x] 9. Corrigir wallpaper e chuva da Home no tema claro sem quebrar a troca real de wallpaper no tema escuro.
+- [x] 10. Implementar suporte a cursor personalizado do site com fallback seguro.
+- [ ] 11. Executar o PASSE MESTRE DE RÉPLICA VISUAL descrito em `CRAZZY_VISUAL_REPLICA_PLAN.md`.
+- [ ] 12. Fazer revisão funcional, acessibilidade, performance e regressão completa após a réplica.
+- [ ] 13. Implementar o EDITOR VISUAL ADMIN do site.
 
-## Etapa 12 — Editor visual Admin
+## Etapa 13 — Editor visual Admin
 
 Objetivo: permitir que somente administradores personalizem a apresentação do site sem editar código.
 
