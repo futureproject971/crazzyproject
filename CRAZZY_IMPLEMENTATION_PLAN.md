@@ -51,3 +51,12 @@ Arquitetura:
 - persistir ordem/posição/visibilidade em configuração própria
 - manter defaults no código para fallback
 - construir o editor somente depois que o layout base estiver estável
+
+
+## REGRA DE PARIDADE FUNCIONAL DA SOURCE
+
+- [ ] Preservar todas as funcionalidades úteis existentes na source original durante o redesign.
+- [ ] Nenhuma rota funcional pode ser removida apenas para copiar a referência visual.
+- [ ] Contas, Status, Avaliações, Rewards, Dashboard, Meus Pedidos, Chat, Checkout, Admin, Busca e Carrinho devem permanecer acessíveis.
+- [ ] Quando uma função não couber visualmente no header, mover para menu secundário/conta/mobile sem removê-la.
+- [ ] Antes de remover componente antigo, verificar se ele representa lógica funcional real.
