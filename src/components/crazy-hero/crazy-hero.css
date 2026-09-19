@@ -1878,3 +1878,64 @@
     top: 30%;
   }
 }
+
+
+/* Header funcional completo: sobrescreve o passe de fidelidade em desktops médios
+   para preservar todas as rotas da source sem quebrar a primeira dobra. */
+@media (min-width: 1281px) and (max-width: 1780px) {
+  .crazy-site-header {
+    width: min(96vw, 1640px);
+  }
+
+  .crazy-site-header__inner {
+    grid-template-columns: auto auto minmax(150px, 1fr) auto;
+    gap: .45rem;
+    min-height: 62px;
+    padding: .42rem .55rem .42rem .85rem;
+  }
+
+  .crazy-site-header__brand {
+    min-width: 130px;
+  }
+
+  .crazy-site-header__brand span {
+    font-size: 1.12rem;
+  }
+
+  .crazy-site-header__brand strong {
+    font-size: 1.02rem;
+  }
+
+  .crazy-site-header__nav {
+    gap: .04rem;
+  }
+
+  .crazy-site-header__nav button {
+    min-height: 36px;
+    gap: .28rem;
+    padding-inline: .48rem;
+    font-size: .59rem;
+  }
+
+  .crazy-site-header__nav button svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .crazy-site-header__search {
+    min-width: 150px;
+    max-width: 220px;
+    height: 36px;
+  }
+
+  .crazy-site-header__actions {
+    gap: .3rem;
+  }
+
+  .crazy-site-header__account,
+  .crazy-site-header__cart {
+    height: 38px;
+    padding-inline: .55rem;
+    font-size: .62rem;
+  }
+}
