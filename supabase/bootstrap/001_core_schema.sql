@@ -660,6 +660,19 @@ CREATE POLICY "Anyone can view game images" ON storage.objects FOR SELECT USING 
 CREATE POLICY "Admins can upload game images" ON storage.objects FOR INSERT
   TO authenticated
   WITH CHECK (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
+
+CREATE POLICY "Users can upload own ticket files" ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    bucket_id = 'game-images'
+    AND (storage.foldername(name))[1] = 'ticket-files'
+    AND EXISTS (
+      SELECT 1
+      FROM public.order_tickets ot
+      WHERE ot.id::text = (storage.foldername(name))[2]
+        AND ot.user_id = auth.uid()
+    )
+  );
 CREATE POLICY "Admins can update game images" ON storage.objects FOR UPDATE
   TO authenticated
   USING (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'))

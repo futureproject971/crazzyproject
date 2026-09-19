@@ -213,6 +213,20 @@ create policy "Admins can upload game images" on storage.objects
 for insert to authenticated
 with check (bucket_id = 'game-images' and public.has_role(auth.uid(), 'admin'));
 
+drop policy if exists "Users can upload own ticket files" on storage.objects;
+create policy "Users can upload own ticket files" on storage.objects
+for insert to authenticated
+with check (
+  bucket_id = 'game-images'
+  and (storage.foldername(name))[1] = 'ticket-files'
+  and exists (
+    select 1
+    from public.order_tickets ot
+    where ot.id::text = (storage.foldername(name))[2]
+      and ot.user_id = auth.uid()
+  )
+);
+
 create policy "Admins can update game images" on storage.objects
 for update to authenticated
 using (bucket_id = 'game-images' and public.has_role(auth.uid(), 'admin'))

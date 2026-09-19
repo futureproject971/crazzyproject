@@ -155,4 +155,6 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 137. Preservar o carrinho até confirmação real do pagamento e migrar o storage legado para CRAZZY PROJECT.
 - [x] 138. Espelhar no carrinho o desconto real de cupons restritos por produto.
 - [x] 139. Alinhar limite de quantidade do carrinho ao máximo aceito pelo backend.
-- [ ] 140. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 140. Preservar anexos/áudio de tickets com política de storage limitada ao dono do ticket.
+- [x] 141. Adicionar CI independente da Vercel para validar build e testes no GitHub.
+- [ ] 142. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.

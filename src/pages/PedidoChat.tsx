@@ -216,9 +216,25 @@ const PedidoChat = () => {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-    const newFiles = [...pendingFiles, ...files].slice(0, 5);
+
+    const maxBytes = 10 * 1024 * 1024;
+    const allowedExtensions = new Set(["png", "jpg", "jpeg", "webp", "gif", "pdf", "txt", "doc", "docx", "zip", "rar"]);
+    const accepted = files.filter((file) => {
+      const ext = file.name.split(".").pop()?.toLowerCase() || "";
+      return file.size > 0 && file.size <= maxBytes && (file.type.startsWith("image/") || allowedExtensions.has(ext));
+    });
+
+    if (accepted.length !== files.length) {
+      toast({
+        title: "Alguns arquivos não foram adicionados",
+        description: "Use imagens, PDF, TXT, DOC/DOCX, ZIP ou RAR de até 10 MB.",
+        variant: "destructive",
+      });
+    }
+
+    const newFiles = [...pendingFiles, ...accepted].slice(0, 5);
     setPendingFiles(newFiles);
-    setPreviewUrls(newFiles.map(f => f.type.startsWith("image/") ? URL.createObjectURL(f) : ""));
+    setPreviewUrls(newFiles.map((file) => file.type.startsWith("image/") ? URL.createObjectURL(file) : ""));
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -229,7 +245,7 @@ const PedidoChat = () => {
   };
 
   const uploadFileToStorage = async (file: File): Promise<string | null> => {
-    const ext = file.name.split(".").pop() || "bin";
+    const ext = (file.name.split(".").pop() || "bin").toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 10) || "bin";
     const path = `ticket-files/${ticket!.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
     const { error } = await supabase.storage.from("game-images").upload(path, file, { upsert: false });
     if (error) { console.error("Upload error:", error); return null; }
