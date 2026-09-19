@@ -57,7 +57,14 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
   }
 
   if (items.length === 0) {
-    return null;
+    return (
+      <div className="crazy-featured crazy-featured--empty crazy-featured--empty-showcase">
+        <div>
+          <strong>Produtos em destaque</strong>
+          <span>Marque produtos como NOVO no painel admin para exibi-los aqui.</span>
+        </div>
+      </div>
+    );
   }
 
   const go = (index: number, manual = false) => {
@@ -84,12 +91,13 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
           if (offset < -count / 2) offset += count;
           const distance = Math.abs(offset);
           const visible = distance <= 2;
-          const scale = offset === 0 ? 1 : distance === 1 ? 0.8 : 0.66;
-          const depth = offset === 0 ? 0 : -(distance * 120);
+          const scale = offset === 0 ? 1 : distance === 1 ? 0.78 : 0.61;
+          const depth = offset === 0 ? 80 : distance === 1 ? -40 : -160;
+          const xStep = distance === 1 ? 54 : 82;
           const style: CSSProperties = {
-            transform: `translateX(calc(-50% + ${offset * 50}%)) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -24 : 24}deg)`,
-            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.9 : 0.72) : 0,
-            zIndex: 20 - distance,
+            transform: `translateX(calc(-50% + ${Math.sign(offset) * xStep}%)) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -30 : 30}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.4 : -1.4}deg)`,
+            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.95 : 0.72) : 0,
+            zIndex: offset === 0 ? 30 : distance === 1 ? 20 : 10,
             pointerEvents: visible ? "auto" : "none",
           };
 
