@@ -75,7 +75,6 @@ export function CategoryCard({ category, index, productCount, selected = false, 
           </span>
         ) : null}
       </span>
-      {selected ? <span className="crazy-category-card__selected">Selecionado</span> : null}
       <span className="crazy-category-card__corner" aria-hidden="true" />
     </motion.button>
   );
