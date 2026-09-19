@@ -1625,3 +1625,96 @@
     height: 34px;
   }
 }
+
+
+/* ========================= HOME FEATURED SHOWCASE ========================= */
+.crazy-home-featured {
+  position: absolute;
+  z-index: 18;
+  left: 50%;
+  bottom: 8.35rem;
+  width: min(94vw, 1540px);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.crazy-home-featured .crazy-featured {
+  width: 100%;
+  max-width: 100%;
+  pointer-events: auto;
+}
+
+.crazy-home-featured .crazy-featured__stage {
+  height: clamp(220px, 24vh, 292px);
+}
+
+.crazy-home-featured .crazy-featured__card {
+  width: min(610px, 42%);
+  border: 1px solid rgba(83, 170, 255, .52);
+  border-radius: 16px;
+  background: #07162f;
+  box-shadow: 0 20px 54px rgba(0, 28, 82, .38);
+}
+
+.crazy-home-featured .crazy-featured__card.is-active {
+  border-color: rgba(126, 205, 255, .96);
+  box-shadow:
+    0 26px 68px rgba(0, 38, 120, .5),
+    0 0 0 1px rgba(226, 245, 255, .24) inset,
+    0 0 34px rgba(0, 105, 255, .34);
+}
+
+.crazy-featured__side-content {
+  position: absolute;
+  z-index: 3;
+  left: 1rem;
+  right: 1rem;
+  bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .28rem;
+  color: #fff;
+  text-align: left;
+}
+
+.crazy-featured__side-content strong {
+  max-width: 92%;
+  font-size: clamp(.86rem, 1.05vw, 1.1rem);
+  line-height: 1.08;
+}
+
+.crazy-featured__side-content > span:last-child {
+  margin-top: .25rem;
+  padding: .42rem .72rem;
+  border: 1px solid rgba(139, 203, 255, .48);
+  border-radius: 7px;
+  background: rgba(0, 82, 255, .72);
+  font-size: .58rem;
+  font-weight: 800;
+}
+
+@media (max-width: 1280px) {
+  .crazy-home-featured {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: min(96vw, 980px);
+    margin: 1rem auto 0;
+    transform: none;
+  }
+
+  .crazy-home-featured .crazy-featured__card {
+    width: min(520px, 56%);
+  }
+}
+
+@media (max-width: 700px) {
+  .crazy-home-featured .crazy-featured__stage {
+    height: 210px;
+  }
+
+  .crazy-home-featured .crazy-featured__card {
+    width: min(300px, 74%);
+  }
+}
