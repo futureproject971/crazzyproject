@@ -960,7 +960,10 @@
   .crazy-category-card,
   .crazy-category-card__icon,
   .crazy-category-card__shine,
-  .crazy-product-card__footer button {
+  .crazy-product-card__footer button,
+  .crazy-featured__card,
+  .crazy-featured__dots button,
+  .crazy-featured__arrow {
     animation: none !important;
     transition-duration: .01ms !important;
   }
@@ -1436,7 +1439,7 @@
   position: absolute; left: 50%; top: 0; height: 100%; width: min(340px, 60%);
   border: 0; padding: 0; border-radius: 18px; overflow: hidden; cursor: pointer;
   background: #0a1224; box-shadow: 0 30px 60px rgba(0,0,0,.5);
-  transition: transform .55s cubic-bezier(.22,1,.36,1), opacity .55s ease; transform-origin: center center;
+  transition: transform .9s cubic-bezier(.22,1,.36,1), opacity .72s ease; transform-origin: center center;
 }
 .crazy-featured__card.is-active { box-shadow: 0 34px 80px rgba(0,40,120,.55), 0 0 0 1px rgba(120,170,255,.25) inset; }
 .crazy-featured__media { position: absolute; inset: 0; background-size: cover; background-position: center; background-color: #0e1730; background-image: linear-gradient(135deg, #16233f, #0a1120); }
