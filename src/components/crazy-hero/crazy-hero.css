@@ -1,4 +1,4 @@
-/* CRAZZY PROJET HOME
+/* CRAZZY PROJECT HOME
    The supplied wallpaper is environmental art only. Every interactive element
    on top of it is real HTML and stays responsive/accessibile. */
 
@@ -2056,5 +2056,70 @@
 @media (max-width: 700px) {
   .crazy-home-featured .crazy-featured__card {
     width: min(320px, 78%);
+  }
+}
+
+
+/* ========================= HOME GATE — SAFE DESKTOP GEOMETRY ========================= */
+/*
+ * Final safety pass for the first fold. These rules intentionally come last so
+ * the seven category zones, the ETAPA 3/4 coverflow, trust bar and footer keep
+ * physical breathing room instead of relying on z-index to hide collisions.
+ */
+@media (min-width: 1281px) {
+  .crazy-trustbar {
+    bottom: 6.4rem;
+  }
+
+  .crazy-category-cloud {
+    bottom: calc(11.6rem + clamp(232px, 25.5vh, 304px) + 2rem);
+  }
+
+  .crazy-category-zone--left-top { top: 0; }
+  .crazy-category-zone--left-middle { top: 33%; }
+  .crazy-category-zone--left-bottom { top: 67%; }
+
+  .crazy-category-zone--right-top { top: 0; }
+  .crazy-category-zone--right-middle { top: 32%; }
+  .crazy-category-zone--right-bottom { top: 59%; }
+  .crazy-category-zone--bottom-right { top: 82%; }
+
+  .crazy-category-zone--right-bottom,
+  .crazy-category-zone--bottom-right {
+    bottom: auto;
+  }
+}
+
+@media (min-width: 1281px) and (max-height: 1000px) {
+  .crazy-category-cloud {
+    bottom: calc(11.4rem + 230px + 2rem);
+  }
+
+  .crazy-category-zone--left-top { top: 0; }
+  .crazy-category-zone--left-middle { top: 30%; }
+  .crazy-category-zone--left-bottom { top: 62%; }
+
+  .crazy-category-zone--right-top { top: 0; }
+  .crazy-category-zone--right-middle { top: 29%; }
+  .crazy-category-zone--right-bottom { top: 56%; }
+  .crazy-category-zone--bottom-right { top: 79%; }
+
+  .crazy-category-card {
+    min-height: 54px;
+    padding: .55rem .6rem;
+  }
+
+  .crazy-category-zone--bottom-right .crazy-category-card {
+    min-height: 44px;
+    padding: .4rem .44rem;
+  }
+
+  .crazy-category-zone--bottom-right .crazy-category-card__icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .crazy-category-zone--bottom-right .crazy-category-card__name {
+    font-size: .54rem;
   }
 }
