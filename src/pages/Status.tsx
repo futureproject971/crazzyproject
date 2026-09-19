@@ -62,10 +62,10 @@ const Status = () => {
   const timeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
     const mins = Math.floor(diff / 60000);
-    if (mins < 60) return `${mins}min atrÃ¡s`;
+    if (mins < 60) return `${mins}min atrás`;
     const hours = Math.floor(mins / 60);
-    if (hours < 24) return `${hours}h atrÃ¡s`;
-    return `${Math.floor(hours / 24)}d atrÃ¡s`;
+    if (hours < 24) return `${hours}h atrás`;
+    return `${Math.floor(hours / 24)}d atrás`;
   };
 
   return (
@@ -80,16 +80,16 @@ const Status = () => {
             <span className="text-success">STATUS</span> DOS PRODUTOS
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Acompanhe o status de detecÃ§Ã£o de cada produto em tempo real
+            Acompanhe o status de detecção de cada produto em tempo real
           </p>
         </div>
 
         {/* Legend */}
         <div className="mb-8 flex flex-wrap justify-center gap-4">
           {[
-            { key: "undetected", label: "IndetectÃ¡vel" },
+            { key: "undetected", label: "Indetectável" },
             { key: "updating", label: "Atualizando" },
-            { key: "detected", label: "DetectÃ¡vel" },
+            { key: "detected", label: "Detectável" },
             { key: "offline", label: "Offline" },
           ].map((s) => {
             const cfg = statusConfig[s.key];
