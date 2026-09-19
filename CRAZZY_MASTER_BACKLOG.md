@@ -1,0 +1,154 @@
+# CRAZZY PROJECT — BACKLOG MESTRE OPERACIONAL
+
+Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo, os planos atuais do repositório e as regras mais recentes do usuário.
+
+## Regras fixas
+
+- A Home é o HOME GATE: não avançar para polimento de páginas internas enquanto houver sobreposição, quebra visual ou divergência grave da referência.
+- Da foto de instruções, somente a ETAPA 1 é ignorada. ETAPAS 2, 3, 4 e 5 continuam válidas; ETAPAS 3 e 4 têm prioridade máxima.
+- Categoria clicada nunca controla o carrossel de destaques. Categoria navega para /produtos?game=slug.
+- O carrossel da Home é de produtos NOVO/DESTAQUE e deve ser independente das categorias.
+- Redesign nunca remove função existente da source.
+- Toda feature deve ser ponta a ponta: UI + Admin + banco + migration + bootstrap + tipos + RLS/permissões + backend quando necessário + validação.
+- Nada de componente órfão.
+- Toda mudança de schema precisa existir também no bootstrap de instalações novas.
+- O REGISTRO DE AUDITORIA/HANDOFF é sempre o ÚLTIMO item. Se surgir tarefa nova, a auditoria desce novamente para o final.
+
+## Backlog
+
+- [x] 1. Criar backup seguro do estado anterior às mudanças sequenciais.
+- [x] 2. Definir as categorias oficiais/canônicas da Home.
+- [x] 3. Alinhar Admin > Produtos com as categorias oficiais.
+- [x] 4. Fazer clique em categoria navegar para /produtos?game=slug.
+- [x] 5. Restaurar CRAZZY PROJECT como foco central do hero.
+- [x] 6. Implementar autoplay lento no coverflow.
+- [x] 7. Pausar temporariamente o autoplay após interação manual.
+- [x] 8. Reproduzir inclinação/perspectiva 3D das categorias.
+- [ ] 9. Eliminar 100% das sobreposições entre categorias na Home desktop.
+- [ ] 10. Eliminar invasão entre categorias, logo, coverflow, trust bar, header e footer.
+- [x] 11. Trocar wallpaper real entre tema claro e escuro.
+- [ ] 12. Refinar enquadramento do wallpaper por breakpoint.
+- [ ] 13. Refinar chuva no tema claro.
+- [ ] 14. Refinar chuva no tema escuro.
+- [ ] 15. Implementar cursor personalizado CRAZZY com fallback seguro.
+- [ ] 16. Fazer revisão visual completa da Home em light.
+- [ ] 17. Fazer revisão visual completa da Home em dark.
+- [ ] 18. Validar Home em 1920x1080.
+- [ ] 19. Validar Home em 2560x1440.
+- [ ] 20. Validar Home em ultrawide.
+- [ ] 21. Validar Home em tablet.
+- [ ] 22. Validar Home em mobile.
+- [x] 23. Preservar header funcional da source.
+- [x] 24. Preservar busca funcional.
+- [x] 25. Preservar Login/Auth.
+- [x] 26. Preservar carrinho e contador real.
+- [ ] 27. Confirmar sistema de contas ponta a ponta.
+- [ ] 28. Confirmar avaliações ponta a ponta.
+- [ ] 29. Confirmar Status ponta a ponta.
+- [ ] 30. Confirmar Rewards ponta a ponta.
+- [ ] 31. Confirmar Tickets ponta a ponta.
+- [ ] 32. Confirmar Estoque ponta a ponta.
+- [ ] 33. Confirmar Produtos/Admin ponta a ponta.
+- [ ] 34. Confirmar Jogos/Admin ponta a ponta.
+- [ ] 35. Confirmar Usuários/Admin ponta a ponta.
+- [ ] 36. Confirmar Cupons ponta a ponta.
+- [ ] 37. Confirmar Revendedores ponta a ponta.
+- [ ] 38. Confirmar Financeiro ponta a ponta.
+- [ ] 39. Confirmar Vendas ponta a ponta.
+- [ ] 40. Confirmar Pagamentos ponta a ponta.
+- [ ] 41. Confirmar Credenciais ponta a ponta.
+- [ ] 42. Confirmar LZT e módulos legados que ainda fazem parte da source.
+- [ ] 43. Validar integração PIX PurinCash.
+- [ ] 44. Validar consulta de status da PurinCash.
+- [ ] 45. Validar webhook assinado da PurinCash.
+- [ ] 46. Validar valor efetivamente pago antes de liberar pedido.
+- [ ] 47. Garantir idempotência de webhook/pagamento.
+- [ ] 48. Validar fluxo de cartão/crédito quando realmente habilitado.
+- [ ] 49. Validar Litecoin/cripto quando realmente habilitado.
+- [ ] 50. Garantir que chaves/segredos de gateway só existam no backend.
+- [ ] 51. Validar sandbox/ambiente de teste sem contaminar produção.
+- [ ] 52. Revisar ciclo completo de pedidos.
+- [ ] 53. Corrigir/impedir pagamentos presos em FULFILLING.
+- [ ] 54. Garantir payments.updated_at e demais timestamps coerentes.
+- [ ] 55. Manter compra externa fail-closed.
+- [ ] 56. Validar hostname/allowlist de proxy externo.
+- [ ] 57. Remover exposição de token/resposta de diagnóstico.
+- [ ] 58. Evitar logar resposta sensível de fornecedor.
+- [ ] 59. Separar estoque pago do estoque de trial/recompensa.
+- [ ] 60. Revisar RLS/grants das tabelas expostas.
+- [ ] 61. Impedir sender_role/role de staff forjado pelo cliente.
+- [ ] 62. Restringir RPCs sensíveis de revendedor ao backend/service role.
+- [ ] 63. Manter bootstrap Supabase limpo para instalação nova.
+- [ ] 64. Refletir toda migration nova no bootstrap antigo/base.
+- [ ] 65. Atualizar tipos TypeScript sempre que schema mudar.
+- [ ] 66. Atualizar Admin sempre que surgir dado configurável novo.
+- [ ] 67. Atualizar frontend de leitura para toda feature nova.
+- [ ] 68. Atualizar backend/Edge Function quando o browser não puder ser confiado.
+- [x] 69. Consolidar AIM Universal/Aimbot Universal em IA Universal na Home.
+- [x] 70. Manter somente as categorias canônicas na composição da Home.
+- [x] 71. Desacoplar coverflow da categoria selecionada.
+- [x] 72. Definir products.is_new como fonte de NOVO/destaque.
+- [x] 73. Adicionar products.is_new ao bootstrap.
+- [x] 74. Criar migration idempotente de products.is_new.
+- [x] 75. Adicionar is_new aos tipos TypeScript.
+- [x] 76. Adicionar toggle NOVO/destacar na Home no Admin.
+- [x] 77. Persistir is_new no create/update com fallback seguro.
+- [x] 78. Mostrar badge NOVO no Admin.
+- [x] 79. Coverflow receber somente produtos NOVO quando a coluna existir.
+- [x] 80. Manter fallback temporário de DESTAQUE enquanto a migration não estiver disponível.
+- [x] 81. Card central dominante no coverflow.
+- [x] 82. Dois níveis de cards laterais no coverflow.
+- [x] 83. Laterais com rotateY/rotateZ/translateZ/scale.
+- [x] 84. Setas do coverflow.
+- [x] 85. Dots do coverflow.
+- [x] 86. Clique em lateral traz produto ao centro antes de abrir.
+- [x] 87. CTA do produto abre produto correto.
+- [x] 88. Respeitar prefers-reduced-motion no carrossel.
+- [ ] 89. Refinar card central para fidelidade visual da referência.
+- [ ] 90. Refinar side cards para fidelidade visual da referência.
+- [x] 91. Separar fisicamente coverflow de categorias.
+- [x] 92. Separar fisicamente trust bar do footer em desktop.
+- [ ] 93. Validar que nenhuma categoria sobrepõe outra após o passe de geometria.
+- [ ] 94. Validar que nenhum card do coverflow invade trust bar/footer.
+- [ ] 95. Ajustar logo central/negative space comparando lado a lado com a referência.
+- [ ] 96. Ajustar HUD/microcopy técnica da Home.
+- [ ] 97. Ajustar glow/glass/shadows para light.
+- [ ] 98. Ajustar glow/glass/shadows para dark.
+- [ ] 99. Otimizar imagens críticas e evitar carregar resolução máxima desnecessária.
+- [ ] 100. Corrigir warnings de console relacionados à Home.
+- [ ] 101. Validar navegação por teclado e focus-visible.
+- [ ] 102. Aplicar migration products.is_new no Supabase CRAZZY correto (teyqtfdeugldgtzkyybg) quando a conexão estiver disponível.
+- [ ] 103. Validar criação/edição real de produto NOVO no Admin contra o banco CRAZZY.
+- [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
+- [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
+- [ ] 106. Só após HOME GATE: implementar trial grátis de 1 hora com regras reais.
+- [ ] 107. Implementar área de recompensas/missões.
+- [ ] 108. Permitir escolha de produto/recompensa conforme regra real.
+- [ ] 109. Implementar progresso de vídeo/missão sem confiar no cliente.
+- [ ] 110. Pausar progresso quando aba perde foco ou mídia é pausada, quando aplicável.
+- [ ] 111. Validar recompensa no backend.
+- [ ] 112. Implementar cooldown e histórico de rewards/trials.
+- [ ] 113. Manter estoque de trial separado.
+- [ ] 114. Implementar fila de staff para aprovar/recusar quando necessária.
+- [ ] 115. Implementar entrega automática/manual conforme produto.
+- [ ] 116. Expor status claro da solicitação para usuário/staff.
+- [ ] 117. Preparar estrutura para campanhas/recompensas futuras.
+- [ ] 118. Só depois da réplica base: implementar EDITOR VISUAL ADMIN.
+- [ ] 119. Editor visual: modo Editar Site apenas para admin.
+- [ ] 120. Editor visual: drag/drop respeitando zonas seguras.
+- [ ] 121. Editor visual: ordenar categorias e produtos.
+- [ ] 122. Editor visual: editar textos/logo/imagens permitidas.
+- [ ] 123. Editor visual: controlar visibilidade de blocos.
+- [ ] 124. Editor visual: configurar destaques/carrossel.
+- [ ] 125. Editor visual: preview light/dark e breakpoints.
+- [ ] 126. Editor visual: salvar/publicar configuração estruturada.
+- [ ] 127. Editor visual: histórico/versionamento/undo.
+- [ ] 128. Editor visual: restaurar layout padrão CRAZZY PROJECT.
+- [ ] 129. Editor visual: proteger tudo com backend/RLS e impedir HTML/JS arbitrário.
+- [ ] 130. Revisão funcional final completa do site.
+- [ ] 131. Revisão final de acessibilidade/performance.
+- [ ] 132. Revisão final de segurança e advisors do Supabase.
+- [ ] 133. Validar checkout real e realizar compra de teste controlada.
+- [ ] 134. Validar entrega/estoque pós-pagamento.
+- [ ] 135. Confirmar produção pronta para venda sem componentes órfãos.
+- [ ] 136. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
