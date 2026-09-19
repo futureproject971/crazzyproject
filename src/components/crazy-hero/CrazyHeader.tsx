@@ -11,9 +11,13 @@ import { useCart } from "@/hooks/useCart";
 const links = [
   { label: "Início", to: "/", icon: Home },
   { label: "Produtos", to: "/produtos", icon: Grid2X2 },
-  { label: "Contas", to: "/contas", icon: Grid2X2 },
   { label: "Status", to: "/status", icon: CircleHelp },
   { label: "Avaliações", to: "/avaliacoes", icon: Star },
+];
+
+const mobileExtraLinks = [
+  { label: "Contas", to: "/contas", icon: Grid2X2 },
+  { label: "Rewards", to: "/rewards", icon: Star },
 ];
 
 export function CrazyHeader() {
@@ -50,6 +54,15 @@ export function CrazyHeader() {
     setMenuOpen(false);
   };
 
+  const openCategories = () => {
+    setMenuOpen(false);
+    if (location.pathname === "/") {
+      document.getElementById("categorias")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+    navigate("/#categorias");
+  };
+
   const openAccount = () => {
     if (user) navigate("/dashboard");
     else setAuthOpen(true);
@@ -69,7 +82,15 @@ export function CrazyHeader() {
           </Link>
 
           <nav className="crazy-site-header__nav" aria-label="Navegação principal">
-            {links.map(({ label, to, icon: Icon }) => (
+            <button type="button" onClick={() => goTo("/")} className={isActive("/") ? "is-active" : ""}>
+              <Home aria-hidden="true" />
+              <span>Início</span>
+            </button>
+            <button type="button" onClick={openCategories}>
+              <Grid2X2 aria-hidden="true" />
+              <span>Categorias</span>
+            </button>
+            {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon }) => (
               <button key={label} type="button" onClick={() => goTo(to)} className={isActive(to) ? "is-active" : ""}>
                 <Icon aria-hidden="true" />
                 <span>{label}</span>
@@ -135,7 +156,15 @@ export function CrazyHeader() {
               <Search aria-hidden="true" />
               <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar produtos..." />
             </form>
+            <button type="button" onClick={openCategories}>
+              <Grid2X2 aria-hidden="true" /> Categorias
+            </button>
             {links.map(({ label, to, icon: Icon }) => (
+              <button key={label} type="button" onClick={() => goTo(to)}>
+                <Icon aria-hidden="true" /> {label}
+              </button>
+            ))}
+            {mobileExtraLinks.map(({ label, to, icon: Icon }) => (
               <button key={label} type="button" onClick={() => goTo(to)}>
                 <Icon aria-hidden="true" /> {label}
               </button>
