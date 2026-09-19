@@ -1,0 +1,80 @@
+name: CRAZZY Home Layout
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/components/crazy-hero/**"
+      - "src/config/homeCategories.ts"
+      - "src/pages/Index.tsx"
+      - "src/App.tsx"
+      - "vite.config.ts"
+      - "scripts/home-layout-check.mjs"
+      - ".github/workflows/home-layout.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: crazzy-home-layout-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      VITE_SUPABASE_PROJECT_ID: visual-test
+      VITE_SUPABASE_URL: http://127.0.0.1:54321
+      VITE_SUPABASE_PUBLISHABLE_KEY: visual-test-publishable-key
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install app
+        run: npm ci
+
+      - name: Install Playwright without changing lockfile
+        run: npm install --no-save --package-lock=false playwright@1.55.0
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build
+        run: npm run build
+
+      - name: Start preview
+        run: |
+          npx vite preview --host 127.0.0.1 --port 4173 > /tmp/crazzy-preview.log 2>&1 &
+          echo $! > /tmp/crazzy-preview.pid
+          for i in {1..40}; do
+            if curl -fsS http://127.0.0.1:4173/ >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/crazzy-preview.log
+          exit 1
+
+      - name: Audit Home geometry
+        run: node scripts/home-layout-check.mjs
+
+      - name: Show preview log on failure
+        if: failure()
+        run: cat /tmp/crazzy-preview.log || true
+
+      - name: Upload layout report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crazzy-home-layout-${{ github.sha }}
+          path: artifacts/home-layout
+          if-no-files-found: warn
+          retention-days: 7
