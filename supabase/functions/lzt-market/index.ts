@@ -196,8 +196,9 @@ Deno.serve(async (req) => {
       console.log("Fast-buy response", { status: response.status, itemId: String(item_id) });
 
       if (!response.ok) {
+        console.warn("[lzt-market] fast-buy failed", { status: response.status, itemId: String(item_id) });
         return new Response(
-          JSON.stringify({ error: "LZT fast-buy failed", status: response.status, detail: data }),
+          JSON.stringify({ error: "Provider purchase failed", status: response.status }),
           {
             status: response.status,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -276,10 +277,9 @@ Deno.serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("LZT API error:", response.status, errorText);
+      console.warn("[lzt-market] provider request failed", { status: response.status, action });
       return new Response(
-        JSON.stringify({ error: "LZT API error", status: response.status, detail: errorText }),
+        JSON.stringify({ error: "Provider request failed", status: response.status }),
         {
           status: response.status,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -292,8 +292,8 @@ Deno.serve(async (req) => {
     try {
       data = JSON.parse(rawText);
     } catch {
-      console.error("[lzt-market] Response not JSON:", rawText.substring(0, 500));
-      return new Response(JSON.stringify({ error: "LZT returned non-JSON", preview: rawText.substring(0, 200) }), {
+      console.warn("[lzt-market] provider returned non-JSON", { action });
+      return new Response(JSON.stringify({ error: "Provider returned an invalid response" }), {
         status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
