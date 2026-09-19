@@ -1724,6 +1724,14 @@
   .crazy-home-featured .crazy-featured__card {
     width: min(520px, 56%);
   }
+
+  .crazy-home-featured .crazy-featured__arrow--left {
+    left: .45rem;
+  }
+
+  .crazy-home-featured .crazy-featured__arrow--right {
+    right: .45rem;
+  }
 }
 
 @media (max-width: 700px) {
