@@ -10,13 +10,34 @@ import {
   type HomeCategoryConfig,
 } from "@/config/homeCategories";
 import { CategoryCloud } from "./CategoryCloud";
-import { CategoryProductDock, type HeroProduct } from "./CategoryProductDock";
+import { FeaturedCarousel, type FeaturedCarouselItem } from "./FeaturedCarousel";
 import { CrazyLogo } from "./CrazyLogo";
 import { FuturisticBackground } from "./FuturisticBackground";
 import { FuturisticPlatform } from "./FuturisticPlatform";
 import { HudDecoration } from "./HudDecoration";
 import { HeroTrustBar } from "./HeroTrustBar";
 import { HeroFooter } from "./HeroFooter";
+
+interface HeroProductPlan {
+  id: string;
+  name: string;
+  price: number;
+  active: boolean;
+  sort_order: number;
+}
+
+interface HeroProduct {
+  id: string;
+  game_id: string;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+  sort_order: number;
+  status: string;
+  status_label: string;
+  is_new?: boolean;
+  product_plans: HeroProductPlan[];
+}
 
 interface GameRow {
   id: string;
@@ -59,7 +80,7 @@ export function CrazyHero() {
           .order("sort_order", { ascending: true }),
         supabase
           .from("products")
-          .select("id,game_id,name,description,image_url,status,status_label,product_plans(id,name,price,active,sort_order)")
+          .select("*,product_plans(id,name,price,active,sort_order)")
           .eq("active", true)
           .order("sort_order", { ascending: true }),
       ]);
@@ -110,21 +131,6 @@ export function CrazyHero() {
     }
   }, [categories, loading, searchParams, selectedSlug]);
 
-  const selectedCategory = useMemo(
-    () => categories.find((category) => category.slug === selectedSlug) || null,
-    [categories, selectedSlug],
-  );
-
-  const selectedGame = useMemo(
-    () => games.find((game) => normalizeSlug(game.slug || game.name) === selectedSlug) || null,
-    [games, selectedSlug],
-  );
-
-  const selectedProducts = useMemo(() => {
-    if (!selectedGame) return [];
-    return products.filter((product) => product.game_id === selectedGame.id);
-  }, [products, selectedGame]);
-
   const activateCategory = (category: HomeCategoryConfig) => {
     if (category.action.type === "product") {
       navigate(category.action.destination);
@@ -137,16 +143,24 @@ export function CrazyHero() {
     setSearchParams(next, { replace: true });
   };
 
-  const closeCategory = () => {
-    setSelectedSlug(null);
-    const next = new URLSearchParams(searchParams);
-    next.delete("game");
-    setSearchParams(next, { replace: true });
-  };
+  const featuredItems = useMemo<FeaturedCarouselItem[]>(
+    () =>
+      products
+        .filter((product) => product.is_new === true)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((product) => ({
+          id: product.id,
+          title: product.name,
+          subtitle: product.description || "Confira os planos disponíveis para este produto.",
+          image: product.image_url,
+          badge: "NOVO",
+        })),
+    [products],
+  );
 
   return (
     <main className="crazy-home">
-      <section className={`crazy-hero ${selectedCategory ? "crazy-hero--with-dock" : ""}`} aria-labelledby="crazy-home-title">
+      <section className="crazy-hero" aria-labelledby="crazy-home-title">
         <HudDecoration />
 
         <div className="crazy-hero__center">
@@ -172,15 +186,15 @@ export function CrazyHero() {
           onActivate={activateCategory}
         />
 
-        <CategoryProductDock
-          categoryName={selectedCategory?.name || null}
-          categoryImage={selectedGame?.image_url}
-          products={selectedProducts}
-          loading={loading}
-          onClose={closeCategory}
-          onOpenProduct={(productId) => navigate(`/produto/${productId}`)}
-          onOpenAll={() => selectedCategory && navigate(selectedCategory.action.destination)}
-        />
+        {loading || featuredItems.length > 0 ? (
+          <section className="crazy-home-featured" aria-label="Produtos novos em destaque">
+            <FeaturedCarousel
+              items={featuredItems}
+              loading={loading}
+              onOpen={(productId) => navigate(`/produto/${productId}`)}
+            />
+          </section>
+        ) : null}
 
         <HeroTrustBar />
         <HeroFooter />
