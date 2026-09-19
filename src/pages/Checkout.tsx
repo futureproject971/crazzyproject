@@ -607,7 +607,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-lg border border-border/40 bg-background/40 px-3.5 py-2 w-fit mb-8">
                       <Clock className="h-3 w-3 text-muted-foreground/40" />
                       <span className="text-[10px] text-muted-foreground">
-                        Expira Ã s{" "}
+                        Expira às{" "}
                         <span className="font-semibold text-foreground">
                           {chargeData.expiresAt
                             ? new Date(chargeData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -703,7 +703,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-full border border-border/40 bg-card/50 px-4 py-1.5">
                       <Clock className="h-3 w-3 text-muted-foreground/40" />
                       <span className="text-[10px] text-muted-foreground">
-                        Expira Ã s{" "}
+                        Expira às{" "}
                         <span className="font-medium text-foreground">
                           {chargeData.expiresAt
                             ? new Date(chargeData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -853,7 +853,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-4 py-1.5 w-fit mb-6">
                       <Clock className="h-3 w-3 text-success/60" />
                       <span className="text-[11px] text-muted-foreground">
-                        Expira Ã s{" "}
+                        Expira às{" "}
                         <span className="font-medium text-foreground">
                           {cryptoData.expiresAt
                             ? new Date(cryptoData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
