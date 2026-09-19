@@ -20,6 +20,16 @@ o conteúdo por dados reais/admin.
 
 ---
 
+## REFERÊNCIA VISUAL — REGRA DAS ETAPAS DA FOTO
+
+- [x] ETAPA 1 da foto de instruções deve ser IGNORADA como obrigação visual. O header continua funcional conforme a source.
+- [ ] ETAPA 2 continua válida como referência da área principal: logo central, categorias laterais, planeta e informações centrais.
+- [ ] ETAPA 3 é PRIORIDADE OBRIGATÓRIA: mostruário/carrossel de produtos abaixo do hero, construído com card central dominante e laterais.
+- [ ] ETAPA 4 é PRIORIDADE OBRIGATÓRIA: cards laterais inclinados em perspectiva, parcialmente atrás do central, nunca retos.
+- [ ] ETAPA 5 continua válida depois que 3 e 4 estiverem visualmente corretas.
+
+Enquanto ETAPA 3 e ETAPA 4 não estiverem visualmente aprovadas, não avançar para polimento de páginas internas.
+
 ## HOME GATE — PRIORIDADE BLOQUEANTE
 
 Até a Home desktop estar visualmente estável e sem sobreposição, NÃO avançar para polimento de páginas internas.
