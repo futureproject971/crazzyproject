@@ -1,4 +1,5 @@
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
 export interface FeaturedCarouselItem {
@@ -16,6 +17,7 @@ interface FeaturedCarouselProps {
 }
 
 export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCarouselProps) {
+  const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
   const [manualPause, setManualPause] = useState(false);
   const resumeTimerRef = useRef<number | null>(null);
@@ -25,13 +27,13 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
   }, [items.length]);
 
   useEffect(() => {
-    if (items.length < 2 || manualPause) return;
+    if (items.length < 2 || manualPause || reducedMotion) return;
     const timer = window.setInterval(
       () => setActive((current) => (current + 1) % items.length),
       7200,
     );
     return () => window.clearInterval(timer);
-  }, [items.length, manualPause]);
+  }, [items.length, manualPause, reducedMotion]);
 
   useEffect(() => () => {
     if (resumeTimerRef.current !== null) {
