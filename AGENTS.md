@@ -149,3 +149,32 @@ Antes de qualquer commit visual, revisar:
 - responsividade
 - sobreposição
 - consistência com a Home e o restante do site
+
+
+## 11. REGRA FULL-STACK — NADA DE COMPONENTE ÓRFÃO
+
+Toda mudança funcional deve ser implementada ponta a ponta.
+
+Se uma feature nova depende de dado ou estado persistente, revisar e atualizar, quando aplicável:
+- migration SQL
+- bootstrap/schema base
+- tipos TypeScript
+- Admin de criação/edição
+- leitura no frontend
+- backend/Edge Function
+- RLS/grants/permissões
+- migração de dados antigos
+- fallback de rollout
+- teste de build e fluxo real
+
+É proibido considerar pronta uma feature que exista apenas visualmente.
+Exemplos de erro:
+- botão sem ação real
+- badge sem campo persistente
+- toggle que só muda estado local
+- card que não vem do catálogo real
+- filtro que não corresponde ao banco
+- UI de Admin que grava em campo inexistente
+- migration adicionada sem atualizar o bootstrap
+
+Antes de concluir, confirmar que UI -> lógica -> banco/backend -> leitura novamente formam um ciclo funcional.
