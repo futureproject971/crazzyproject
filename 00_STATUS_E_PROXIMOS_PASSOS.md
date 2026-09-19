@@ -32,3 +32,8 @@ Esta pasta é a única que deve ser alterada como projeto principal.
 Tema claro deve usar o wallpaper claro oficial.
 Tema escuro deve usar o wallpaper escuro oficial enviado pelo usuário.
 Não usar apenas filter/brightness/overlay para simular o modo escuro.
+
+
+## REGRA OBRIGATÓRIA DE DESIGN / IA
+Antes de qualquer alteração visual ou novo componente, ler `AGENTS.md`.
+Toda novidade, inclusive referências externas, deve ser adaptada para a identidade CRAZZY PROJECT, funcionar em tema claro e escuro, manter contraste, responsividade e não criar sobreposições indevidas.
