@@ -522,6 +522,7 @@ export type Database = {
           game_id: string
           id: string
           image_url: string | null
+          is_new: boolean
           name: string
           sort_order: number
           status: string
@@ -539,6 +540,7 @@ export type Database = {
           game_id: string
           id?: string
           image_url?: string | null
+          is_new?: boolean
           name: string
           sort_order?: number
           status?: string
@@ -556,6 +558,7 @@ export type Database = {
           game_id?: string
           id?: string
           image_url?: string | null
+          is_new?: boolean
           name?: string
           sort_order?: number
           status?: string
