@@ -736,9 +736,13 @@ CREATE TABLE public.coupon_usage (
   UNIQUE (coupon_id, user_id)
 );
 ALTER TABLE public.coupon_usage ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own coupon usage" ON public.coupon_usage FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own usage" ON public.coupon_usage FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Admins can manage coupon usage" ON public.coupon_usage FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Users can view own coupon usage" ON public.coupon_usage FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+CREATE POLICY "Admins can manage coupon usage" ON public.coupon_usage FOR ALL
+  TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
 -- RESELLERS
