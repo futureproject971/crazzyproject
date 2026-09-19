@@ -347,7 +347,7 @@ RETURNS TABLE(ticket_id UUID, stock_item_id UUID, created BOOLEAN)
 LANGUAGE plpgsql
 SECURITY INVOKER
 SET search_path = public
-AS $
+AS $$
 DECLARE
   v_ticket_id UUID;
   v_stock_id UUID;
@@ -457,7 +457,7 @@ BEGIN
 
   RETURN QUERY SELECT v_ticket_id, v_stock_id, true;
 END;
-$;
+$$;
 
 REVOKE ALL ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM anon, authenticated;
@@ -645,11 +645,11 @@ RETURNS void
 LANGUAGE sql
 SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
   UPDATE public.resellers
   SET total_purchases = total_purchases + 1
   WHERE id = _reseller_id;
-$;
+$$;
 
 REVOKE ALL ON FUNCTION public.increment_reseller_purchases(UUID) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.increment_reseller_purchases(UUID) FROM anon, authenticated;
