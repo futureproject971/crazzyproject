@@ -11,14 +11,15 @@ import { useCart } from "@/hooks/useCart";
 const links = [
   { label: "Início", to: "/", icon: Home },
   { label: "Produtos", to: "/produtos", icon: Grid2X2 },
+  { label: "Contas", to: "/contas", icon: Grid2X2 },
+  { label: "Status", to: "/status", icon: CircleHelp },
+  { label: "Avaliações", to: "/avaliacoes", icon: Star },
   { label: "FAQ", to: "/faq", icon: CircleHelp },
 ];
 
 const mobileExtraLinks = [
-  { label: "Contas", to: "/contas", icon: Grid2X2 },
-  { label: "Status", to: "/status", icon: CircleHelp },
-  { label: "Avaliações", to: "/avaliacoes", icon: Star },
   { label: "Rewards", to: "/rewards", icon: Star },
+  { label: "Meus Pedidos", to: "/meus-pedidos", icon: Grid2X2 },
 ];
 
 export function CrazyHeader() {
