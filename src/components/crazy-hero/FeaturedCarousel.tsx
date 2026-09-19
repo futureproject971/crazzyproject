@@ -82,7 +82,31 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
   };
 
   return (
-    <div className="crazy-featured" aria-label="Produtos novos em destaque">
+    <div
+      className="crazy-featured"
+      role="region"
+      aria-roledescription="carrossel"
+      aria-label="Produtos novos em destaque"
+      onKeyDown={(event) => {
+        if (items.length < 2) return;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          go(active - 1, true);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          go(active + 1, true);
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          go(0, true);
+        } else if (event.key === "End") {
+          event.preventDefault();
+          go(items.length - 1, true);
+        }
+      }}
+    >
+      <span className="sr-only" aria-live="polite">
+        Produto {active + 1} de {items.length}: {items[active]?.title}
+      </span>
       <div className="crazy-featured__stage">
         {items.map((item, index) => {
           const count = items.length;
@@ -114,6 +138,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
               style={style}
               onClick={() => onCardClick(index, item)}
               aria-hidden={!visible}
+              aria-label={offset === 0 ? `Abrir ${item.title}` : `Selecionar ${item.title}`}
               tabIndex={offset === 0 ? 0 : -1}
             >
               <div
@@ -172,7 +197,8 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
               type="button"
               className={index === active ? "is-active" : ""}
               onClick={() => go(index, true)}
-              aria-label={`Ir para o produto ${index + 1}`}
+              aria-label={`Ir para o produto ${index + 1}: ${item.title}`}
+              aria-current={index === active ? "true" : undefined}
             />
           ))}
         </div>
