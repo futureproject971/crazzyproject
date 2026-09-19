@@ -1449,15 +1449,19 @@
   .crazy-platform { display:none; }
 
   .crazy-site-header {
-    top:0;
+    top:.65rem;
     width:min(76vw,1285px);
   }
   .crazy-site-header__inner {
-    min-height:70px;
-    padding:.5rem .7rem .5rem 1.15rem;
-    border-top:0;
-    border-radius:0 0 15px 15px;
-    background:rgba(255,255,255,.86);
+    min-height:66px;
+    padding:.48rem .68rem .48rem 1.05rem;
+    border:1px solid rgba(65,135,255,.16);
+    border-radius:16px;
+    background:rgba(255,255,255,.82);
+    box-shadow:
+      0 16px 42px rgba(0,47,133,.10),
+      inset 0 1px 0 rgba(255,255,255,.9);
+    backdrop-filter:blur(18px) saturate(1.16);
   }
   .crazy-site-header__brand { min-width:180px; }
   .crazy-site-header__brand span { font-size:1.34rem; }
