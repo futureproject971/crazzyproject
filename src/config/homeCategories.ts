@@ -29,25 +29,34 @@ const category = (
 });
 
 /**
- * Visual fallback for a brand-new database.
- * When active games exist in Supabase, the home prefers those records and only
- * uses this list to enrich icon/placement metadata by slug/name.
+ * Categorias canonicas da Home CRAZZY PROJECT.
+ *
+ * Esta lista representa as categorias visuais oficiais da pagina inicial e
+ * tambem define os slugs que devem existir no catalogo/admin. Registros extras
+ * do banco podem continuar existindo, mas estas categorias nao devem sumir da
+ * Home nem do fluxo de cadastro de produtos.
  */
 export const DEFAULT_HOME_CATEGORIES: HomeCategoryConfig[] = [
   category("warzone", "Call of Duty Warzone", "crosshair", "left-top", true),
   category("valorant", "Valorant", "spark", "left-top", true),
   category("apex", "Apex", "triangle", "left-top"),
+
   category("fivem", "FiveM", "layers", "left-middle"),
   category("gta-online", "GTA Online", "car", "left-middle"),
+
   category("bloodstrike", "BloodStrike", "zap", "left-bottom"),
-  category("steam-keys", "Steam Keys", "brain", "left-bottom"),
-  category("gift-cards", "Gift Cards", "target", "left-bottom"),
-  category("contas", "Contas", "focus", "right-top", true),
+  category("ia-universal", "IA Universal", "brain", "left-bottom"),
+  category("aim-universal", "AIM Universal", "target", "left-bottom"),
+
+  category("aimbot-universal", "Aimbot Universal", "focus", "right-top", true),
   category("dead-by-daylight", "Dead by Daylight", "scan", "right-top"),
+
   category("arc-raiders", "ARC Raiders", "rocket", "right-middle"),
-  category("assinaturas", "Assinaturas", "shield", "right-middle", true),
+  category("vanguard-emulator", "Vanguard Emulator", "shield", "right-middle", true),
+
   category("rust", "Rust", "boxes", "right-bottom"),
   category("hell-let-loose", "Hell Let Loose", "swords", "right-bottom"),
+
   category("scum", "SCUM", "skull", "bottom-right"),
   category("squad", "Squad", "users", "bottom-right"),
   category("war-dogs", "War Dogs", "badge", "bottom-right"),
