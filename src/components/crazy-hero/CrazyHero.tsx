@@ -132,15 +132,8 @@ export function CrazyHero() {
   }, [categories, loading, searchParams, selectedSlug]);
 
   const activateCategory = (category: HomeCategoryConfig) => {
-    if (category.action.type === "product") {
-      navigate(category.action.destination);
-      return;
-    }
-
     setSelectedSlug(category.slug);
-    const next = new URLSearchParams(searchParams);
-    next.set("game", category.slug);
-    setSearchParams(next, { replace: true });
+    navigate(category.action.destination);
   };
 
   const featuredItems = useMemo<FeaturedCarouselItem[]>(
