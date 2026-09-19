@@ -67,13 +67,13 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 49. Validar Litecoin/cripto quando realmente habilitado.
 - [ ] 50. Garantir que chaves/segredos de gateway só existam no backend.
 - [ ] 51. Validar sandbox/ambiente de teste sem contaminar produção.
-- [ ] 52. Revisar ciclo completo de pedidos.
+- [x] 52. Revisar ciclo completo de pedidos no código: checkout, conciliação, entrega e tickets.
 - [x] 53. Corrigir/impedir pagamentos presos em FULFILLING no código.
 - [x] 54. Garantir payments.updated_at e trigger no bootstrap/migration.
-- [ ] 55. Manter compra externa fail-closed.
+- [x] 55. Manter compra externa fail-closed no backend versionado.
 - [ ] 56. Validar hostname/allowlist de proxy externo.
-- [ ] 57. Remover exposição de token/resposta de diagnóstico.
-- [ ] 58. Evitar logar resposta sensível de fornecedor.
+- [x] 57. Remover exposição de payload bruto de fornecedor em entrega/diagnóstico ao cliente.
+- [x] 58. Evitar persistir resposta sensível bruta de fornecedor em estoque/tickets.
 - [ ] 59. Separar estoque pago do estoque de trial/recompensa.
 - [ ] 60. Revisar RLS/grants das tabelas expostas.
 - [ ] 61. Impedir sender_role/role de staff forjado pelo cliente.
@@ -151,4 +151,6 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 133. Validar checkout real e realizar compra de teste controlada.
 - [ ] 134. Validar entrega/estoque pós-pagamento.
 - [ ] 135. Confirmar produção pronta para venda sem componentes órfãos.
-- [ ] 136. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 136. Registrar e restaurar a rota /carrinho usada pelo checkout e cancelamento do gateway.
+- [x] 137. Preservar o carrinho até confirmação real do pagamento e migrar o storage legado para CRAZZY PROJECT.
+- [ ] 138. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.

@@ -33,12 +33,13 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-const CART_KEY = "infinit-project-cart";
+const CART_KEY = "crazzy-project-cart";
+const LEGACY_CART_KEY = "infinit-project-cart";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>(() => {
     try {
-      const stored = localStorage.getItem(CART_KEY);
+      const stored = localStorage.getItem(CART_KEY) || localStorage.getItem(LEGACY_CART_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch {
       return [];
@@ -49,6 +50,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
+    localStorage.removeItem(LEGACY_CART_KEY);
   }, [items]);
 
   const clearRequiresAuth = useCallback(() => setRequiresAuth(false), []);

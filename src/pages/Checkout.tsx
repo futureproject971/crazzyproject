@@ -121,7 +121,6 @@ const Checkout = () => {
         final: Number(result.authoritativeTotalCents ?? 0) / 100,
         discount: Number(result.authoritativeDiscountCents ?? 0) / 100,
       });
-      clearCart();
     } catch (err: any) {
       console.error(err);
       toast({ title: "Erro ao gerar PIX", description: err.message, variant: "destructive" });
@@ -157,7 +156,6 @@ const Checkout = () => {
         final: Number(result.authoritativeTotalCents ?? 0) / 100,
         discount: Number(result.authoritativeDiscountCents ?? 0) / 100,
       });
-      clearCart();
       // Open the checkout URL in a new tab
       window.open(result.paymentUrl, "_blank");
     } catch (err: any) {
@@ -195,7 +193,6 @@ const Checkout = () => {
         final: Number(result.authoritativeTotalCents ?? 0) / 100,
         discount: Number(result.authoritativeDiscountCents ?? 0) / 100,
       });
-      clearCart();
     } catch (err: any) {
       console.error(err);
       toast({ title: "Erro ao gerar pagamento Litecoin", description: err.message, variant: "destructive" });
@@ -232,7 +229,10 @@ const Checkout = () => {
         const data = await res.json();
         if (data.status && data.status !== "ACTIVE") {
           setPaymentStatus(data.status);
-          if (data.status === "COMPLETED" && intervalRef.current) clearInterval(intervalRef.current);
+          if (data.status === "COMPLETED") {
+            clearCart();
+            if (intervalRef.current) clearInterval(intervalRef.current);
+          }
         }
       } catch { /* silent */ }
       setChecking(false);

@@ -23,6 +23,7 @@ import Avaliacoes from "./pages/Avaliacoes";
 import MeusPedidos from "./pages/MeusPedidos";
 import PedidoChat from "./pages/PedidoChat";
 import Checkout from "./pages/Checkout";
+import Carrinho from "./pages/Carrinho";
 import Rewards from "./pages/Rewards";
 import Faq from "./pages/Faq";
 import NotFound from "./pages/NotFound";
@@ -56,6 +57,7 @@ const App = () => (
               
               <Route path="/meus-pedidos" element={<MeusPedidos />} />
               <Route path="/pedido/:id" element={<PedidoChat />} />
+              <Route path="/carrinho" element={<Carrinho />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/rewards" element={<Rewards />} />
               <Route path="/faq" element={<Faq />} />

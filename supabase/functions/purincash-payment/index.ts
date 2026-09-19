@@ -604,7 +604,13 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (!payment) return json({ error: "Pagamento não encontrado" }, 404);
     if (payment.status === "COMPLETED") return json({ success: true, status: "COMPLETED" });
-    if (payment.status === "FULFILLING") return json({ success: true, status: "ACTIVE" });
+    if (payment.status === "FULFILLING") {
+      const updatedAt = new Date(payment.updated_at || 0).getTime();
+      const leaseIsFresh = Number.isFinite(updatedAt) && updatedAt >= Date.now() - 5 * 60_000;
+      if (leaseIsFresh) return json({ success: true, status: "ACTIVE" });
+      // A stale worker lease must fall through to provider reconciliation so
+      // claimAndFulfill() can safely reset/reclaim it using idempotent delivery units.
+    }
 
     const providerKind: ProviderKind = action === "card-status" ? "card" : action === "crypto-status" ? "payment" : "charge";
     const { response, body: provider } = await fetchProviderPayment(PURINCASH_API_KEY, payment.charge_id, providerKind);

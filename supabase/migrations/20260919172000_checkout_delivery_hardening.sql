@@ -23,6 +23,13 @@ create trigger update_payments_updated_at
 before update on public.payments
 for each row execute function public.update_updated_at_column();
 
+-- Recover leases left behind by interrupted workers before enabling the new idempotent flow.
+update public.payments
+set status = 'ACTIVE',
+    updated_at = now()
+where status = 'FULFILLING'
+  and updated_at < now() - interval '5 minutes';
+
 alter table public.order_tickets
   add column if not exists payment_id uuid references public.payments(id) on delete set null,
   add column if not exists payment_item_index integer,
