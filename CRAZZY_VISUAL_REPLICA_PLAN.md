@@ -23,56 +23,56 @@ o conteúdo por dados reais/admin.
 ## A. COMPOSIÇÃO GERAL / ENQUADRAMENTO
 
 - [ ] A1. Fazer a Home desktop funcionar como uma composição única de primeira dobra, visualmente próxima de 16:9.
-- [ ] A2. Wallpaper ocupar 100% da área útil sem bloco de cor opaco cobrindo planeta, nuvens, montanhas ou piso.
+- [x] A2. Wallpaper ocupar 100% da área útil sem bloco de cor opaco cobrindo planeta, nuvens, montanhas ou piso.
 - [ ] A3. Preservar o planeta central como ponto focal do cenário, sem a UI esconder a maior parte dele.
 - [ ] A4. Preservar as estruturas futuristas laterais visíveis, usando-as como moldura natural da página.
 - [ ] A5. Manter o piso/reflexo visível na parte inferior para dar profundidade e sensação de plataforma.
-- [ ] A6. Impedir qualquer scroll horizontal.
+- [x] A6. Impedir qualquer scroll horizontal.
 - [ ] A7. Evitar scroll vertical desnecessário em desktop 1920x1080 quando o conteúdo couber na primeira dobra.
-- [ ] A8. Criar zonas seguras explícitas: HEADER / CATEGORIAS / LOGO / CARROSSEL / TRUST BAR / FOOTER.
+- [x] A8. Criar zonas seguras explícitas: HEADER / CATEGORIAS / LOGO / CARROSSEL / TRUST BAR / FOOTER.
 - [ ] A9. Nenhum elemento interativo pode ocupar fisicamente a zona de outro.
 - [ ] A10. Usar clamp()/breakpoints para preservar proporções em 1920x1080, 2560x1440, 3440x1440, 3840x1600 e 3840x2160.
 
 ## B. HEADER FLUTUANTE
 
-- [ ] B1. Header centralizado e flutuante, com margens laterais como na referência, sem virar barra genérica de 100% da tela.
-- [ ] B2. Altura compacta e premium, com cantos inferiores/superiores coerentes com a referência.
-- [ ] B3. Tema claro: vidro branco/translúcido com blur sutil e borda azul muito leve.
-- [ ] B4. Tema escuro: vidro azul-marinho/preto translúcido, sem perder o contorno elétrico da marca.
+- [x] B1. Header centralizado e flutuante, com margens laterais como na referência, sem virar barra genérica de 100% da tela.
+- [x] B2. Altura compacta e premium, com cantos inferiores/superiores coerentes com a referência.
+- [x] B3. Tema claro: vidro branco/translúcido com blur sutil e borda azul muito leve.
+- [x] B4. Tema escuro: vidro azul-marinho/preto translúcido, sem perder o contorno elétrico da marca.
 - [ ] B5. Logo CRAZZY PROJECT à esquerda com escala e respiro próximos da referência.
-- [ ] B6. Navegação central em ordem coerente: Início / Categorias / Produtos / FAQ ou rotas reais equivalentes.
-- [ ] B7. Estado ativo da navegação usar cápsula branca/azul discreta, não bloco pesado.
-- [ ] B8. Campo de busca com ícone, borda leve, raio e largura proporcionais à referência.
-- [ ] B9. Botão Login separado visualmente e alinhado.
-- [ ] B10. Botão Carrinho azul forte, com ícone e contador circular.
-- [ ] B11. Nenhum item do header quebrar linha em desktop.
-- [ ] B12. Header permanecer acima da chuva/cenário, mas abaixo de modais/toasts.
+- [x] B6. Navegação central em ordem coerente: Início / Categorias / Produtos / FAQ ou rotas reais equivalentes.
+- [x] B7. Estado ativo da navegação usar cápsula branca/azul discreta, não bloco pesado.
+- [x] B8. Campo de busca com ícone, borda leve, raio e largura proporcionais à referência.
+- [x] B9. Botão Login separado visualmente e alinhado.
+- [x] B10. Botão Carrinho azul forte, com ícone e contador circular.
+- [x] B11. Nenhum item do header quebrar linha em desktop.
+- [x] B12. Header permanecer acima da chuva/cenário, mas abaixo de modais/toasts.
 
 ## C. MICROCOPY / HUD LATERAL
 
-- [ ] C1. Reproduzir bloco textual superior esquerdo em linhas curtas, estilo HUD, com tracking alto.
-- [ ] C2. Reproduzir bloco textual superior direito no mesmo sistema visual.
-- [ ] C3. Adicionar traços/linhas azuis curtas abaixo dos blocos laterais.
+- [x] C1. Reproduzir bloco textual superior esquerdo em linhas curtas, estilo HUD, com tracking alto.
+- [x] C2. Reproduzir bloco textual superior direito no mesmo sistema visual.
+- [x] C3. Adicionar traços/linhas azuis curtas abaixo dos blocos laterais.
 - [ ] C4. Adicionar pequenas marcas/linhas técnicas decorativas no cenário sem bloquear clique.
-- [ ] C5. HUD deve reduzir/sumir em tablet/mobile para não poluir a leitura.
+- [x] C5. HUD deve reduzir/sumir em tablet/mobile para não poluir a leitura.
 
 ## D. LOGO CENTRAL / HERO
 
-- [ ] D1. Logo CRAZZY PROJECT voltar a ser o foco central superior, nunca substituída pelo carrossel.
+- [x] D1. Logo CRAZZY PROJECT voltar a ser o foco central superior, nunca substituída pelo carrossel.
 - [ ] D2. Usar a melhor logo oficial disponível, evitando reconstrução tipográfica inferior quando houver asset.
-- [ ] D3. Ajustar largura/altura para ocupar visualmente área semelhante à referência.
+- [x] D3. Ajustar largura/altura para ocupar visualmente área semelhante à referência.
 - [ ] D4. Posicionar a logo sobre a área clara do planeta para obter contraste natural.
-- [ ] D5. Tagline abaixo: "SOFTWARES PRA MILHARES DE JOGOS!" com tracking amplo.
+- [x] D5. Tagline abaixo: "SOFTWARES PRA MILHARES DE JOGOS!" com tracking amplo.
 - [ ] D6. Preservar bastante espaço negativo ao redor da logo.
-- [ ] D7. Criar os quatro microcards/benefícios abaixo da tagline.
-- [ ] D8. Os quatro benefícios devem ter ícone, texto curto, fundo translúcido e tamanho uniforme.
+- [x] D7. Criar os quatro microcards/benefícios abaixo da tagline.
+- [x] D8. Os quatro benefícios devem ter ícone, texto curto, fundo translúcido e tamanho uniforme.
 - [ ] D9. Benefícios devem usar conteúdo real/configurável, evitando claims não comprovados.
 - [ ] D10. Logo/tagline/benefícios não podem tocar categorias nem carrossel.
 
 ## E. CATEGORIAS DA HOME — GEOMETRIA
 
-- [ ] E1. Manter exatamente as 17 categorias oficiais definidas no catálogo; Aimbot Universal foi consolidado em IA Universal.
-- [ ] E2. Distribuir categorias de forma ASSIMÉTRICA ao redor da logo, não em grade comum.
+- [x] E1. Manter exatamente as 17 categorias oficiais definidas no catálogo; Aimbot Universal foi consolidado em IA Universal.
+- [x] E2. Distribuir categorias de forma ASSIMÉTRICA ao redor da logo, não em grade comum.
 - [ ] E3. Grupo superior esquerdo com três cards.
 - [ ] E4. Grupo médio esquerdo com dois cards.
 - [ ] E5. Grupo inferior esquerdo com dois cards e/ou card isolado conforme a referência.
@@ -83,55 +83,55 @@ o conteúdo por dados reais/admin.
 - [ ] E10. Ajustar widths individualmente para nomes longos sem truncamento feio.
 - [ ] E11. Manter distâncias diferentes entre grupos para reproduzir o aspecto orgânico da referência.
 - [ ] E12. Cards nunca podem passar por baixo do header, logo ou carrossel.
-- [ ] E13. Em desktop, usar wrappers 3D/perspectiva; em tablet/mobile, neutralizar rotação quando necessário.
+- [x] E13. Em desktop, usar wrappers 3D/perspectiva; em tablet/mobile, neutralizar rotação quando necessário.
 
 ## F. CATEGORIAS — APARÊNCIA 3D
 
-- [ ] F1. Cards azuis com gradiente vertical profundo e bordas internas de brilho.
-- [ ] F2. Glow azul controlado, evitando neon estourado que apague o texto.
-- [ ] F3. Ícone branco/azul à esquerda com tamanho consistente.
-- [ ] F4. Nome do jogo branco, forte, com alinhamento vertical preciso.
-- [ ] F5. Cards do lado esquerdo inclinados levemente em direção ao centro.
-- [ ] F6. Cards do lado direito inclinados levemente em direção ao centro.
-- [ ] F7. Aplicar rotateY + pequeno rotateZ no wrapper, não diretamente no motion.button.
-- [ ] F8. A perspectiva deve sugerir placas físicas flutuando no cenário.
-- [ ] F9. Hover move poucos pixels para frente/cima, sem alterar layout.
-- [ ] F10. Focus keyboard reproduz destaque equivalente ao hover.
+- [x] F1. Cards azuis com gradiente vertical profundo e bordas internas de brilho.
+- [x] F2. Glow azul controlado, evitando neon estourado que apague o texto.
+- [x] F3. Ícone branco/azul à esquerda com tamanho consistente.
+- [x] F4. Nome do jogo branco, forte, com alinhamento vertical preciso.
+- [x] F5. Cards do lado esquerdo inclinados levemente em direção ao centro.
+- [x] F6. Cards do lado direito inclinados levemente em direção ao centro.
+- [x] F7. Aplicar rotateY + pequeno rotateZ no wrapper, não diretamente no motion.button.
+- [x] F8. A perspectiva deve sugerir placas físicas flutuando no cenário.
+- [x] F9. Hover move poucos pixels para frente/cima, sem alterar layout.
+- [x] F10. Focus keyboard reproduz destaque equivalente ao hover.
 
 ## G. CATEGORIA SELECIONADA
 
-- [ ] G1. Categoria selecionada deve avançar visualmente em relação às vizinhas.
-- [ ] G2. Escala maior, mas sem invadir outra zona.
-- [ ] G3. Borda/corno cyan-branco forte.
-- [ ] G4. Glow externo mais intenso que os demais cards.
-- [ ] G5. Badge "SELECIONADO" encaixado acima do card como na referência.
-- [ ] G6. Badge não pode cortar em overflow.
+- [x] G1. Categoria selecionada deve avançar visualmente em relação às vizinhas.
+- [x] G2. Escala maior, mas sem invadir outra zona.
+- [x] G3. Borda/contorno cyan-branco forte.
+- [x] G4. Glow externo mais intenso que os demais cards.
+- [x] G5. Badge "SELECIONADO" encaixado acima do card como na referência.
+- [x] G6. Badge não pode cortar em overflow.
 - [ ] G7. Seleção deve sobreviver à URL ?game=slug.
-- [ ] G8. Clique deve trocar a categoria ativa e alimentar o carrossel com produtos reais daquela categoria.
-- [ ] G9. A rota completa /produtos?game=slug deve continuar acessível sem obrigar uso do menu Produtos.
+- [x] G8. Clique em categoria deve abrir /produtos?game=slug e NÃO alterar o carrossel de produtos NOVO.
+- [x] G9. A rota completa /produtos?game=slug deve continuar acessível sem obrigar uso do menu Produtos.
 
 ## H. CARROSSEL COVERFLOW DE PRODUTOS
 
-- [ ] H1. Carrossel deve ficar ABAIXO da área logo/categorias e ACIMA da trust bar.
-- [ ] H2. Carrossel deve ocupar o lugar do antigo dock fixo de produtos.
-- [ ] H3. Card central grande, nítido e frontal.
-- [ ] H4. Dois níveis de cards laterais visíveis, parcialmente sobrepostos ao card central.
-- [ ] H5. Cards laterais devem usar scale menor + rotateY + menor opacidade/profundidade.
-- [ ] H6. Cards da esquerda inclinam para a direita; cards da direita inclinam para a esquerda.
-- [ ] H7. Card central ter borda cyan/azul forte e glow premium.
+- [x] H1. Carrossel deve ficar ABAIXO da área logo/categorias e ACIMA da trust bar.
+- [x] H2. Carrossel deve ocupar o lugar do antigo dock fixo de produtos.
+- [x] H3. Card central grande, nítido e frontal.
+- [x] H4. Dois níveis de cards laterais visíveis, parcialmente sobrepostos ao card central.
+- [x] H5. Cards laterais devem usar scale menor + rotateY + menor opacidade/profundidade.
+- [x] H6. Cards da esquerda inclinam para a direita; cards da direita inclinam para a esquerda.
+- [x] H7. Card central ter borda cyan/azul forte e glow premium.
 - [ ] H8. Conteúdo do card central puxado de produto real marcado como NOVO: imagem, nome, descrição e badge NOVO.
-- [ ] H9. CTA "Ver agora" ou equivalente real, levando ao produto.
+- [x] H9. CTA "Ver agora" ou equivalente real, levando ao produto.
 - [ ] H10. Side cards também devem mostrar nome/resumo/CTA de forma mais compacta.
-- [ ] H11. Incluir setas circulares nas bordas esquerda/direita do card central.
-- [ ] H12. Incluir dots de paginação abaixo do card central.
-- [ ] H13. Autoplay lento e suave.
-- [ ] H14. Interação manual pausa temporariamente autoplay.
-- [ ] H15. Selecionar um card lateral traz ele para o centro antes de abrir.
-- [ ] H16. Se existir apenas 1 produto, centralizar sem setas/dots inúteis.
-- [ ] H17. Se não houver produtos, usar estado vazio discreto ou esconder área, nunca um painel enorme "vazio".
-- [ ] H18. Carrossel não pode depender da categoria selecionada nem buscar catálogo por conta própria; recebe somente produtos ativos marcados como NOVO pela Home.
-- [ ] H19. Todos os tons do carrossel seguem azul CRAZZY, sem roxo.
-- [ ] H20. Respeitar prefers-reduced-motion.
+- [x] H11. Incluir setas circulares nas bordas esquerda/direita do card central.
+- [x] H12. Incluir dots de paginação abaixo do card central.
+- [x] H13. Autoplay lento e suave.
+- [x] H14. Interação manual pausa temporariamente autoplay.
+- [x] H15. Selecionar um card lateral traz ele para o centro antes de abrir.
+- [x] H16. Se existir apenas 1 produto, centralizar sem setas/dots inúteis.
+- [x] H17. Se não houver produtos, usar estado vazio discreto ou esconder área, nunca um painel enorme "vazio".
+- [x] H18. Carrossel não pode depender da categoria selecionada nem buscar catálogo por conta própria; recebe somente produtos ativos marcados como NOVO pela Home.
+- [x] H19. Todos os tons do carrossel seguem azul CRAZZY, sem roxo.
+- [x] H20. Respeitar prefers-reduced-motion.
 
 ## I. CARD CENTRAL DO CARROSSEL — FIDELIDADE
 
@@ -148,40 +148,40 @@ o conteúdo por dados reais/admin.
 
 ## J. TRUST BAR / PAGAMENTOS
 
-- [ ] J1. Barra larga abaixo do carrossel, visual branco/translúcido no light.
-- [ ] J2. Versão dark correspondente com vidro azul profundo.
-- [ ] J3. Bloco esquerdo: ícone cadeado + "Pagamento seguro" + subtítulo curto real.
+- [x] J1. Barra larga abaixo do carrossel, visual branco/translúcido no light.
+- [x] J2. Versão dark correspondente com vidro azul profundo.
+- [x] J3. Bloco esquerdo: ícone cadeado + "Pagamento seguro" + subtítulo curto real.
 - [ ] J4. Centro: "Aceitamos" + métodos de pagamento REALMENTE habilitados.
-- [ ] J5. PIX deve aparecer quando ativo.
-- [ ] J6. LTC deve aparecer quando ativo.
+- [x] J5. PIX deve aparecer quando ativo.
+- [x] J6. LTC deve aparecer quando ativo.
 - [ ] J7. Cartão só deve aparecer quando a integração estiver habilitada.
-- [ ] J8. Não mostrar BTC/ETH/USDT como aceitos só porque aparecem na arte se não estiverem implementados.
-- [ ] J9. Separadores verticais finos entre blocos.
-- [ ] J10. Bloco direito: ícone raio + "Entrega automática" somente quando aplicável, com texto configurável.
-- [ ] J11. Barra nunca pode ser coberta pelo carrossel.
+- [x] J8. Não mostrar BTC/ETH/USDT como aceitos só porque aparecem na arte se não estiverem implementados.
+- [x] J9. Separadores verticais finos entre blocos.
+- [x] J10. Bloco direito: ícone raio + "Entrega automática" somente quando aplicável, com texto configurável.
+- [x] J11. Barra nunca pode ser coberta pelo carrossel.
 
 ## K. FOOTER VISUAL DA PRIMEIRA DOBRA
 
-- [ ] K1. Faixa inferior azul-marinho com topo arredondado ocupando quase toda a largura.
-- [ ] K2. Logo CRAZZY PROJECT no canto esquerdo com microcopy.
-- [ ] K3. Centro dividido em 3–4 indicadores/benefícios com ícones.
+- [x] K1. Faixa inferior azul-marinho com topo arredondado ocupando quase toda a largura.
+- [x] K2. Logo CRAZZY PROJECT no canto esquerdo com microcopy.
+- [x] K3. Centro dividido em 3–4 indicadores/benefícios com ícones.
 - [ ] K4. Estrutura deve reproduzir a densidade da referência.
-- [ ] K5. Métricas numéricas só podem aparecer se vierem de dado real/configurado.
-- [ ] K6. Se métricas não forem confirmadas, usar labels neutras configuráveis em vez de números inventados.
-- [ ] K7. Elemento comunitário/assinatura visual no canto direito.
+- [x] K5. Métricas numéricas só podem aparecer se vierem de dado real/configurado.
+- [x] K6. Se métricas não forem confirmadas, usar labels neutras configuráveis em vez de números inventados.
+- [x] K7. Elemento comunitário/assinatura visual no canto direito.
 - [ ] K8. Footer deve encostar visualmente na base sem cortar o piso futurista por completo.
 
 ## L. WALLPAPER / ILUMINAÇÃO / CHUVA
 
-- [ ] L1. Light usa exclusivamente o wallpaper claro oficial.
-- [ ] L2. Dark usa exclusivamente o wallpaper noturno oficial.
-- [ ] L3. Troca de tema deve trocar o asset real, não apenas brightness/filter.
+- [x] L1. Light usa exclusivamente o wallpaper claro oficial.
+- [x] L2. Dark usa exclusivamente o wallpaper noturno oficial.
+- [x] L3. Troca de tema deve trocar o asset real, não apenas brightness/filter.
 - [ ] L4. Wallpaper deve usar enquadramento diferente por breakpoint se necessário.
 - [ ] L5. Evitar overlay branco/azul que lave o planeta no light.
 - [ ] L6. Evitar overlay preto que esconda detalhes no dark.
 - [ ] L7. Chuva deve ficar visível no light e no dark.
 - [ ] L8. Chuva deve ficar atrás de header/cards/texto, mas acima do wallpaper.
-- [ ] L9. Chuva não pode interceptar cliques.
+- [x] L9. Chuva não pode interceptar cliques.
 - [ ] L10. Intensidade/contraste da chuva deve se adaptar ao tema.
 - [ ] L11. Respeitar prefers-reduced-motion e reduzir/desativar animação quando solicitado.
 
@@ -208,11 +208,11 @@ o conteúdo por dados reais/admin.
 
 - [ ] O1. Hover das categorias sem deslocar outros componentes.
 - [ ] O2. Hover do carrossel sem interromper posição do layout.
-- [ ] O3. Clique em categoria atualiza seleção rapidamente sem flash de loading grande.
-- [ ] O4. Busca do header leva/filtro para catálogo real.
-- [ ] O5. Login usa fluxo real.
-- [ ] O6. Carrinho usa contador real.
-- [ ] O7. CTA dos produtos abre produto correto.
+- [x] O3. Clique em categoria navega diretamente para o catálogo filtrado sem alterar o carrossel de NOVO.
+- [x] O4. Busca do header leva/filtro para catálogo real.
+- [x] O5. Login usa fluxo real.
+- [x] O6. Carrinho usa contador real.
+- [x] O7. CTA dos produtos abre produto correto.
 - [ ] O8. Navegação por teclado em categorias, carrossel, header e CTAs.
 - [ ] O9. Estados focus-visible alinhados à identidade CRAZZY.
 
@@ -221,8 +221,8 @@ o conteúdo por dados reais/admin.
 - [ ] P1. Desktop >= 1440: composição artística próxima da referência.
 - [ ] P2. Ultrawide: manter o centro visual, sem categorias fugirem para as bordas extremas.
 - [ ] P3. 1280–1439: reduzir escala mantendo hierarquia.
-- [ ] P4. Tablet: abandonar posicionamento absoluto quando necessário e usar grid organizado.
-- [ ] P5. Mobile: logo, categorias, carrossel e trust bar viram fluxo vertical.
+- [x] P4. Tablet: abandonar posicionamento absoluto quando necessário e usar grid organizado.
+- [x] P5. Mobile: logo, categorias, carrossel e trust bar viram fluxo vertical.
 - [ ] P6. Nenhum texto cortado ou card fora da viewport.
 - [ ] P7. Nenhuma sobreposição funcional em qualquer breakpoint.
 - [ ] P8. Touch targets mínimos adequados no mobile.
@@ -233,17 +233,17 @@ o conteúdo por dados reais/admin.
 - [ ] Q2. Não criar componente novo com cor hardcoded que ignore tokens/tema.
 - [ ] Q3. Manter a mesma identidade, composição e funções nos dois temas.
 - [ ] Q4. Ajustar glow/contraste para olhos sensíveis.
-- [ ] Q5. Preferência persistir entre sessões.
+- [x] Q5. Preferência persistir entre sessões.
 - [ ] Q6. Testar troca de tema com Home já aberta e carrossel em movimento.
 - [ ] Q7. Wallpaper, chuva, header, categorias, carrossel, trust bar e footer devem trocar sem flicker evidente.
 
 ## R. PERFORMANCE / QUALIDADE
 
-- [ ] R1. Evitar vídeo gigante/WebGL como background.
+- [x] R1. Evitar vídeo gigante/WebGL como background.
 - [ ] R2. Otimizar imagens em WebP/AVIF quando possível.
 - [ ] R3. Não carregar todas as imagens de produtos em resolução máxima de uma vez.
 - [ ] R4. Preload apenas dos assets críticos da primeira dobra.
-- [ ] R5. Animações preferencialmente transform/opacity.
+- [x] R5. Animações preferencialmente transform/opacity.
 - [ ] R6. Evitar layout shift quando produtos/carrossel carregarem.
 - [ ] R7. Corrigir warnings de console relacionados aos componentes alterados.
 
@@ -314,10 +314,10 @@ Regra de ouro: **nada de componente órfão**. Se aparece na tela, precisa ter o
 - [ ] U13. Aplicar migration no Supabase CRAZZY correto (`teyqtfdeugldgtzkyybg`) quando a conexão estiver disponível.
 - [ ] U14. Validar criação/edição real de um produto NOVO no Admin contra o banco correto.
 - [ ] U15. Validar que um produto NOVO aparece no carrossel de produção e um produto comum não aparece.
-- [ ] U16. Validar que clicar em categoria não altera mais o conteúdo do carrossel.
+- [x] U16. Validar em código que clicar em categoria não altera mais o conteúdo do carrossel.
 - [ ] U17. Refinar escala/posição do coverflow comparando lado a lado com a referência.
 
-## U. ITEM FINAL OBRIGATÓRIO — REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA
+## FINAL. ITEM OBRIGATÓRIO — REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA
 
 **Este bloco deve ser SEMPRE o último item da lista.**
 Se novas tarefas forem adicionadas, este bloco deve ser movido novamente para o final.
