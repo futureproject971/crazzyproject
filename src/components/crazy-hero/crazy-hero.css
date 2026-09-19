@@ -1829,6 +1829,11 @@
 }
 
 @media (max-width: 700px) {
+  .crazy-home-featured .crazy-featured {
+    --coverflow-step-1: 54vw;
+    --coverflow-step-2: 82vw;
+  }
+
   .crazy-home-featured .crazy-featured__stage {
     height: 210px;
   }
@@ -1947,6 +1952,8 @@
 }
 
 .crazy-home-featured .crazy-featured {
+  --coverflow-step-1: min(25vw, 390px);
+  --coverflow-step-2: min(41vw, 640px);
   width: 100%;
 }
 
