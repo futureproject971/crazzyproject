@@ -32,7 +32,9 @@ export default defineConfig(({ mode, command }) => {
     },
   },
   build: {
-    assetsInlineLimit: 10_000_000,
+    // Keep large WebP wallpapers/product artwork as cacheable files instead of
+    // inflating the JavaScript bundle with base64 data URLs.
+    assetsInlineLimit: 4096,
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
