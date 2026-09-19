@@ -92,7 +92,7 @@ const MinecraftDetalhes = () => {
 
   const handleAddToCart = () => {
     if (!item || isInCart) return;
-    const title = `Conta Minecraft${nickname ? ` · ${nickname}` : ""}${hasJava ? " · Java" : ""}${hasBedrock ? " · Bedrock" : ""}`;
+    const title = `Conta Minecraft${nickname ? ` Â· ${nickname}` : ""}${hasJava ? " Â· Java" : ""}${hasBedrock ? " Â· Bedrock" : ""}`;
     const priceBRL = calcPrice(item.price, item.price_currency);
     const added = addItem({
       productId: `lzt-mc-${item.item_id}`,
@@ -114,7 +114,7 @@ const MinecraftDetalhes = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-20">
         <button
@@ -143,7 +143,7 @@ const MinecraftDetalhes = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Início</button>
+              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">InÃ­cio</button>
               <ChevronRight className="h-3 w-3" />
               <button onClick={() => navigate("/contas")} className="hover:text-foreground transition-colors">Contas</button>
               <ChevronRight className="h-3 w-3" />
@@ -174,7 +174,7 @@ const MinecraftDetalhes = () => {
                     </div>
                   ) : (
                     <div className="relative z-[1] flex items-center justify-center h-full">
-                      <p className="text-muted-foreground text-sm">Sem skin disponível</p>
+                      <p className="text-muted-foreground text-sm">Sem skin disponÃ­vel</p>
                     </div>
                   )}
 
@@ -194,7 +194,7 @@ const MinecraftDetalhes = () => {
                   {/* Ban warning */}
                   {banned && (
                     <div className="absolute top-3 right-3 z-[2] rounded-lg bg-destructive/90 border border-destructive px-2.5 py-1.5">
-                      <p className="text-xs font-bold text-destructive-foreground">⚠️ Ban Hypixel</p>
+                      <p className="text-xs font-bold text-destructive-foreground">âš ï¸ Ban Hypixel</p>
                       {banReason && <p className="text-[10px] text-destructive-foreground/80">{banReason}</p>}
                     </div>
                   )}
@@ -202,23 +202,23 @@ const MinecraftDetalhes = () => {
 
                 {/* Stats card */}
                 <div className="rounded-lg border border-border bg-card p-5 space-y-4">
-                  <h3 className="text-sm font-bold text-foreground">Informações da Conta</h3>
+                  <h3 className="text-sm font-bold text-foreground">InformaÃ§Ãµes da Conta</h3>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     {hasJava && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
-                        <p className="text-xs text-muted-foreground">Edição</p>
+                        <p className="text-xs text-muted-foreground">EdiÃ§Ã£o</p>
                         <p className="text-sm font-bold" style={{ color: MC_GREEN }}>Java</p>
                       </div>
                     )}
                     {hasBedrock && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
-                        <p className="text-xs text-muted-foreground">Edição</p>
+                        <p className="text-xs text-muted-foreground">EdiÃ§Ã£o</p>
                         <p className="text-sm font-bold text-foreground">Bedrock</p>
                       </div>
                     )}
                     {hypixelLevel > 0 && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
-                        <p className="text-xs text-muted-foreground">Nível Hypixel</p>
+                        <p className="text-xs text-muted-foreground">NÃ­vel Hypixel</p>
                         <p className="text-sm font-bold" style={{ color: MC_GREEN }}>{hypixelLevel}</p>
                       </div>
                     )}
@@ -248,20 +248,20 @@ const MinecraftDetalhes = () => {
                     )}
                     {skyblockLevel > 0 && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
-                        <p className="text-xs text-muted-foreground">Skyblock Nível</p>
+                        <p className="text-xs text-muted-foreground">Skyblock NÃ­vel</p>
                         <p className="text-sm font-bold text-foreground">{skyblockLevel}</p>
                       </div>
                     )}
                     {hasDungeons && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
                         <p className="text-xs text-muted-foreground">Dungeons</p>
-                        <p className="text-sm font-bold" style={{ color: MC_GREEN }}>✓</p>
+                        <p className="text-sm font-bold" style={{ color: MC_GREEN }}>âœ“</p>
                       </div>
                     )}
                     {hasLegends && (
                       <div className="rounded-lg border border-border bg-secondary/30 px-3 py-2.5 text-center">
                         <p className="text-xs text-muted-foreground">Legends</p>
-                        <p className="text-sm font-bold" style={{ color: MC_GREEN }}>✓</p>
+                        <p className="text-sm font-bold" style={{ color: MC_GREEN }}>âœ“</p>
                       </div>
                     )}
                   </div>
@@ -322,7 +322,7 @@ const MinecraftDetalhes = () => {
               <div className="lg:col-span-2 space-y-4">
                 <div className="rounded-lg border bg-card p-5 space-y-3.5" style={{ borderColor: `${MC_GREEN}40` }}>
                   <h1 className="text-lg font-bold text-foreground leading-snug">
-                    Conta Minecraft{nickname ? ` · ${nickname}` : ""}{hasJava && hasBedrock ? " · Java + Bedrock" : hasJava ? " · Java" : hasBedrock ? " · Bedrock" : ""}
+                    Conta Minecraft{nickname ? ` Â· ${nickname}` : ""}{hasJava && hasBedrock ? " Â· Java + Bedrock" : hasJava ? " Â· Java" : hasBedrock ? " Â· Bedrock" : ""}
                   </h1>
 
                   <div className="flex flex-wrap gap-1.5">
@@ -347,14 +347,14 @@ const MinecraftDetalhes = () => {
                     )}
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                       <Shield className="h-3 w-3" />
-                      Conta verificável
+                      Conta verificÃ¡vel
                     </span>
                   </div>
 
                   <div className="space-y-0.5 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>✓</span> Entrega automática</p>
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>✓</span> Email e senha inclusos</p>
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>✓</span> Liberação instantânea</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>âœ“</span> Entrega automÃ¡tica</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>âœ“</span> Email e senha inclusos</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: MC_GREEN }}>âœ“</span> LiberaÃ§Ã£o instantÃ¢nea</p>
                   </div>
 
                   <div className="rounded-lg bg-card border border-border p-3 flex items-end justify-between">
@@ -382,15 +382,15 @@ const MinecraftDetalhes = () => {
                   </button>
 
                   {item.item_id && (
-                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">Código: {item.item_id}</p>
+                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">CÃ³digo: {item.item_id}</p>
                   )}
 
                   {/* Quick stats */}
                   <div className="grid grid-cols-3 divide-x divide-border border border-border rounded-lg overflow-hidden">
                     {[
-                      { label: "Edição", value: hasJava && hasBedrock ? "Java+BE" : hasJava ? "Java" : hasBedrock ? "Bedrock" : "—" },
-                      { label: "Hypixel", value: hypixelLevel > 0 ? `Nv.${hypixelLevel}` : "—" },
-                      { label: "Capes", value: capes > 0 ? capes : "—" },
+                      { label: "EdiÃ§Ã£o", value: hasJava && hasBedrock ? "Java+BE" : hasJava ? "Java" : hasBedrock ? "Bedrock" : "â€”" },
+                      { label: "Hypixel", value: hypixelLevel > 0 ? `Nv.${hypixelLevel}` : "â€”" },
+                      { label: "Capes", value: capes > 0 ? capes : "â€”" },
                     ].map((s) => (
                       <div key={s.label} className="flex flex-col items-center py-2 px-1">
                         <p className="text-[10px] text-muted-foreground">{s.label}</p>
@@ -404,7 +404,7 @@ const MinecraftDetalhes = () => {
                 <div className="rounded-lg border border-border bg-card p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <svg className="h-6 w-6 flex-shrink-0" viewBox="0 0 24 24" fill={MC_GREEN}><path d="M4,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2M6,6V10H10V12H8V18H10V16H14V18H16V12H14V10H18V6H14V10H10V6H6Z" /></svg>
-                    <h3 className="text-sm font-bold text-foreground">O que está incluso</h3>
+                    <h3 className="text-sm font-bold text-foreground">O que estÃ¡ incluso</h3>
                   </div>
                   <ul className="space-y-2 text-xs text-muted-foreground">
                     {[
@@ -418,7 +418,7 @@ const MinecraftDetalhes = () => {
                       capes > 0 ? `${capes} cape(s): ${capesList.join(", ")}` : null,
                     ].filter(Boolean).map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <span className="mt-0.5 font-bold flex-shrink-0" style={{ color: MC_GREEN }}>✓</span>
+                        <span className="mt-0.5 font-bold flex-shrink-0" style={{ color: MC_GREEN }}>âœ“</span>
                         {item}
                       </li>
                     ))}

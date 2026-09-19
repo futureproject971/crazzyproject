@@ -41,7 +41,7 @@ const Checkout = () => {
   const hasLztItems = items.some((i) => i.type === "lzt-account");
   const cardCheckoutEnabled = enabledMethods.card === true && import.meta.env.VITE_ENABLE_CARD_CHECKOUT === "true";
   const couponId = searchParams.get("coupon_id");
-  // Price is calculated from cart items — never trust URL params
+  // Price is calculated from cart items â€” never trust URL params
   const cartTotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const discountAmount = parseFloat(searchParams.get("discount") || "0");
   const cartFinalPrice = Math.max(0, cartTotal - discountAmount);
@@ -113,7 +113,7 @@ const Checkout = () => {
         }
       );
       const result = await res.json();
-      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobrança");
+      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobranÃ§a");
       setPaymentId(result.payment_id);
       setChargeData(result.charge);
       setDisplayPrice({
@@ -149,7 +149,7 @@ const Checkout = () => {
         }
       );
       const result = await res.json();
-      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobrança");
+      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobranÃ§a");
       setPaymentId(result.payment_id);
       setCardPaymentUrl(result.paymentUrl);
       setDisplayPrice({
@@ -162,7 +162,7 @@ const Checkout = () => {
       window.open(result.paymentUrl, "_blank");
     } catch (err: any) {
       console.error(err);
-      toast({ title: "Erro ao gerar pagamento com cartão", description: err.message, variant: "destructive" });
+      toast({ title: "Erro ao gerar pagamento com cartÃ£o", description: err.message, variant: "destructive" });
       setPaymentMethod(null);
     } finally {
       setLoading(false);
@@ -187,7 +187,7 @@ const Checkout = () => {
         }
       );
       const result = await res.json();
-      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobrança");
+      if (!res.ok || !result.success) throw new Error(result.error || "Erro ao criar cobranÃ§a");
       setPaymentId(result.payment_id);
       setCryptoData(result.crypto);
       setDisplayPrice({
@@ -247,14 +247,14 @@ const Checkout = () => {
       navigator.clipboard.writeText(chargeData.brCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-      toast({ title: "Código copiado!" });
+      toast({ title: "CÃ³digo copiado!" });
     }
   };
 
 
   if (authLoading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="flex items-center justify-center pt-40">
           <Loader2 className="h-8 w-8 animate-spin text-success" />
@@ -266,7 +266,7 @@ const Checkout = () => {
   // Payment completed
   if (paymentStatus === "COMPLETED") {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="mx-auto max-w-3xl px-6 pt-32 pb-20">
           <motion.div
@@ -303,7 +303,7 @@ const Checkout = () => {
               transition={{ delay: 0.5 }}
               className="text-sm text-muted-foreground mb-12 max-w-md mx-auto"
             >
-              Seus produtos já estão disponíveis. Obrigado por comprar na CRAZZY PROJECT!
+              Seus produtos jÃ¡ estÃ£o disponÃ­veis. Obrigado por comprar na CRAZZY PROJECT!
             </motion.p>
 
             <motion.div
@@ -337,7 +337,7 @@ const Checkout = () => {
   // Payment expired/failed/cancelled
   if (paymentStatus === "EXPIRED" || paymentStatus === "FAILED" || paymentStatus === "CANCELLED") {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="mx-auto max-w-2xl px-6 pt-32 pb-20 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -348,7 +348,7 @@ const Checkout = () => {
               {paymentStatus === "EXPIRED" ? "Pagamento Expirado" : paymentStatus === "FAILED" ? "Pagamento Falhou" : "Pagamento Cancelado"}
             </h1>
             <p className="text-sm text-muted-foreground mb-8">
-              {paymentStatus === "EXPIRED" ? "O tempo para pagamento expirou." : paymentStatus === "FAILED" ? "O cartão foi recusado ou houve um erro." : "O pagamento foi cancelado."}
+              {paymentStatus === "EXPIRED" ? "O tempo para pagamento expirou." : paymentStatus === "FAILED" ? "O cartÃ£o foi recusado ou houve um erro." : "O pagamento foi cancelado."}
             </p>
             <button
               onClick={() => navigate("/carrinho")}
@@ -364,7 +364,7 @@ const Checkout = () => {
 
   // Main checkout view
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden">
       {/* Subtle ambient glow */}
       <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[600px] w-[800px] bg-success/[0.03] blur-[120px] rounded-full" />
 
@@ -450,14 +450,14 @@ const Checkout = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-bold text-foreground tracking-tight">PIX</h3>
-                      <p className="text-xs text-muted-foreground">Pagamento instantâneo</p>
+                      <p className="text-xs text-muted-foreground">Pagamento instantÃ¢neo</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-all group-hover:text-success group-hover:translate-x-0.5" />
                   </div>
                 </motion.button>
               )}
 
-              {/* Card — hidden for LZT account purchases */}
+              {/* Card â€” hidden for LZT account purchases */}
               {cardCheckoutEnabled && !hasLztItems && (
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
@@ -474,7 +474,7 @@ const Checkout = () => {
                       <CreditCard className="h-6 w-6 text-muted-foreground transition-colors duration-500 group-hover:text-success" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-base font-bold text-foreground tracking-tight">Cartão</h3>
+                      <h3 className="text-base font-bold text-foreground tracking-tight">CartÃ£o</h3>
                       <p className="text-xs text-muted-foreground">Visa, Master, Elo</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-all group-hover:text-success group-hover:translate-x-0.5" />
@@ -500,7 +500,7 @@ const Checkout = () => {
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-bold text-foreground tracking-tight">Litecoin</h3>
-                      <p className="text-xs text-muted-foreground">LTC · confirmação pela rede</p>
+                      <p className="text-xs text-muted-foreground">LTC Â· confirmaÃ§Ã£o pela rede</p>
                     </div>
                     <ChevronRight className="h-4 w-4 text-muted-foreground/40 transition-all group-hover:text-success group-hover:translate-x-0.5" />
                   </div>
@@ -522,7 +522,7 @@ const Checkout = () => {
               <div className="h-3 w-px bg-border" />
               <div className="flex items-center gap-1.5">
                 <Sparkles className="h-3.5 w-3.5" />
-                <span className="text-[10px] uppercase tracking-wider">Entrega automática</span>
+                <span className="text-[10px] uppercase tracking-wider">Entrega automÃ¡tica</span>
               </div>
             </motion.div>
           </motion.div>
@@ -542,7 +542,7 @@ const Checkout = () => {
               </div>
             </div>
             <p className="text-sm font-medium text-foreground mb-1">
-              {paymentMethod === "card" ? "Criando pagamento com cartão" : paymentMethod === "crypto" ? "Criando pagamento Litecoin" : "Gerando QR Code PIX"}
+              {paymentMethod === "card" ? "Criando pagamento com cartÃ£o" : paymentMethod === "crypto" ? "Criando pagamento Litecoin" : "Gerando QR Code PIX"}
             </p>
             <p className="text-xs text-muted-foreground">Aguarde um momento...</p>
           </motion.div>
@@ -559,7 +559,7 @@ const Checkout = () => {
             <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-[0_8px_60px_-16px_hsl(var(--success)/0.08)]">
               <div className="flex flex-col lg:flex-row min-h-[520px]">
 
-                {/* ── Left panel — Branding & info ── */}
+                {/* â”€â”€ Left panel â€” Branding & info â”€â”€ */}
                 <div className="hidden lg:flex flex-col w-[44%] relative overflow-hidden">
                   {/* Gradient background */}
                   <div className="absolute inset-0 bg-gradient-to-br from-success/[0.06] via-card to-card" />
@@ -582,7 +582,7 @@ const Checkout = () => {
                       PAGUE VIA <span className="text-success">PIX</span>
                     </h2>
                     <p className="text-[13px] text-muted-foreground mb-10 leading-relaxed">
-                      Escaneie o QR Code ou copie o código Pix para realizar o pagamento.
+                      Escaneie o QR Code ou copie o cÃ³digo Pix para realizar o pagamento.
                     </p>
 
                     {/* Price card */}
@@ -607,7 +607,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-lg border border-border/40 bg-background/40 px-3.5 py-2 w-fit mb-8">
                       <Clock className="h-3 w-3 text-muted-foreground/40" />
                       <span className="text-[10px] text-muted-foreground">
-                        Expira às{" "}
+                        Expira Ã s{" "}
                         <span className="font-semibold text-foreground">
                           {chargeData.expiresAt
                             ? new Date(chargeData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -626,13 +626,13 @@ const Checkout = () => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Zap className="h-3.5 w-3.5" />
-                        <span className="text-[9px] uppercase tracking-wider font-medium">Confirmação pela rede</span>
+                        <span className="text-[9px] uppercase tracking-wider font-medium">ConfirmaÃ§Ã£o pela rede</span>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* ── Right panel — QR Code + Copy ── */}
+                {/* â”€â”€ Right panel â€” QR Code + Copy â”€â”€ */}
                 <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 lg:px-14 py-10 lg:py-12">
                   {/* Mobile header */}
                   <div className="lg:hidden text-center mb-8">
@@ -647,7 +647,7 @@ const Checkout = () => {
                         <div className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
                         <span className="text-[10px] font-semibold uppercase tracking-widest text-success">Aguardando</span>
                       </div>
-                      <span className="text-muted-foreground/30">·</span>
+                      <span className="text-muted-foreground/30">Â·</span>
                       <span className="text-lg font-bold text-foreground">R$ {finalPrice.toFixed(2).replace(".", ",")}</span>
                     </div>
                   </div>
@@ -689,13 +689,13 @@ const Checkout = () => {
                     }`}
                   >
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? "Código copiado!" : "Copiar código PIX"}
+                    {copied ? "CÃ³digo copiado!" : "Copiar cÃ³digo PIX"}
                   </button>
 
                   {/* Auto confirm */}
                   <div className="mt-7 flex items-center justify-center gap-2 text-muted-foreground/30">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    <span className="text-[9px] uppercase tracking-wider font-medium">Confirmação automática ao pagar</span>
+                    <span className="text-[9px] uppercase tracking-wider font-medium">ConfirmaÃ§Ã£o automÃ¡tica ao pagar</span>
                   </div>
 
                   {/* Mobile expiry */}
@@ -703,7 +703,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-full border border-border/40 bg-card/50 px-4 py-1.5">
                       <Clock className="h-3 w-3 text-muted-foreground/40" />
                       <span className="text-[10px] text-muted-foreground">
-                        Expira às{" "}
+                        Expira Ã s{" "}
                         <span className="font-medium text-foreground">
                           {chargeData.expiresAt
                             ? new Date(chargeData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -738,9 +738,9 @@ const Checkout = () => {
                     </div>
 
                     <h2 className="text-2xl font-bold text-foreground mb-2" style={{ fontFamily: "'Valorant', sans-serif" }}>
-                      PAGAMENTO COM <span className="text-success">CARTÃO</span>
+                      PAGAMENTO COM <span className="text-success">CARTÃƒO</span>
                     </h2>
-                    <p className="text-sm text-muted-foreground mb-8">Complete o pagamento na página externa</p>
+                    <p className="text-sm text-muted-foreground mb-8">Complete o pagamento na pÃ¡gina externa</p>
 
                      <div className="rounded-md border border-success/20 bg-success/5 p-5 mb-6">
                       <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-success/70 mb-1">Valor total</p>
@@ -764,7 +764,7 @@ const Checkout = () => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="h-3.5 w-3.5" />
-                        <span className="text-[10px] uppercase tracking-wider">Entrega automática</span>
+                        <span className="text-[10px] uppercase tracking-wider">Entrega automÃ¡tica</span>
                       </div>
                     </div>
                   </div>
@@ -773,12 +773,12 @@ const Checkout = () => {
                 <div className="flex-1 flex flex-col items-center justify-center px-8 md:px-12 py-14">
                   <div className="md:hidden text-center mb-6">
                     <h2 className="text-xl font-bold text-foreground mb-1" style={{ fontFamily: "'Valorant', sans-serif" }}>
-                      PAGAMENTO COM <span className="text-success">CARTÃO</span>
+                      PAGAMENTO COM <span className="text-success">CARTÃƒO</span>
                     </h2>
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <Loader2 className="h-3.5 w-3.5 animate-spin text-success" />
                       <span className="text-[11px] font-semibold uppercase tracking-widest text-success">Aguardando</span>
-                      <span className="text-muted-foreground mx-1">·</span>
+                      <span className="text-muted-foreground mx-1">Â·</span>
                       <span className="text-lg font-bold text-foreground">R$ {finalPrice.toFixed(2).replace(".", ",")}</span>
                     </div>
                   </div>
@@ -787,7 +787,7 @@ const Checkout = () => {
                     <CreditCard className="h-12 w-12 text-success" />
                   </div>
                   <p className="text-sm text-muted-foreground text-center max-w-xs mb-8">
-                    Uma aba foi aberta para completar o pagamento. O status será atualizado automaticamente.
+                    Uma aba foi aberta para completar o pagamento. O status serÃ¡ atualizado automaticamente.
                   </p>
                   <a
                     href={cardPaymentUrl}
@@ -797,12 +797,12 @@ const Checkout = () => {
                     style={{ fontFamily: "'Valorant', sans-serif" }}
                   >
                     <ExternalLink className="h-4 w-4" />
-                    Abrir página de pagamento
+                    Abrir pÃ¡gina de pagamento
                   </a>
 
                   <div className="mt-8 flex items-center justify-center gap-2 text-muted-foreground/40">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    <span className="text-[10px] uppercase tracking-wider">Confirmação automática</span>
+                    <span className="text-[10px] uppercase tracking-wider">ConfirmaÃ§Ã£o automÃ¡tica</span>
                   </div>
                 </div>
               </div>
@@ -853,7 +853,7 @@ const Checkout = () => {
                     <div className="inline-flex items-center gap-2 rounded-md border border-border bg-secondary/50 px-4 py-1.5 w-fit mb-6">
                       <Clock className="h-3 w-3 text-success/60" />
                       <span className="text-[11px] text-muted-foreground">
-                        Expira às{" "}
+                        Expira Ã s{" "}
                         <span className="font-medium text-foreground">
                           {cryptoData.expiresAt
                             ? new Date(cryptoData.expiresAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
@@ -871,7 +871,7 @@ const Checkout = () => {
                       </div>
                       <div className="flex items-center gap-1.5">
                         <Zap className="h-3.5 w-3.5" />
-                        <span className="text-[10px] uppercase tracking-wider">Confirmação pela rede</span>
+                        <span className="text-[10px] uppercase tracking-wider">ConfirmaÃ§Ã£o pela rede</span>
                       </div>
                     </div>
                   </div>
@@ -885,7 +885,7 @@ const Checkout = () => {
                     <div className="flex items-center justify-center gap-2 mb-2">
                       <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
                       <span className="text-[11px] font-semibold uppercase tracking-widest text-success">Aguardando</span>
-                      <span className="text-muted-foreground mx-1">·</span>
+                      <span className="text-muted-foreground mx-1">Â·</span>
                       <span className="text-lg font-bold text-foreground">R$ {finalPrice.toFixed(2).replace(".", ",")}</span>
                     </div>
                   </div>
@@ -920,13 +920,13 @@ const Checkout = () => {
                       </button>
                     </div>
                     <p className="mt-2 text-[10px] leading-relaxed text-muted-foreground">
-                      Não arredonde o valor. A PurinCash identifica a cobrança pelo valor exato e libera após as confirmações da rede Litecoin.
+                      NÃ£o arredonde o valor. A PurinCash identifica a cobranÃ§a pelo valor exato e libera apÃ³s as confirmaÃ§Ãµes da rede Litecoin.
                     </p>
                   </div>
 
                   <div className="flex items-center gap-3 mb-5">
                     <div className="flex-1 h-px bg-border" />
-                    <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/40">Endereço {cryptoData.network}</span>
+                    <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/40">EndereÃ§o {cryptoData.network}</span>
                     <div className="flex-1 h-px bg-border" />
                   </div>
 
@@ -938,19 +938,19 @@ const Checkout = () => {
                       navigator.clipboard.writeText(cryptoData.address);
                       setCopied(true);
                       setTimeout(() => setCopied(false), 2000);
-                      toast({ title: "Endereço copiado!" });
+                      toast({ title: "EndereÃ§o copiado!" });
                     }}
                      className={`w-full inline-flex items-center justify-center gap-2.5 rounded-md py-3 text-sm font-bold uppercase tracking-wider transition-all duration-300 ${
                        copied ? "bg-success text-success-foreground shadow-[0_0_30px_hsl(var(--success)/0.3)]" : "bg-success/10 border border-success/30 text-success hover:bg-success/20 hover:border-success/50"
                      }`}
                   >
                     {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                    {copied ? "Endereço copiado!" : "Copiar endereço"}
+                    {copied ? "EndereÃ§o copiado!" : "Copiar endereÃ§o"}
                   </button>
 
                   <div className="mt-6 flex items-center justify-center gap-2 text-muted-foreground/40">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    <span className="text-[10px] uppercase tracking-wider">Confirmação automática</span>
+                    <span className="text-[10px] uppercase tracking-wider">ConfirmaÃ§Ã£o automÃ¡tica</span>
                   </div>
                 </div>
               </div>

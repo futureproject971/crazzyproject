@@ -166,17 +166,17 @@ const Dashboard = () => {
     } else {
       setSecurityVerified(true);
       setVerifyPassword("");
-      toast({ title: "Identidade verificada", description: "Agora você pode alterar suas configurações de segurança." });
+      toast({ title: "Identidade verificada", description: "Agora vocÃª pode alterar suas configuraÃ§Ãµes de seguranÃ§a." });
     }
   };
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-      toast({ title: "Erro", description: "As senhas não coincidem.", variant: "destructive" });
+      toast({ title: "Erro", description: "As senhas nÃ£o coincidem.", variant: "destructive" });
       return;
     }
     if (newPassword.length < 6) {
-      toast({ title: "Erro", description: "A senha deve ter no mínimo 6 caracteres.", variant: "destructive" });
+      toast({ title: "Erro", description: "A senha deve ter no mÃ­nimo 6 caracteres.", variant: "destructive" });
       return;
     }
     setChangingPassword(true);
@@ -203,14 +203,14 @@ const Dashboard = () => {
   if (!user) return null;
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
-    { id: "overview", label: "Visão Geral", icon: <BarChart3 className="h-4 w-4" /> },
+    { id: "overview", label: "VisÃ£o Geral", icon: <BarChart3 className="h-4 w-4" /> },
     { id: "purchases", label: "Minhas Compras", icon: <Package className="h-4 w-4" /> },
-    { id: "security", label: "Segurança", icon: <Shield className="h-4 w-4" /> },
-    { id: "settings", label: "Configurações", icon: <Settings className="h-4 w-4" /> },
+    { id: "security", label: "SeguranÃ§a", icon: <Shield className="h-4 w-4" /> },
+    { id: "settings", label: "ConfiguraÃ§Ãµes", icon: <Settings className="h-4 w-4" /> },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
         {/* Profile Header */}
@@ -232,7 +232,7 @@ const Dashboard = () => {
               <div className="mt-1 flex items-center gap-2 flex-wrap">
                 {isReseller && (
                   <span className="flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-[10px] font-bold text-accent-foreground">
-                    <UserCheck className="h-3 w-3" /> Revendedor · -{discountPercent}%
+                    <UserCheck className="h-3 w-3" /> Revendedor Â· -{discountPercent}%
                   </span>
                 )}
                 <span className="rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground">
@@ -278,7 +278,7 @@ const Dashboard = () => {
         {/* Tab Content */}
         <div className="mt-8">
 
-          {/* ───── OVERVIEW ───── */}
+          {/* â”€â”€â”€â”€â”€ OVERVIEW â”€â”€â”€â”€â”€ */}
           {activeTab === "overview" && (
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-8">
               {/* Stat Cards with mini charts */}
@@ -290,14 +290,14 @@ const Dashboard = () => {
               />
 
               <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Últimas Compras */}
+                {/* Ãšltimas Compras */}
                 <div className="rounded-lg border border-border bg-card overflow-hidden">
                   <div className="flex items-center justify-between px-6 pt-5 pb-3">
                     <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-success/10 flex items-center justify-center">
                         <Package className="h-3.5 w-3.5 text-success" />
                       </div>
-                      Últimas Compras
+                      Ãšltimas Compras
                     </h3>
                     <button onClick={() => setActiveTab("purchases")} className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground hover:text-success transition-colors">
                       Ver todas <ChevronRight className="h-3 w-3" />
@@ -327,7 +327,7 @@ const Dashboard = () => {
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium text-foreground truncate group-hover:text-success transition-colors">{t.product_name}</p>
-                            <p className="text-[11px] text-muted-foreground">{t.plan_name} · {new Date(t.created_at).toLocaleDateString("pt-BR")}</p>
+                            <p className="text-[11px] text-muted-foreground">{t.plan_name} Â· {new Date(t.created_at).toLocaleDateString("pt-BR")}</p>
                           </div>
                           <div className="flex flex-col items-end gap-1">
                             <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusColors[t.status] || "bg-muted text-muted-foreground"}`}>
@@ -341,14 +341,14 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Últimas Faturas */}
+                {/* Ãšltimas Faturas */}
                 <div className="rounded-lg border border-border bg-card overflow-hidden">
                   <div className="flex items-center justify-between px-6 pt-5 pb-3">
                     <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                       <div className="h-7 w-7 rounded-lg bg-success/10 flex items-center justify-center">
                         <Receipt className="h-3.5 w-3.5 text-success" />
                       </div>
-                      Últimas Faturas
+                      Ãšltimas Faturas
                     </h3>
                   </div>
                   <div className="px-4 pb-4 space-y-1">
@@ -391,7 +391,7 @@ const Dashboard = () => {
             </motion.div>
           )}
 
-          {/* ───── PURCHASES ───── */}
+          {/* â”€â”€â”€â”€â”€ PURCHASES â”€â”€â”€â”€â”€ */}
           {activeTab === "purchases" && (
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-6">
               <div className="flex flex-col gap-1">
@@ -451,7 +451,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-base font-bold text-foreground">Produtos</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">Cheats, softwares e licenças digitais</p>
+                      <p className="mt-1 text-sm text-muted-foreground">Cheats, softwares e licenÃ§as digitais</p>
                       <div className="mt-4 flex items-center gap-3">
                         <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-3 py-1 text-xs font-semibold text-success">
                           <Package className="h-3 w-3" />{tickets.filter(t => !t.metadata?.type).length} pedido(s)
@@ -569,7 +569,7 @@ const Dashboard = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-foreground truncate">{t.product_name}</p>
-                          <p className="text-xs text-muted-foreground">{t.plan_name} · {new Date(t.created_at).toLocaleDateString("pt-BR")}</p>
+                          <p className="text-xs text-muted-foreground">{t.plan_name} Â· {new Date(t.created_at).toLocaleDateString("pt-BR")}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${statusColors[t.status] || "bg-muted text-muted-foreground"}`}>{statusLabels[t.status] || t.status_label}</span>
@@ -583,12 +583,12 @@ const Dashboard = () => {
             </motion.div>
           )}
 
-          {/* ───── SECURITY ───── */}
+          {/* â”€â”€â”€â”€â”€ SECURITY â”€â”€â”€â”€â”€ */}
           {activeTab === "security" && (
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-6">
               <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold text-foreground">Segurança</h2>
-                <p className="text-sm text-muted-foreground">Gerencie sua senha e configurações de acesso.</p>
+                <h2 className="text-xl font-bold text-foreground">SeguranÃ§a</h2>
+                <p className="text-sm text-muted-foreground">Gerencie sua senha e configuraÃ§Ãµes de acesso.</p>
               </div>
 
               {!securityVerified ? (
@@ -602,9 +602,9 @@ const Dashboard = () => {
                         <Lock className="h-2.5 w-2.5 text-success-foreground" />
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-foreground">Área Protegida</h3>
+                    <h3 className="text-lg font-bold text-foreground">Ãrea Protegida</h3>
                     <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-                      Confirme sua identidade com sua senha atual para acessar as configurações de segurança.
+                      Confirme sua identidade com sua senha atual para acessar as configuraÃ§Ãµes de seguranÃ§a.
                     </p>
                     <div className="mt-8 w-full space-y-3">
                       <div className="relative">
@@ -640,7 +640,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-success">Identidade verificada</p>
-                      <p className="text-xs text-muted-foreground">Você pode alterar sua senha agora.</p>
+                      <p className="text-xs text-muted-foreground">VocÃª pode alterar sua senha agora.</p>
                     </div>
                   </div>
 
@@ -652,7 +652,7 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-foreground">Alterar Senha</h3>
-                        <p className="text-xs text-muted-foreground">Use uma senha forte e única.</p>
+                        <p className="text-xs text-muted-foreground">Use uma senha forte e Ãºnica.</p>
                       </div>
                     </div>
                     <div className="max-w-md space-y-4">
@@ -663,7 +663,7 @@ const Dashboard = () => {
                             type={showNewPass ? "text" : "password"}
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            placeholder="Mínimo 6 caracteres"
+                            placeholder="MÃ­nimo 6 caracteres"
                             className="w-full rounded-lg border border-border bg-secondary/50 py-3 pl-4 pr-11 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-success/50 transition-colors"
                           />
                           <button onClick={() => setShowNewPass(!showNewPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -687,7 +687,7 @@ const Dashboard = () => {
                         <div className={`flex items-center gap-2 text-xs ${newPassword === confirmPassword ? "text-success" : "text-destructive"}`}>
                           {newPassword === confirmPassword
                             ? <><Check className="h-3.5 w-3.5" /> Senhas coincidem</>
-                            : <><AlertTriangle className="h-3.5 w-3.5" /> Senhas não coincidem</>
+                            : <><AlertTriangle className="h-3.5 w-3.5" /> Senhas nÃ£o coincidem</>
                           }
                         </div>
                       )}
@@ -710,14 +710,14 @@ const Dashboard = () => {
                         <Smartphone className="h-5 w-5 text-muted-foreground" />
                       </div>
                       <div>
-                        <h3 className="text-base font-bold text-foreground">Sessão Atual</h3>
-                        <p className="text-xs text-muted-foreground">Detalhes do seu último acesso.</p>
+                        <h3 className="text-base font-bold text-foreground">SessÃ£o Atual</h3>
+                        <p className="text-xs text-muted-foreground">Detalhes do seu Ãºltimo acesso.</p>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <InfoRow label="E-mail" value={user.email || "—"} />
+                      <InfoRow label="E-mail" value={user.email || "â€”"} />
                       <InfoRow label="Membro desde" value={new Date(user.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })} />
-                      <InfoRow label="Último login" value={user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"} />
+                      <InfoRow label="Ãšltimo login" value={user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "â€”"} />
                     </div>
                   </div>
                 </div>
@@ -725,12 +725,12 @@ const Dashboard = () => {
             </motion.div>
           )}
 
-          {/* ───── SETTINGS ───── */}
+          {/* â”€â”€â”€â”€â”€ SETTINGS â”€â”€â”€â”€â”€ */}
           {activeTab === "settings" && (
             <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-5">
               <div className="flex flex-col gap-1">
-                <h2 className="text-xl font-bold text-foreground">Configurações</h2>
-                <p className="text-sm text-muted-foreground">Informações da sua conta.</p>
+                <h2 className="text-xl font-bold text-foreground">ConfiguraÃ§Ãµes</h2>
+                <p className="text-sm text-muted-foreground">InformaÃ§Ãµes da sua conta.</p>
               </div>
 
               <div className="rounded-lg border border-border bg-card overflow-hidden">
@@ -746,7 +746,7 @@ const Dashboard = () => {
                     <div className="space-y-1">
                       <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Username</label>
                       <div className="rounded-md border border-border bg-secondary/50 py-2.5 px-3 text-sm text-foreground">
-                        {profile?.username || "—"}
+                        {profile?.username || "â€”"}
                       </div>
                     </div>
                     <div className="space-y-1">
@@ -770,7 +770,7 @@ const Dashboard = () => {
                   <div className="space-y-2">
                     <InfoRow label="ID da Conta" value={user.id.slice(0, 16) + "..."} />
                     <InfoRow label="Conta criada em" value={new Date(user.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })} />
-                    <InfoRow label="Último login" value={user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"} />
+                    <InfoRow label="Ãšltimo login" value={user.last_sign_in_at ? new Date(user.last_sign_in_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "â€”"} />
                   </div>
                 </div>
 
@@ -802,7 +802,7 @@ const Dashboard = () => {
                       </div>
                       <div>
                         <h3 className="text-sm font-bold text-foreground">Sair da Conta</h3>
-                        <p className="text-[11px] text-muted-foreground">Encerrar sua sessão atual.</p>
+                        <p className="text-[11px] text-muted-foreground">Encerrar sua sessÃ£o atual.</p>
                       </div>
                     </div>
                     <button
@@ -824,7 +824,7 @@ const Dashboard = () => {
   );
 };
 
-/* ── Mini sparkline data generator ── */
+/* â”€â”€ Mini sparkline data generator â”€â”€ */
 const generateSparkline = (count: number, trend: "up" | "down" | "flat" = "up") => {
   const data = [];
   let val = trend === "up" ? 20 : trend === "down" ? 80 : 50;
@@ -836,7 +836,7 @@ const generateSparkline = (count: number, trend: "up" | "down" | "flat" = "up") 
   return data;
 };
 
-/* ── Overview Stats Component ── */
+/* â”€â”€ Overview Stats Component â”€â”€ */
 const OverviewStats = ({
   tickets,
   payments,
@@ -876,7 +876,7 @@ const OverviewStats = ({
     {
       icon: <UserCheck className="h-4 w-4" />,
       label: "Status Revenda",
-      value: isReseller ? `Ativo · -${discountPercent}%` : "Inativo",
+      value: isReseller ? `Ativo Â· -${discountPercent}%` : "Inativo",
       color: "hsl(var(--success))",
       sparkline: generateSparkline(12, isReseller ? "up" : "flat"),
     },

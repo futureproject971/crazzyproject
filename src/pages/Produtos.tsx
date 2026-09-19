@@ -49,12 +49,12 @@ const staggerContainer = {
 
 const priceRanges = [
   { label: "Todos", min: 0, max: Infinity },
-  { label: "Até R$ 50", min: 0, max: 50 },
+  { label: "AtÃ© R$ 50", min: 0, max: 50 },
   { label: "R$ 50 - R$ 100", min: 50, max: 100 },
   { label: "R$ 100 - R$ 300", min: 100, max: 300 },
   { label: "R$ 300+", min: 300, max: Infinity },
 ];
-const sortOptions = ["Mais Recentes", "Menor Preço", "Maior Preço"] as const;
+const sortOptions = ["Mais Recentes", "Menor PreÃ§o", "Maior PreÃ§o"] as const;
 
 const ProductCard = ({ product }: { product: ProductFromDB }) => {
   const navigate = useNavigate();
@@ -117,7 +117,7 @@ const ProductCard = ({ product }: { product: ProductFromDB }) => {
 };
 
 const GameSelectScreen = ({ onSelect, games, loading }: { onSelect: (gameId: string) => void; games: GameFromDB[]; loading: boolean }) => (
-  <div className="min-h-screen bg-background">
+  <div className="min-h-screen">
     <Header />
     <div className="mx-auto max-w-5xl px-6 pt-28 pb-20">
       <motion.div
@@ -130,13 +130,13 @@ const GameSelectScreen = ({ onSelect, games, loading }: { onSelect: (gameId: str
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-foreground md:text-6xl" style={{ fontFamily: "'Valorant', sans-serif" }}>
           ESCOLHA SEU JOGO
         </h1>
-        <p className="mt-4 text-base text-muted-foreground">Selecione o jogo para ver os produtos disponíveis</p>
+        <p className="mt-4 text-base text-muted-foreground">Selecione o jogo para ver os produtos disponÃ­veis</p>
       </motion.div>
 
       {loading ? (
         <div className="mt-20 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-success" /></div>
       ) : games.length === 0 ? (
-        <div className="mt-20 text-center text-muted-foreground">Nenhum jogo disponível no momento.</div>
+        <div className="mt-20 text-center text-muted-foreground">Nenhum jogo disponÃ­vel no momento.</div>
       ) : (
         <motion.div
           className={`mt-14 grid gap-6 ${
@@ -324,12 +324,12 @@ const Produtos = () => {
         return lowest >= range.min && lowest <= range.max;
       })
       .sort((a, b) => {
-        if (sortBy === "Menor Preço") {
+        if (sortBy === "Menor PreÃ§o") {
           const aMin = Math.min(...(a.product_plans?.filter(p => p.active).map(p => Number(p.price)) || [Infinity]));
           const bMin = Math.min(...(b.product_plans?.filter(p => p.active).map(p => Number(p.price)) || [Infinity]));
           return aMin - bMin;
         }
-        if (sortBy === "Maior Preço") {
+        if (sortBy === "Maior PreÃ§o") {
           const aMax = Math.max(...(a.product_plans?.filter(p => p.active).map(p => Number(p.price)) || [0]));
           const bMax = Math.max(...(b.product_plans?.filter(p => p.active).map(p => Number(p.price)) || [0]));
           return bMax - aMax;
@@ -359,7 +359,7 @@ const Produtos = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
         <button
@@ -438,7 +438,7 @@ const Produtos = () => {
                 <div className="mt-6">
                   <h4 className="flex items-center gap-2 text-sm font-semibold text-foreground">
                     <DollarSign className="h-4 w-4 text-success" />
-                    Faixa de Preço
+                    Faixa de PreÃ§o
                   </h4>
                   <div className="mt-3 flex flex-col gap-1.5">
                     {priceRanges.map((range, idx) => (

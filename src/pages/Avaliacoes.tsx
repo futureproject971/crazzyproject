@@ -53,7 +53,7 @@ const Avaliacoes = () => {
           comment: r.comment,
           created_at: r.created_at,
           user_id: r.user_id,
-          username: usernameMap.get(r.user_id) || "Usuário",
+          username: usernameMap.get(r.user_id) || "UsuÃ¡rio",
           product_name: productMap.get(r.product_id) || "Produto",
         }))
       );
@@ -67,7 +67,7 @@ const Avaliacoes = () => {
     : "0";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-5xl px-6 pt-28 pb-20">
         {/* Header */}
@@ -80,10 +80,10 @@ const Avaliacoes = () => {
             className="text-3xl font-bold tracking-wider text-foreground md:text-4xl"
             style={{ fontFamily: "'Valorant', sans-serif" }}
           >
-            <span className="text-success">AVALIAÇÕES</span> DOS CLIENTES
+            <span className="text-success">AVALIAÃ‡Ã•ES</span> DOS CLIENTES
           </h1>
           <p className="mt-3 text-sm text-muted-foreground">
-            Veja o que nossos clientes estão dizendo sobre nossos produtos
+            Veja o que nossos clientes estÃ£o dizendo sobre nossos produtos
           </p>
 
           {/* Stats */}
@@ -96,7 +96,7 @@ const Avaliacoes = () => {
               <div className="h-6 w-px bg-border" />
               <div className="flex items-center gap-1.5">
                 <MessageSquare className="h-4 w-4 text-success" />
-                <span className="text-sm text-muted-foreground">{reviews.length} avaliação{reviews.length !== 1 ? "ões" : ""}</span>
+                <span className="text-sm text-muted-foreground">{reviews.length} avaliaÃ§Ã£o{reviews.length !== 1 ? "Ãµes" : ""}</span>
               </div>
             </div>
           )}
@@ -109,7 +109,7 @@ const Avaliacoes = () => {
         ) : reviews.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Star className="h-12 w-12 text-muted-foreground/20" />
-            <p className="text-muted-foreground">Nenhuma avaliação ainda.</p>
+            <p className="text-muted-foreground">Nenhuma avaliaÃ§Ã£o ainda.</p>
           </div>
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

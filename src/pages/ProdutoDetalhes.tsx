@@ -114,7 +114,7 @@ const ProdutoDetalhes = () => {
         const usernameMap = new Map((profiles || []).map((p: any) => [p.user_id, p.username]));
         setReviews(reviewsData.map((r: any) => ({
           ...r,
-          username: usernameMap.get(r.user_id) || "Usuário",
+          username: usernameMap.get(r.user_id) || "UsuÃ¡rio",
         })));
       }
 
@@ -180,7 +180,7 @@ const ProdutoDetalhes = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="flex items-center justify-center pt-40">
           <Loader2 className="h-8 w-8 animate-spin text-success" />
@@ -191,13 +191,13 @@ const ProdutoDetalhes = () => {
 
   if (!product) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="mx-auto max-w-5xl px-6 pt-28 text-center">
           <Package className="mx-auto h-16 w-16 text-muted-foreground/30" />
-          <h1 className="mt-4 text-2xl font-bold text-foreground">Produto não encontrado</h1>
+          <h1 className="mt-4 text-2xl font-bold text-foreground">Produto nÃ£o encontrado</h1>
           <button onClick={() => navigate("/produtos")} className="mt-6 text-sm text-success hover:underline">
-            ← Voltar aos produtos
+            â† Voltar aos produtos
           </button>
         </div>
       </div>
@@ -205,7 +205,7 @@ const ProdutoDetalhes = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
         {/* Back button */}
@@ -219,12 +219,12 @@ const ProdutoDetalhes = () => {
 
         {/* Breadcrumb */}
         <div className="mb-8 flex items-center gap-2 text-sm text-muted-foreground">
-          <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Início</button>
-          <span>›</span>
+          <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">InÃ­cio</button>
+          <span>â€º</span>
           {game && (
             <>
               <button onClick={() => navigate("/produtos")} className="hover:text-foreground transition-colors">{game.name}</button>
-              <span>›</span>
+              <span>â€º</span>
             </>
           )}
           <span className="text-foreground">{product.name}</span>
@@ -393,7 +393,7 @@ const ProdutoDetalhes = () => {
             {isReseller && isResellerForProduct(product.id) && (
               <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent/20 border border-accent/30 px-4 py-1.5">
                 <UserCheck className="h-4 w-4 text-accent-foreground" />
-                <span className="text-xs font-bold text-accent-foreground">Revendedor · -{discountPercent}%</span>
+                <span className="text-xs font-bold text-accent-foreground">Revendedor Â· -{discountPercent}%</span>
               </div>
             )}
 
@@ -485,14 +485,14 @@ const ProdutoDetalhes = () => {
             <div className="mt-8 rounded-xl border border-border bg-card p-6">
               <div className="mb-4 flex items-center gap-2">
                 <div className="h-px flex-1 bg-gradient-to-r from-success/50 to-transparent" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-success">Avaliações ({reviews.length})</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-success">AvaliaÃ§Ãµes ({reviews.length})</span>
                 <div className="h-px flex-1 bg-gradient-to-l from-success/50 to-transparent" />
               </div>
 
               {reviews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-6 gap-2">
                   <Star className="h-8 w-8 text-muted-foreground/20" />
-                  <p className="text-sm text-muted-foreground">Nenhuma avaliação ainda.</p>
+                  <p className="text-sm text-muted-foreground">Nenhuma avaliaÃ§Ã£o ainda.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-3">
@@ -505,7 +505,7 @@ const ProdutoDetalhes = () => {
                         <span className="text-xs font-bold text-foreground">{review.username}</span>
                         <div className="flex gap-0.5">
                           {Array.from({ length: 5 }).map((_, i) => (
-                            <span key={i} className={`text-[10px] ${i < review.rating ? "text-yellow-400" : "text-muted-foreground/30"}`}>★</span>
+                            <span key={i} className={`text-[10px] ${i < review.rating ? "text-yellow-400" : "text-muted-foreground/30"}`}>â˜…</span>
                           ))}
                         </div>
                       </div>

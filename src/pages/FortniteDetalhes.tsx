@@ -178,12 +178,12 @@ const FortniteDetalhes = () => {
   const tabs: { id: InventoryTab; label: string; count: number }[] = [
     { id: "skins", label: "Skins", count: skinPreviews.length },
     { id: "pickaxes", label: "Picaretas", count: pickaxePreviews.length },
-    { id: "dances", label: "Danças", count: dancePreviews.length },
+    { id: "dances", label: "DanÃ§as", count: dancePreviews.length },
     { id: "gliders", label: "Planadores", count: gliderPreviews.length },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-20">
         <button
@@ -212,7 +212,7 @@ const FortniteDetalhes = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Início</button>
+              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">InÃ­cio</button>
               <ChevronRight className="h-3 w-3" />
               <button onClick={() => navigate("/contas")} className="hover:text-foreground transition-colors">Contas</button>
               <ChevronRight className="h-3 w-3" />
@@ -288,13 +288,13 @@ const FortniteDetalhes = () => {
 
                 {/* Stats */}
                 <div className="rounded-lg border border-border bg-card p-5 space-y-4">
-                  <h3 className="text-sm font-bold text-foreground">Informações da Conta</h3>
+                  <h3 className="text-sm font-bold text-foreground">InformaÃ§Ãµes da Conta</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {skinCount > 0 && <StatCell label="Skins" value={skinCount} color={FN_PURPLE} />}
                     {vbucks > 0 && <StatCell label="V-Bucks" value={vbucks.toLocaleString()} color={FN_BLUE} />}
-                    {level > 0 && <StatCell label="Nível" value={level} color={FN_PURPLE} />}
+                    {level > 0 && <StatCell label="NÃ­vel" value={level} color={FN_PURPLE} />}
                     {pickaxePreviews.length > 0 && <StatCell label="Picaretas" value={pickaxePreviews.length} color={FN_PURPLE} />}
-                    {dancePreviews.length > 0 && <StatCell label="Danças" value={dancePreviews.length} color={FN_PURPLE} />}
+                    {dancePreviews.length > 0 && <StatCell label="DanÃ§as" value={dancePreviews.length} color={FN_PURPLE} />}
                     {gliderPreviews.length > 0 && <StatCell label="Planadores" value={gliderPreviews.length} color={FN_PURPLE} />}
                   </div>
                 </div>
@@ -304,7 +304,7 @@ const FortniteDetalhes = () => {
               <div className="lg:col-span-2 space-y-4">
                 <div className="rounded-lg border bg-card p-5 space-y-3.5" style={{ borderColor: `${FN_PURPLE}40` }}>
                   <h1 className="text-lg font-bold text-foreground leading-snug">
-                    Conta Fortnite{vbucks > 0 ? ` · ${vbucks} V-Bucks` : ""}{level > 0 ? ` · Nível ${level}` : ""}
+                    Conta Fortnite{vbucks > 0 ? ` Â· ${vbucks} V-Bucks` : ""}{level > 0 ? ` Â· NÃ­vel ${level}` : ""}
                   </h1>
 
                   <div className="flex flex-wrap gap-1.5">
@@ -320,14 +320,14 @@ const FortniteDetalhes = () => {
                     )}
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                       <Shield className="h-3 w-3" />
-                      Conta verificável
+                      Conta verificÃ¡vel
                     </span>
                   </div>
 
                   <div className="space-y-0.5 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>✓</span> Entrega automática</p>
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>✓</span> Liberação instantânea</p>
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>✓</span> Email e senha inclusos</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>âœ“</span> Entrega automÃ¡tica</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>âœ“</span> LiberaÃ§Ã£o instantÃ¢nea</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: FN_PURPLE }}>âœ“</span> Email e senha inclusos</p>
                   </div>
 
                   <div className="rounded-lg bg-card border border-border p-3 flex items-end justify-between">
@@ -355,13 +355,13 @@ const FortniteDetalhes = () => {
                   </button>
 
                   {item.item_id && (
-                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">Código: {item.item_id}</p>
+                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">CÃ³digo: {item.item_id}</p>
                   )}
 
                   <div className="grid grid-cols-3 divide-x divide-border border border-border rounded-lg overflow-hidden">
                     <StatHighlight label="Skins" value={skinCount} color={FN_PURPLE} />
-                    <StatHighlight label="V-Bucks" value={vbucks > 0 ? vbucks.toLocaleString() : "—"} color={FN_BLUE} />
-                    <StatHighlight label="Nível" value={level > 0 ? level : "—"} color={FN_PURPLE} />
+                    <StatHighlight label="V-Bucks" value={vbucks > 0 ? vbucks.toLocaleString() : "â€”"} color={FN_BLUE} />
+                    <StatHighlight label="NÃ­vel" value={level > 0 ? level : "â€”"} color={FN_PURPLE} />
                   </div>
                 </div>
 
@@ -372,15 +372,15 @@ const FortniteDetalhes = () => {
                     <h3 className="text-xl font-bold text-foreground">Conta FULL ACESSO</h3>
                   </div>
                   <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>•</span> Email e senha inclusos</li>
-                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>•</span> Senha alterável</li>
-                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>•</span> Conta verificável</li>
+                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>â€¢</span> Email e senha inclusos</li>
+                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>â€¢</span> Senha alterÃ¡vel</li>
+                    <li className="flex items-center gap-2.5"><span style={{ color: FN_PURPLE }}>â€¢</span> Conta verificÃ¡vel</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* ─── Inventory Tabs ─── */}
+            {/* â”€â”€â”€ Inventory Tabs â”€â”€â”€ */}
             <div className="mt-8">
               {/* Tab bar */}
               <div className="flex items-center gap-1 mb-5 border-b border-border">
@@ -534,7 +534,7 @@ const FortniteDetalhes = () => {
             {/* Description */}
             {item.description && (
               <div className="mt-6 rounded-lg border border-border bg-card p-5">
-                <h3 className="text-sm font-bold text-foreground mb-2">Descrição</h3>
+                <h3 className="text-sm font-bold text-foreground mb-2">DescriÃ§Ã£o</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{item.description}</p>
               </div>
             )}

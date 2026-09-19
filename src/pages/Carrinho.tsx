@@ -26,7 +26,7 @@ const Carrinho = () => {
   const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
-    if (!user) { toast({ title: "Faça login para usar cupons", variant: "destructive" }); return; }
+    if (!user) { toast({ title: "FaÃ§a login para usar cupons", variant: "destructive" }); return; }
     setCouponLoading(true);
 
     // Fetch coupon
@@ -38,7 +38,7 @@ const Carrinho = () => {
       .single();
 
     if (error || !coupon) {
-      toast({ title: "Cupom inválido", description: "Este cupom não existe ou está inativo.", variant: "destructive" });
+      toast({ title: "Cupom invÃ¡lido", description: "Este cupom nÃ£o existe ou estÃ¡ inativo.", variant: "destructive" });
       setCouponLoading(false);
       return;
     }
@@ -59,7 +59,7 @@ const Carrinho = () => {
 
     // Check min order value
     if (coupon.min_order_value && totalPrice < Number(coupon.min_order_value)) {
-      toast({ title: "Valor mínimo não atingido", description: `Pedido mínimo: R$ ${Number(coupon.min_order_value).toFixed(2)}`, variant: "destructive" });
+      toast({ title: "Valor mÃ­nimo nÃ£o atingido", description: `Pedido mÃ­nimo: R$ ${Number(coupon.min_order_value).toFixed(2)}`, variant: "destructive" });
       setCouponLoading(false);
       return;
     }
@@ -73,7 +73,7 @@ const Carrinho = () => {
     if (allowedUsers && allowedUsers.length > 0) {
       const isAllowed = allowedUsers.some((u: any) => u.user_id === user.id);
       if (!isAllowed) {
-        toast({ title: "Cupom não disponível para você", variant: "destructive" });
+        toast({ title: "Cupom nÃ£o disponÃ­vel para vocÃª", variant: "destructive" });
         setCouponLoading(false);
         return;
       }
@@ -89,7 +89,7 @@ const Carrinho = () => {
       const allowedIds = allowedProducts.map((p: any) => p.product_id);
       const hasValidItem = items.some(i => allowedIds.includes(i.productId));
       if (!hasValidItem) {
-        toast({ title: "Cupom não aplicável", description: "Nenhum produto do carrinho é elegível.", variant: "destructive" });
+        toast({ title: "Cupom nÃ£o aplicÃ¡vel", description: "Nenhum produto do carrinho Ã© elegÃ­vel.", variant: "destructive" });
         setCouponLoading(false);
         return;
       }
@@ -103,7 +103,7 @@ const Carrinho = () => {
       .eq("user_id", user.id);
 
     if (usage && usage.length > 0) {
-      toast({ title: "Cupom já utilizado", variant: "destructive" });
+      toast({ title: "Cupom jÃ¡ utilizado", variant: "destructive" });
       setCouponLoading(false);
       return;
     }
@@ -127,7 +127,7 @@ const Carrinho = () => {
   const finalPrice = Math.max(0, totalPrice - discountAmount);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-5xl px-6 pt-28 pb-20">
         <button
@@ -157,7 +157,7 @@ const Carrinho = () => {
             className="flex flex-col items-center justify-center py-20"
           >
             <ShoppingCart className="h-16 w-16 text-muted-foreground/20" />
-            <p className="mt-4 text-lg font-semibold text-muted-foreground">Seu carrinho está vazio</p>
+            <p className="mt-4 text-lg font-semibold text-muted-foreground">Seu carrinho estÃ¡ vazio</p>
             <p className="mt-1 text-sm text-muted-foreground/60">Adicione produtos para continuar</p>
             <button
               onClick={() => navigate("/produtos")}
@@ -257,7 +257,7 @@ const Carrinho = () => {
                   <div key={`${item.productId}-${item.planId}`} className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-foreground truncate">{item.productName}</p>
-                      <p className="text-[10px] text-muted-foreground">{item.planName} × {item.quantity}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.planName} Ã— {item.quantity}</p>
                     </div>
                     <span className="text-xs font-bold text-foreground shrink-0">
                       R$ {(item.price * item.quantity).toFixed(2)}
@@ -291,7 +291,7 @@ const Carrinho = () => {
                       type="text"
                       value={couponCode}
                       onChange={(e) => setCouponCode(e.target.value.toUpperCase().slice(0, 20))}
-                      placeholder="CÓDIGO"
+                      placeholder="CÃ“DIGO"
                       className="flex-1 rounded-lg border border-border bg-secondary/50 px-3 py-2 text-xs font-medium text-foreground uppercase placeholder:text-muted-foreground outline-none focus:border-success/50"
                     />
                     <button
@@ -325,7 +325,7 @@ const Carrinho = () => {
 
               <button
                 onClick={() => {
-                  if (!user) { toast({ title: "Faça login para comprar", variant: "destructive" }); return; }
+                  if (!user) { toast({ title: "FaÃ§a login para comprar", variant: "destructive" }); return; }
                   const params = new URLSearchParams();
                   if (appliedCoupon) {
                     params.set("coupon_id", appliedCoupon.id);

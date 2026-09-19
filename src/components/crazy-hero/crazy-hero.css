@@ -40,6 +40,7 @@
 }
 
 .crazy-scene {
+  position: fixed;
   inset: 0;
   z-index: -10;
   overflow: hidden;
@@ -135,14 +136,14 @@
 }
 
 .crazy-logo__crazzy {
-  font-size: clamp(3.2rem, 6vw, 7rem);
+  font-size: clamp(2.3rem, 3.8vw, 4.3rem);
   background-image: linear-gradient(180deg, #030712 3%, #1d334f 33%, #03060d 60%, #385f91 77%, #010208 94%);
   -webkit-text-stroke: 1px rgba(255,255,255,.62);
 }
 
 .crazy-logo__project {
   margin-top: .36em;
-  font-size: clamp(3rem, 5.5vw, 6.35rem);
+  font-size: clamp(2.1rem, 3.5vw, 3.9rem);
   background-image: linear-gradient(180deg, #f4fbff 0%, #4194ff 25%, #004cff 50%, #002fc5 67%, #79cfff 82%, #0042ef 100%);
   -webkit-text-stroke: 1px rgba(0, 45, 178, .38);
   text-shadow: 0 14px 38px rgba(0, 68, 255, .23);
@@ -1189,8 +1190,8 @@
     top: 31.7%;
     width: min(40vw, 690px);
   }
-  .crazy-logo__crazzy { font-size: clamp(3.8rem, 5.45vw, 6.55rem); }
-  .crazy-logo__project { margin-top:.34em; font-size:clamp(3.5rem, 5.05vw, 6.05rem); }
+  .crazy-logo__crazzy { font-size: clamp(2.6rem, 3.5vw, 4.6rem); }
+  .crazy-logo__project { margin-top:.34em; font-size:clamp(2.4rem, 3.2vw, 4.2rem); }
   .crazy-logo__tagline { margin-top:1.65rem; font-size:clamp(.62rem,.73vw,.84rem); letter-spacing:.42em; }
   .crazy-logo__features { margin-top:1.05rem; gap:.35rem; }
   .crazy-logo__features > span { min-height:31px; padding:.36rem .58rem; border-radius:7px; background:rgba(255,255,255,.7); font-size:.5rem; }

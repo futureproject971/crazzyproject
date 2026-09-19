@@ -79,7 +79,7 @@ export default function Rewards() {
   useEffect(() => {
     callRewards("catalog")
       .then((data) => setCampaigns(data.campaigns || []))
-      .catch((e) => toast({ title: "Rewards indisponível", description: e.message, variant: "destructive" }))
+      .catch((e) => toast({ title: "Rewards indisponÃ­vel", description: e.message, variant: "destructive" }))
       .finally(() => setLoading(false));
   }, []);
 
@@ -179,7 +179,7 @@ export default function Rewards() {
 
   const start = async (campaign: Campaign, product: RewardProduct) => {
     if (!user) {
-      toast({ title: "Entre na sua conta", description: "Você precisa estar logado para iniciar um teste." });
+      toast({ title: "Entre na sua conta", description: "VocÃª precisa estar logado para iniciar um teste." });
       setAuthOpen(true);
       return;
     }
@@ -188,7 +188,7 @@ export default function Rewards() {
       const body = await callRewards("start", { method: "POST", body: JSON.stringify({ campaign_product_id: product.id }) });
       setCurrentCampaign(campaign); setSelected(product); setRewardSession(body.session); setDelivery(null);
     } catch (e: any) {
-      toast({ title: "Não foi possível iniciar", description: e.message, variant: "destructive" });
+      toast({ title: "NÃ£o foi possÃ­vel iniciar", description: e.message, variant: "destructive" });
     } finally { setBusy(false); }
   };
 
@@ -198,16 +198,16 @@ export default function Rewards() {
     try {
       const body = await callRewards("request", { method: "POST", body: JSON.stringify({ session_id: rewardSession.id }) });
       setRewardSession(body.session);
-      toast({ title: body.delivery_mode === "automatic" ? "Entrega em processamento" : "Solicitação enviada ao staff" });
+      toast({ title: body.delivery_mode === "automatic" ? "Entrega em processamento" : "SolicitaÃ§Ã£o enviada ao staff" });
     } catch (e: any) {
       toast({ title: "Falha ao solicitar", description: e.message, variant: "destructive" });
     } finally { setBusy(false); }
   };
 
-  if (loading || authLoading) return <div className="min-h-screen bg-background text-foreground flex items-center justify-center"><Loader2 className="h-7 w-7 animate-spin" /></div>;
+  if (loading || authLoading) return <div className="min-h-screen text-foreground flex items-center justify-center"><Loader2 className="h-7 w-7 animate-spin" /></div>;
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} defaultTab="login" />
       <CrazyHeader />
       <main className="mx-auto w-full max-w-7xl px-4 pb-20 pt-28 sm:px-6 lg:px-8">
@@ -215,10 +215,10 @@ export default function Rewards() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[.2em] text-primary"><Gift className="h-4 w-4"/> Crazzy Rewards</div>
-              <h1 className="text-3xl font-black tracking-tight md:text-5xl">Ganhe um teste grátis de 1 hora</h1>
-              <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">Escolha um produto elegível, cumpra a missão e solicite seu trial. O progresso pausa se o vídeo parar, a aba ficar oculta ou a janela perder foco.</p>
+              <h1 className="text-3xl font-black tracking-tight md:text-5xl">Ganhe um teste grÃ¡tis de 1 hora</h1>
+              <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">Escolha um produto elegÃ­vel, cumpra a missÃ£o e solicite seu trial. O progresso pausa se o vÃ­deo parar, a aba ficar oculta ou a janela perder foco.</p>
             </div>
-            <div className="flex gap-3 text-xs text-muted-foreground"><span className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-primary"/> validação no backend</span><span className="flex items-center gap-1"><LockKeyhole className="h-4 w-4 text-primary"/> estoque separado</span></div>
+            <div className="flex gap-3 text-xs text-muted-foreground"><span className="flex items-center gap-1"><ShieldCheck className="h-4 w-4 text-primary"/> validaÃ§Ã£o no backend</span><span className="flex items-center gap-1"><LockKeyhole className="h-4 w-4 text-primary"/> estoque separado</span></div>
           </div>
 
           {!currentCampaign ? (
@@ -232,36 +232,36 @@ export default function Rewards() {
                     <div className="min-w-0 flex-1">
                       <div className="text-xs font-semibold uppercase tracking-wider text-primary">{campaign.title}</div>
                       <h2 className="mt-1 truncate text-xl font-black">{product.product.name}</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">{product.plan?.name || "Plano de teste"} · {product.trial_duration_minutes} min</p>
-                      <p className="mt-2 text-xs text-muted-foreground">{product.delivery_mode === "automatic" ? `Entrega automática após ~${Math.max(1, Math.ceil(product.auto_delay_seconds / 60))} min` : "Entrega após aprovação do staff"}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">{product.plan?.name || "Plano de teste"} Â· {product.trial_duration_minutes} min</p>
+                      <p className="mt-2 text-xs text-muted-foreground">{product.delivery_mode === "automatic" ? `Entrega automÃ¡tica apÃ³s ~${Math.max(1, Math.ceil(product.auto_delay_seconds / 60))} min` : "Entrega apÃ³s aprovaÃ§Ã£o do staff"}</p>
                     </div>
                   </div>
-                  <button disabled={busy} onClick={() => start(campaign, product)} className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground transition hover:brightness-110 disabled:opacity-50"><PlayCircle className="h-4 w-4"/> Começar missão</button>
+                  <button disabled={busy} onClick={() => start(campaign, product)} className="mt-5 flex w-full items-center justify-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground transition hover:brightness-110 disabled:opacity-50"><PlayCircle className="h-4 w-4"/> ComeÃ§ar missÃ£o</button>
                 </article>
               )))}
-              {!campaigns.some(c => c.products.length) && <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground lg:col-span-2">Nenhuma campanha de teste está ativa agora.</div>}
+              {!campaigns.some(c => c.products.length) && <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground lg:col-span-2">Nenhuma campanha de teste estÃ¡ ativa agora.</div>}
             </div>
           ) : (
             <div className="mt-8 grid gap-6 xl:grid-cols-[1.4fr_.6fr]">
               <section className="overflow-hidden rounded-3xl border border-border bg-black shadow-2xl">
                 <div className="aspect-video w-full">
-                  <div ref={playerHostRef} className="h-full w-full" aria-label="Vídeo da missão" />
+                  <div ref={playerHostRef} className="h-full w-full" aria-label="VÃ­deo da missÃ£o" />
                 </div>
               </section>
 
               <aside className="rounded-3xl border border-border bg-background/70 p-6">
-                <div className="flex items-center justify-between"><span className="text-sm font-black">Progresso da missão</span><strong className="text-primary">{progress}%</strong></div>
+                <div className="flex items-center justify-between"><span className="text-sm font-black">Progresso da missÃ£o</span><strong className="text-primary">{progress}%</strong></div>
                 <div className="mt-3 h-3 overflow-hidden rounded-full bg-secondary"><div className="h-full rounded-full bg-primary transition-all duration-500" style={{ width: `${progress}%` }}/></div>
-                <div className="mt-2 flex justify-between text-xs text-muted-foreground"><span>{Math.floor(Number(rewardSession?.watched_seconds || 0))}s assistidos</span><span>{currentCampaign.required_watch_seconds}s necessários</span></div>
+                <div className="mt-2 flex justify-between text-xs text-muted-foreground"><span>{Math.floor(Number(rewardSession?.watched_seconds || 0))}s assistidos</span><span>{currentCampaign.required_watch_seconds}s necessÃ¡rios</span></div>
 
                 <div className="mt-6 space-y-3">
-                  <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><CheckCircle2 className={`mt-0.5 h-5 w-5 ${progress >= 100 ? "text-emerald-500" : "text-muted-foreground"}`}/><div><strong className="text-sm">Assistir ao vídeo</strong><p className="mt-1 text-xs text-muted-foreground">Só conta enquanto a aba está visível, a janela está em foco e o vídeo está reproduzindo.</p></div></div>
-                  <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><Clock3 className="mt-0.5 h-5 w-5 text-primary"/><div><strong className="text-sm">Entrega</strong><p className="mt-1 text-xs text-muted-foreground">{selected?.delivery_mode === "automatic" ? "Automática quando o prazo e o estoque permitirem." : "Vai para a fila do staff após a solicitação."}</p></div></div>
+                  <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><CheckCircle2 className={`mt-0.5 h-5 w-5 ${progress >= 100 ? "text-emerald-500" : "text-muted-foreground"}`}/><div><strong className="text-sm">Assistir ao vÃ­deo</strong><p className="mt-1 text-xs text-muted-foreground">SÃ³ conta enquanto a aba estÃ¡ visÃ­vel, a janela estÃ¡ em foco e o vÃ­deo estÃ¡ reproduzindo.</p></div></div>
+                  <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4"><Clock3 className="mt-0.5 h-5 w-5 text-primary"/><div><strong className="text-sm">Entrega</strong><p className="mt-1 text-xs text-muted-foreground">{selected?.delivery_mode === "automatic" ? "AutomÃ¡tica quando o prazo e o estoque permitirem." : "Vai para a fila do staff apÃ³s a solicitaÃ§Ã£o."}</p></div></div>
                 </div>
 
                 {rewardSession?.status === "completed" && <button disabled={busy} onClick={requestReward} className="mt-6 w-full rounded-2xl bg-primary px-4 py-3 text-sm font-black text-primary-foreground">Solicitar meu teste</button>}
-                {["requested","delivering"].includes(rewardSession?.status || "") && <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/10 p-4 text-sm"><strong>Solicitação recebida.</strong><p className="mt-1 text-xs text-muted-foreground">Aguarde a entrega. Esta tela atualiza automaticamente.</p></div>}
-                {rewardSession?.status === "delivered" && <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4"><strong className="text-emerald-500">Teste entregue 🎁</strong>{delivery?.content && <pre className="mt-3 whitespace-pre-wrap break-all rounded-xl bg-background p-3 text-xs">{delivery.content}</pre>}{delivery?.expires_at && <p className="mt-2 text-xs text-muted-foreground">Validade: {new Date(delivery.expires_at).toLocaleString("pt-BR")}</p>}</div>}
+                {["requested","delivering"].includes(rewardSession?.status || "") && <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/10 p-4 text-sm"><strong>SolicitaÃ§Ã£o recebida.</strong><p className="mt-1 text-xs text-muted-foreground">Aguarde a entrega. Esta tela atualiza automaticamente.</p></div>}
+                {rewardSession?.status === "delivered" && <div className="mt-6 rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4"><strong className="text-emerald-500">Teste entregue ðŸŽ</strong>{delivery?.content && <pre className="mt-3 whitespace-pre-wrap break-all rounded-xl bg-background p-3 text-xs">{delivery.content}</pre>}{delivery?.expires_at && <p className="mt-2 text-xs text-muted-foreground">Validade: {new Date(delivery.expires_at).toLocaleString("pt-BR")}</p>}</div>}
               </aside>
             </div>
           )}

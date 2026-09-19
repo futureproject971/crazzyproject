@@ -11,25 +11,25 @@ import { useCart } from "@/hooks/useCart";
 import { toast } from "@/hooks/use-toast";
 import { useLztMarkup } from "@/hooks/useLztMarkup";
 
-// ─── Region translation map (from API response to Portuguese) ───
+// â”€â”€â”€ Region translation map (from API response to Portuguese) â”€â”€â”€
 const regionTranslationMap: Record<string, string> = {
   // Valorant regions (Russian/English to Portuguese)
-  "Бразилия": "Brasil",
+  "Ð‘Ñ€Ð°Ð·Ð¸Ð»Ð¸Ñ": "Brasil",
   "Brasil": "Brasil",
   "Brazil": "Brasil",
-  "Европа": "Europa",
+  "Ð•Ð²Ñ€Ð¾Ð¿Ð°": "Europa",
   "Europa": "Europa",
   "Europe": "Europa",
-  "Северная Америка": "América do Norte",
-  "América do Norte": "América do Norte",
-  "North America": "América do Norte",
-  "Азия-Тихоокеанский регион": "Ásia-Pacífico",
-  "Ásia-Pacífico": "Ásia-Pacífico",
-  "Asia-Pacific": "Ásia-Pacífico",
-  "Корея": "Coréia",
-  "Coréia": "Coréia",
-  "Korea": "Coréia",
-  "Латинская Америка": "LATAM",
+  "Ð¡ÐµÐ²ÐµÑ€Ð½Ð°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "AmÃ©rica do Norte",
+  "AmÃ©rica do Norte": "AmÃ©rica do Norte",
+  "North America": "AmÃ©rica do Norte",
+  "ÐÐ·Ð¸Ñ-Ð¢Ð¸Ñ…Ð¾Ð¾ÐºÐµÐ°Ð½ÑÐºÐ¸Ð¹ Ñ€ÐµÐ³Ð¸Ð¾Ð½": "Ãsia-PacÃ­fico",
+  "Ãsia-PacÃ­fico": "Ãsia-PacÃ­fico",
+  "Asia-Pacific": "Ãsia-PacÃ­fico",
+  "ÐšÐ¾Ñ€ÐµÑ": "CorÃ©ia",
+  "CorÃ©ia": "CorÃ©ia",
+  "Korea": "CorÃ©ia",
+  "Ð›Ð°Ñ‚Ð¸Ð½ÑÐºÐ°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "LATAM",
   "LATAM": "LATAM",
   "Latin America": "LATAM",
   // LoL regions
@@ -39,8 +39,8 @@ const regionTranslationMap: Record<string, string> = {
   "LAN": "LAN",
   "Oceania": "Oceania",
   "Turquia": "Turquia",
-  "Rússia": "Rússia",
-  "Japão": "Japão",
+  "RÃºssia": "RÃºssia",
+  "JapÃ£o": "JapÃ£o",
 };
 
 // Helper function to translate region names
@@ -70,7 +70,7 @@ import lolRankEsmeraldaImg from "@/assets/lol-rank-esmeralda.png";
 import lolRankDiamanteImg from "@/assets/lol-rank-diamante.webp";
 import lolRankMestreImg from "@/assets/lol-rank-mestre.png";
 
-// ─── LoL rank config (preenchido após imports) ───
+// â”€â”€â”€ LoL rank config (preenchido apÃ³s imports) â”€â”€â”€
 const lolRankConfig: Record<string, { color: string; img: string | null }> = {
   iron:        { color: "#7e6a5e", img: lolRankFerroImg },
   bronze:      { color: "#a0603c", img: lolRankBronzeImg },
@@ -100,7 +100,7 @@ const lolRankToKey = (rank: string): string => {
   return "";
 };
 
-// ─── DDragon helpers ───
+// â”€â”€â”€ DDragon helpers â”€â”€â”€
 const fetchChampKeyMap = async (): Promise<Map<number, string>> => {
   const versRes = await fetch("https://ddragon.leagueoflegends.com/api/versions.json");
   if (!versRes.ok) return new Map();
@@ -133,7 +133,7 @@ const fetchAccountDetail = async (itemId: string) => {
   return res.json();
 };
 
-// ─── Types ───
+// â”€â”€â”€ Types â”€â”€â”€
 interface SkinPreview {
   champName: string;
   skinNum: number;
@@ -176,14 +176,14 @@ const LolDetalhes = () => {
 
   const item = data?.item;
   // API retorna lolInventory para contas LoL
-  // Skin pode ser objeto {index: skinId} ou array — normalize para array de valores
+  // Skin pode ser objeto {index: skinId} ou array â€” normalize para array de valores
   const lolInventory = item?.lolInventory as {
     Champion?: number[];
     Skin?: number[] | Record<string, number>;
   } | null | undefined;
 
-  // ─── Skins: ID = champKey * 1000 + skinNum ───
-  // Skin vem como objeto {"0": 555016, "10": 42006, ...} → pegar os VALUES
+  // â”€â”€â”€ Skins: ID = champKey * 1000 + skinNum â”€â”€â”€
+  // Skin vem como objeto {"0": 555016, "10": 42006, ...} â†’ pegar os VALUES
   const skinPreviews = useMemo((): SkinPreview[] => {
     const raw = lolInventory?.Skin;
     let skinIds: number[] = [];
@@ -213,7 +213,7 @@ const LolDetalhes = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(lolInventory?.Skin), champKeyMap]);
 
-  // ─── Champions: IDs numéricos diretos ───
+  // â”€â”€â”€ Champions: IDs numÃ©ricos diretos â”€â”€â”€
   const champPreviews = useMemo((): ChampPreview[] => {
     const ids = Array.isArray(lolInventory?.Champion) ? lolInventory!.Champion! : [];
     const results: ChampPreview[] = [];
@@ -241,7 +241,7 @@ const LolDetalhes = () => {
   const orangeEssence = item?.riot_lol_wallet_orange;
   const region = item?.riot_lol_region;
 
-  // Se não há skins mas há campeões, muda aba padrão
+  // Se nÃ£o hÃ¡ skins mas hÃ¡ campeÃµes, muda aba padrÃ£o
   useEffect(() => {
     if (skinPreviews.length === 0 && champPreviews.length > 0) {
       setActiveTab("champions");
@@ -250,7 +250,7 @@ const LolDetalhes = () => {
 
   const activeItems = activeTab === "skins" ? skinPreviews : champPreviews;
 
-  // Gallery: skins com arte personalizada primeiro; fallback → campeões
+  // Gallery: skins com arte personalizada primeiro; fallback â†’ campeÃµes
   const galleryItems: (SkinPreview | ChampPreview)[] =
     skinPreviews.length > 0
       ? skinPreviews
@@ -262,7 +262,7 @@ const LolDetalhes = () => {
 
   const handleAddToCart = () => {
     if (!item || isInCart) return;
-    const title = `Conta LoL ${rankText} Nv. ${level} | ${champCount} Campeões | ${skinCount} Skins`;
+    const title = `Conta LoL ${rankText} Nv. ${level} | ${champCount} CampeÃµes | ${skinCount} Skins`;
     const priceBRL = calcPrice(item.price, item.price_currency);
     const added = addItem({
       productId: `lzt-lol-${item.item_id}`,
@@ -286,7 +286,7 @@ const LolDetalhes = () => {
   const LOL_BLUE = "hsl(198,100%,45%)";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-20">
         <button
@@ -315,11 +315,11 @@ const LolDetalhes = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">Início</button>
+              <button onClick={() => navigate("/")} className="hover:text-foreground transition-colors">InÃ­cio</button>
               <ChevronRight className="h-3 w-3" />
               <button onClick={() => navigate("/contas")} className="hover:text-foreground transition-colors">Contas</button>
               <ChevronRight className="h-3 w-3" />
-              <span style={{ color: LOL_BLUE }} className="font-medium">LoL — {rankText}</span>
+              <span style={{ color: LOL_BLUE }} className="font-medium">LoL â€” {rankText}</span>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -413,12 +413,12 @@ const LolDetalhes = () => {
                   </div>
 
                   <div className="border-t border-border pt-4">
-                    <h3 className="text-sm font-bold text-foreground mb-3">Informações da Conta</h3>
+                    <h3 className="text-sm font-bold text-foreground mb-3">InformaÃ§Ãµes da Conta</h3>
                     <div className="grid grid-cols-2 gap-2">
-                      {level > 0 && <StatCell label="Nível" value={level} color={LOL_BLUE} />}
-                      {champCount > 0 && <StatCell label="Campeões" value={champCount} color={LOL_BLUE} />}
+                      {level > 0 && <StatCell label="NÃ­vel" value={level} color={LOL_BLUE} />}
+                      {champCount > 0 && <StatCell label="CampeÃµes" value={champCount} color={LOL_BLUE} />}
                       {skinCount > 0 && <StatCell label="Skins" value={skinCount} color={LOL_BLUE} />}
-                      {region && <StatCell label="Região" value={translateRegion(region)} color={LOL_BLUE} />}
+                      {region && <StatCell label="RegiÃ£o" value={translateRegion(region)} color={LOL_BLUE} />}
                       {blueEssence != null && blueEssence > 0 && <StatCell label="Blue Essence" value={blueEssence.toLocaleString()} color="#4a9fe0" />}
                       {orangeEssence != null && orangeEssence > 0 && <StatCell label="Orange Essence" value={orangeEssence.toLocaleString()} color="#e09a4a" />}
                     </div>
@@ -430,7 +430,7 @@ const LolDetalhes = () => {
               <div className="lg:col-span-2 space-y-4">
                 <div className="rounded-lg border border-border bg-card p-5 space-y-3.5" style={{ borderColor: `${rankColor}30` }}>
                   <h1 className="text-lg font-bold text-foreground leading-snug">
-                    Conta LoL {rankText} · Nível {level}
+                    Conta LoL {rankText} Â· NÃ­vel {level}
                   </h1>
 
                   <div className="flex flex-wrap gap-1.5">
@@ -443,13 +443,13 @@ const LolDetalhes = () => {
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                       <Shield className="h-3 w-3" />
-                      Conta verificável
+                      Conta verificÃ¡vel
                     </span>
                   </div>
 
                   <div className="space-y-0.5 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: LOL_BLUE }}>✓</span> Entrega automática</p>
-                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: LOL_BLUE }}>✓</span> Liberação instantânea</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: LOL_BLUE }}>âœ“</span> Entrega automÃ¡tica</p>
+                    <p className="flex items-center gap-2"><span className="font-bold" style={{ color: LOL_BLUE }}>âœ“</span> LiberaÃ§Ã£o instantÃ¢nea</p>
                   </div>
 
                   <div className="rounded-lg bg-card border border-border p-3 flex items-end justify-between">
@@ -489,14 +489,14 @@ const LolDetalhes = () => {
                   </button>
 
                   {item.item_id && (
-                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">Código: {item.item_id}</p>
+                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">CÃ³digo: {item.item_id}</p>
                   )}
 
                   {/* Stats grid */}
                   <div className="grid grid-cols-3 divide-x divide-border border border-border rounded-lg overflow-hidden">
-                    <StatHighlight label="Campeões" value={champCount} color={LOL_BLUE} />
+                    <StatHighlight label="CampeÃµes" value={champCount} color={LOL_BLUE} />
                     <StatHighlight label="Skins" value={skinCount} color={LOL_BLUE} />
-                    <StatHighlight label="Nível" value={level} color={LOL_BLUE} />
+                    <StatHighlight label="NÃ­vel" value={level} color={LOL_BLUE} />
                   </div>
                 </div>
 
@@ -507,24 +507,24 @@ const LolDetalhes = () => {
                     <h3 className="text-xl font-bold text-foreground">Conta FULL ACESSO</h3>
                   </div>
                   <p className="text-base text-muted-foreground mb-5">
-                    Acesso total: email original, alteração de senha e dados, sem enrolação.
+                    Acesso total: email original, alteraÃ§Ã£o de senha e dados, sem enrolaÃ§Ã£o.
                   </p>
                   <ul className="space-y-3.5 text-base text-muted-foreground">
-                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>•</span> Email e senha inclusos</li>
-                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>•</span> Senha alterável</li>
-                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>•</span> Conta verificável</li>
+                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>â€¢</span> Email e senha inclusos</li>
+                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>â€¢</span> Senha alterÃ¡vel</li>
+                    <li className="flex items-center gap-2.5"><span className="text-lg" style={{ color: LOL_BLUE }}>â€¢</span> Conta verificÃ¡vel</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            {/* ─── Inventory Tabs ─── */}
+            {/* â”€â”€â”€ Inventory Tabs â”€â”€â”€ */}
             {(skinPreviews.length > 0 || champPreviews.length > 0) && (
               <div className="mt-6">
                 <div className="flex gap-2 mb-5">
                   {([
                     { key: "skins" as const, label: "Skins", count: skinPreviews.length, icon: <Star className="h-4 w-4" /> },
-                    { key: "champions" as const, label: "Campeões", count: champPreviews.length, icon: <Swords className="h-4 w-4" /> },
+                    { key: "champions" as const, label: "CampeÃµes", count: champPreviews.length, icon: <Swords className="h-4 w-4" /> },
                   ]).map((tab) => (
                     <button
                       key={tab.key}
@@ -653,7 +653,7 @@ const LolDetalhes = () => {
             {/* Description */}
             {item.description && (
               <div className="mt-6 rounded-lg border border-border bg-card p-5">
-                <h3 className="text-sm font-bold text-foreground mb-2">Descrição</h3>
+                <h3 className="text-sm font-bold text-foreground mb-2">DescriÃ§Ã£o</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{item.description}</p>
               </div>
             )}

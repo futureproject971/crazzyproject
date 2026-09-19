@@ -153,7 +153,7 @@ const MeusPedidos = () => {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen">
         <Header />
         <div className="flex items-center justify-center pt-40">
           <Loader2 className="h-8 w-8 animate-spin text-success" />
@@ -163,7 +163,7 @@ const MeusPedidos = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
 
@@ -281,7 +281,7 @@ const MeusPedidos = () => {
               {search ? "Nenhum resultado encontrado" : statusFilter !== "all" ? "Nenhum pedido com esse status" : isContas ? "Nenhuma conta encontrada" : "Nenhum produto encontrado"}
             </p>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              {search ? "Tente uma busca diferente." : statusFilter !== "all" ? "Tente outro filtro." : "Suas compras aparecerão aqui."}
+              {search ? "Tente uma busca diferente." : statusFilter !== "all" ? "Tente outro filtro." : "Suas compras aparecerÃ£o aqui."}
             </p>
             {!search && statusFilter === "all" && (
               <button

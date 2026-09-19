@@ -123,11 +123,10 @@ export function CrazyHero() {
   return (
     <main className="crazy-home">
       <section className={`crazy-hero ${selectedCategory ? "crazy-hero--with-dock" : ""}`} aria-labelledby="crazy-home-title">
-        <FuturisticBackground />
         <HudDecoration />
 
         <div className="crazy-hero__center">
-          <h1 id="crazy-home-title" className="sr-only">Crazzy Projet</h1>
+          <h1 id="crazy-home-title" className="sr-only">Crazzy Project</h1>
           <CrazyLogo />
           {loading ? (
             <motion.div

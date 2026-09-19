@@ -8,25 +8,25 @@ import { useCart } from "@/hooks/useCart";
 import { toast } from "@/hooks/use-toast";
 import { useLztMarkup } from "@/hooks/useLztMarkup";
 
-// ─── Region translation map (from API response to Portuguese) ───
+// â”€â”€â”€ Region translation map (from API response to Portuguese) â”€â”€â”€
 const regionTranslationMap: Record<string, string> = {
   // Valorant regions (Russian/English to Portuguese)
-  "Бразилия": "Brasil",
+  "Ð‘Ñ€Ð°Ð·Ð¸Ð»Ð¸Ñ": "Brasil",
   "Brasil": "Brasil",
   "Brazil": "Brasil",
-  "Европа": "Europa",
+  "Ð•Ð²Ñ€Ð¾Ð¿Ð°": "Europa",
   "Europa": "Europa",
   "Europe": "Europa",
-  "Северная Америка": "América do Norte",
-  "América do Norte": "América do Norte",
-  "North America": "América do Norte",
-  "Азия-Тихоокеанский регион": "Ásia-Pacífico",
-  "Ásia-Pacífico": "Ásia-Pacífico",
-  "Asia-Pacific": "Ásia-Pacífico",
-  "Корея": "Coréia",
-  "Coréia": "Coréia",
-  "Korea": "Coréia",
-  "Латинская Америка": "LATAM",
+  "Ð¡ÐµÐ²ÐµÑ€Ð½Ð°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "AmÃ©rica do Norte",
+  "AmÃ©rica do Norte": "AmÃ©rica do Norte",
+  "North America": "AmÃ©rica do Norte",
+  "ÐÐ·Ð¸Ñ-Ð¢Ð¸Ñ…Ð¾Ð¾ÐºÐµÐ°Ð½ÑÐºÐ¸Ð¹ Ñ€ÐµÐ³Ð¸Ð¾Ð½": "Ãsia-PacÃ­fico",
+  "Ãsia-PacÃ­fico": "Ãsia-PacÃ­fico",
+  "Asia-Pacific": "Ãsia-PacÃ­fico",
+  "ÐšÐ¾Ñ€ÐµÑ": "CorÃ©ia",
+  "CorÃ©ia": "CorÃ©ia",
+  "Korea": "CorÃ©ia",
+  "Ð›Ð°Ñ‚Ð¸Ð½ÑÐºÐ°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "LATAM",
   "LATAM": "LATAM",
   "Latin America": "LATAM",
   // LoL regions
@@ -36,8 +36,8 @@ const regionTranslationMap: Record<string, string> = {
   "LAN": "LAN",
   "Oceania": "Oceania",
   "Turquia": "Turquia",
-  "Rússia": "Rússia",
-  "Japão": "Japão",
+  "RÃºssia": "RÃºssia",
+  "JapÃ£o": "JapÃ£o",
 };
 
 // Helper function to translate region names
@@ -284,7 +284,7 @@ const ContaDetalhes = () => {
   const activeItems = activeTab === "skins" ? skinItems : activeTab === "agents" ? agentItems : buddyItems;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 pt-28 pb-20">
         <button
@@ -313,7 +313,7 @@ const ContaDetalhes = () => {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
             {/* Breadcrumb */}
             <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
-              <button onClick={() => navigate("/")} className="hover:text-success transition-colors">Início</button>
+              <button onClick={() => navigate("/")} className="hover:text-success transition-colors">InÃ­cio</button>
               <ChevronRight className="h-3 w-3" />
               <button onClick={() => navigate("/contas")} className="hover:text-success transition-colors">Valorant</button>
               <ChevronRight className="h-3 w-3" />
@@ -401,12 +401,12 @@ const ContaDetalhes = () => {
                 {/* Rank + Stats */}
                 <div className="rounded-lg border border-border bg-card p-5 space-y-4">
                   <div className="flex items-center justify-between">
-                    {/* Último rank (esquerda) */}
+                    {/* Ãšltimo rank (esquerda) */}
                     {item.riot_valorant_previous_rank && rankMap[item.riot_valorant_previous_rank] ? (
                       <div className="flex flex-col items-center gap-1.5">
                         <img src={rankMap[item.riot_valorant_previous_rank].img} alt="" className="h-16 w-16 object-contain opacity-50" />
                         <div className="text-center">
-                          <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Último rank</p>
+                          <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Ãšltimo rank</p>
                           <p className="text-sm font-bold text-muted-foreground">{rankMap[item.riot_valorant_previous_rank].name}</p>
                         </div>
                       </div>
@@ -429,13 +429,13 @@ const ContaDetalhes = () => {
                     </div>
                   </div>
                   <div className="border-t border-border pt-4">
-                    <h3 className="text-sm font-bold text-foreground mb-3">Informações da Conta</h3>
+                    <h3 className="text-sm font-bold text-foreground mb-3">InformaÃ§Ãµes da Conta</h3>
                     <div className="grid grid-cols-2 gap-2">
-                      {item.valorantRegionPhrase && <StatCell label="Região" value={translateRegion(item.valorantRegionPhrase)} />}
+                      {item.valorantRegionPhrase && <StatCell label="RegiÃ£o" value={translateRegion(item.valorantRegionPhrase)} />}
                       {item.riot_valorant_wallet_vp != null && <StatCell label="VP na conta" value={item.riot_valorant_wallet_vp} />}
                       {item.riot_valorant_wallet_rp != null && item.riot_valorant_wallet_rp > 0 && <StatCell label="RP na conta" value={item.riot_valorant_wallet_rp} />}
-                      {item.riot_valorant_inventory_value != null && <StatCell label="Valor inventário" value={`$${item.riot_valorant_inventory_value}`} />}
-                      {item.riot_valorant_level != null && <StatCell label="Nível" value={item.riot_valorant_level} />}
+                      {item.riot_valorant_inventory_value != null && <StatCell label="Valor inventÃ¡rio" value={`$${item.riot_valorant_inventory_value}`} />}
+                      {item.riot_valorant_level != null && <StatCell label="NÃ­vel" value={item.riot_valorant_level} />}
                       {item.riot_valorant_knife_count != null && item.riot_valorant_knife_count > 0 && <StatCell label="Knifes" value={item.riot_valorant_knife_count} />}
                     </div>
                   </div>
@@ -455,13 +455,13 @@ const ContaDetalhes = () => {
                     </span>
                     <span className="inline-flex items-center gap-1 rounded-full bg-secondary border border-border px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground">
                       <Shield className="h-3 w-3" />
-                      Conta verificável
+                      Conta verificÃ¡vel
                     </span>
                   </div>
 
                   <div className="space-y-0.5 text-xs text-muted-foreground">
-                    <p className="flex items-center gap-2"><span className="text-success font-bold">✓</span> Entrega automática</p>
-                    <p className="flex items-center gap-2"><span className="text-success font-bold">✓</span> Liberação instantânea</p>
+                    <p className="flex items-center gap-2"><span className="text-success font-bold">âœ“</span> Entrega automÃ¡tica</p>
+                    <p className="flex items-center gap-2"><span className="text-success font-bold">âœ“</span> LiberaÃ§Ã£o instantÃ¢nea</p>
                   </div>
 
                   <div className="rounded-lg bg-card border border-border p-3 flex items-end justify-between">
@@ -472,7 +472,7 @@ const ContaDetalhes = () => {
                       </p>
                     </div>
                     {item.rub_price && item.price_currency !== "rub" && (
-                      <p className="text-[10px] text-muted-foreground mb-1">≈ $ {(item.price / 5.5).toFixed(2)} USD</p>
+                      <p className="text-[10px] text-muted-foreground mb-1">â‰ˆ $ {(item.price / 5.5).toFixed(2)} USD</p>
                     )}
                   </div>
 
@@ -500,13 +500,13 @@ const ContaDetalhes = () => {
                   </button>
 
                   {item.item_id && (
-                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">Código: {item.item_id}</p>
+                    <p className="text-[10px] text-muted-foreground/50 text-center break-all">CÃ³digo: {item.item_id}</p>
                   )}
 
                   <div className="grid grid-cols-4 divide-x divide-border border border-border rounded-lg overflow-hidden">
                     <HighlightStat label="Skins" value={item.riot_valorant_skin_count ?? 0} />
                     <HighlightStat label="Agentes" value={item.riot_valorant_agent_count ?? 0} />
-                    <HighlightStat label="Nível" value={item.riot_valorant_level ?? 0} />
+                    <HighlightStat label="NÃ­vel" value={item.riot_valorant_level ?? 0} />
                     <HighlightStat label="Knifes" value={item.riot_valorant_knife_count ?? 0} />
                   </div>
                 </div>
@@ -519,12 +519,12 @@ const ContaDetalhes = () => {
                     <h3 className="text-xl font-bold text-foreground">Conta FULL ACESSO</h3>
                   </div>
                   <p className="text-base text-muted-foreground mb-5">
-                    Acesso total: email original, alteração de senha e dados, sem enrolação.
+                    Acesso total: email original, alteraÃ§Ã£o de senha e dados, sem enrolaÃ§Ã£o.
                   </p>
                   <ul className="space-y-3.5 text-base text-muted-foreground">
-                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">•</span> Email e senha inclusos</li>
-                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">•</span> Senha alterável</li>
-                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">•</span> Conta verificável</li>
+                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">â€¢</span> Email e senha inclusos</li>
+                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">â€¢</span> Senha alterÃ¡vel</li>
+                    <li className="flex items-center gap-2.5"><span className="text-success text-lg">â€¢</span> Conta verificÃ¡vel</li>
                   </ul>
                 </div>
               </div>
@@ -644,7 +644,7 @@ const ContaDetalhes = () => {
                             <h3 className="text-base font-bold text-foreground text-center">{currentItem.name}</h3>
                             {currentItem.rarity && (
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-muted-foreground">Edição:</span>
+                                <span className="text-xs text-muted-foreground">EdiÃ§Ã£o:</span>
                                 <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/50 px-3 py-1 text-xs font-medium" style={{ color: currentItem.rarity.color }}>
                                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: currentItem.rarity.color }} />
                                   {currentItem.rarity.name} Edition
@@ -677,7 +677,7 @@ const ContaDetalhes = () => {
             {/* Description */}
             {item.description && (
               <div className="mt-6 rounded-lg border border-border bg-card p-5">
-                <h3 className="text-sm font-bold text-foreground mb-2">Descrição</h3>
+                <h3 className="text-sm font-bold text-foreground mb-2">DescriÃ§Ã£o</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{item.description}</p>
               </div>
             )}

@@ -63,9 +63,9 @@ export function CrazyHeader() {
 
       <header className="crazy-site-header">
         <div className="crazy-site-header__inner">
-          <Link to="/" className="crazy-site-header__brand" aria-label="CRAZZY PROJET - Início">
+          <Link to="/" className="crazy-site-header__brand" aria-label="CRAZZY PROJECT - Início">
             <span>CRAZZY</span>
-            <strong>PROJET</strong>
+            <strong>PROJECT</strong>
           </Link>
 
           <nav className="crazy-site-header__nav" aria-label="Navegação principal">

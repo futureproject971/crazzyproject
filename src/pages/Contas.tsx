@@ -51,51 +51,51 @@ type GameTab = "valorant" | "lol" | "fortnite" | "minecraft";
 // Minecraft colors
 const MC_GREEN = "hsl(120,60%,45%)";
 
-// ─── Region options ───
+// â”€â”€â”€ Region options â”€â”€â”€
 const valorantRegions = [
-  { id: "all", label: "Todas as regiões" },
+  { id: "all", label: "Todas as regiÃµes" },
   { id: "br", label: "Brasil" },
   { id: "eu", label: "Europa" },
-  { id: "na", label: "América do Norte" },
-  { id: "ap", label: "Ásia-Pacífico" },
-  { id: "kr", label: "Coréia" },
+  { id: "na", label: "AmÃ©rica do Norte" },
+  { id: "ap", label: "Ãsia-PacÃ­fico" },
+  { id: "kr", label: "CorÃ©ia" },
   { id: "latam", label: "LATAM" },
 ];
 
 const lolRegions = [
-  { id: "all", label: "Todas as regiões" },
+  { id: "all", label: "Todas as regiÃµes" },
   { id: "br", label: "Brasil" },
   { id: "euw", label: "Europa Oeste" },
   { id: "eune", label: "Europa Norte/Leste" },
-  { id: "na", label: "América do Norte" },
+  { id: "na", label: "AmÃ©rica do Norte" },
   { id: "las", label: "LAS" },
   { id: "lan", label: "LAN" },
   { id: "oce", label: "Oceania" },
   { id: "tr", label: "Turquia" },
-  { id: "ru", label: "Rússia" },
-  { id: "jp", label: "Japão" },
-  { id: "kr", label: "Coréia" },
+  { id: "ru", label: "RÃºssia" },
+  { id: "jp", label: "JapÃ£o" },
+  { id: "kr", label: "CorÃ©ia" },
 ];
 
-// ─── Region translation map (from API response to Portuguese) ───
+// â”€â”€â”€ Region translation map (from API response to Portuguese) â”€â”€â”€
 const regionTranslationMap: Record<string, string> = {
   // Valorant regions (Russian/English to Portuguese)
-  "Бразилия": "Brasil",
+  "Ð‘Ñ€Ð°Ð·Ð¸Ð»Ð¸Ñ": "Brasil",
   "Brasil": "Brasil",
   "Brazil": "Brasil",
-  "Европа": "Europa",
+  "Ð•Ð²Ñ€Ð¾Ð¿Ð°": "Europa",
   "Europa": "Europa",
   "Europe": "Europa",
-  "Северная Америка": "América do Norte",
-  "América do Norte": "América do Norte",
-  "North America": "América do Norte",
-  "Азия-Тихоокеанский регион": "Ásia-Pacífico",
-  "Ásia-Pacífico": "Ásia-Pacífico",
-  "Asia-Pacific": "Ásia-Pacífico",
-  "Корея": "Coréia",
-  "Coréia": "Coréia",
-  "Korea": "Coréia",
-  "Латинская Америка": "LATAM",
+  "Ð¡ÐµÐ²ÐµÑ€Ð½Ð°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "AmÃ©rica do Norte",
+  "AmÃ©rica do Norte": "AmÃ©rica do Norte",
+  "North America": "AmÃ©rica do Norte",
+  "ÐÐ·Ð¸Ñ-Ð¢Ð¸Ñ…Ð¾Ð¾ÐºÐµÐ°Ð½ÑÐºÐ¸Ð¹ Ñ€ÐµÐ³Ð¸Ð¾Ð½": "Ãsia-PacÃ­fico",
+  "Ãsia-PacÃ­fico": "Ãsia-PacÃ­fico",
+  "Asia-Pacific": "Ãsia-PacÃ­fico",
+  "ÐšÐ¾Ñ€ÐµÑ": "CorÃ©ia",
+  "CorÃ©ia": "CorÃ©ia",
+  "Korea": "CorÃ©ia",
+  "Ð›Ð°Ñ‚Ð¸Ð½ÑÐºÐ°Ñ ÐÐ¼ÐµÑ€Ð¸ÐºÐ°": "LATAM",
   "LATAM": "LATAM",
   "Latin America": "LATAM",
   // LoL regions
@@ -105,8 +105,8 @@ const regionTranslationMap: Record<string, string> = {
   "LAN": "LAN",
   "Oceania": "Oceania",
   "Turquia": "Turquia",
-  "Rússia": "Rússia",
-  "Japão": "Japão",
+  "RÃºssia": "RÃºssia",
+  "JapÃ£o": "JapÃ£o",
 };
 
 // Helper function to translate region names
@@ -127,7 +127,7 @@ const translateRegion = (regionName: string | undefined): string => {
   return regionName;
 };
 
-// ─── Valorant rank map ───
+// â”€â”€â”€ Valorant rank map â”€â”€â”€
 const rankMap: Record<number, { name: string; img: string }> = {
   3: { name: "Ferro 1", img: rankFerro },
   4: { name: "Ferro 2", img: rankFerro },
@@ -243,8 +243,8 @@ const weapons = [
 
 const sortOptions = [
   { label: "Mais Recentes", value: "pdate_desc" },
-  { label: "Menor Preço", value: "price_asc" },
-  { label: "Maior Preço", value: "price_desc" },
+  { label: "Menor PreÃ§o", value: "price_asc" },
+  { label: "Maior PreÃ§o", value: "price_desc" },
 ] as const;
 
 const FN_PURPLE = "hsl(265,80%,65%)";
@@ -313,7 +313,7 @@ interface LztItem {
   };
 }
 
-// ─── Data fetchers ───
+// â”€â”€â”€ Data fetchers â”€â”€â”€
 
 const fetchAllValorantSkins = async (): Promise<Map<string, { name: string; image: string }>> => {
   const res = await fetch("https://valorant-api.com/v1/weapons/skins?language=pt-BR");
@@ -379,7 +379,7 @@ const staggerContainer = {
   visible: { transition: { staggerChildren: 0.03, delayChildren: 0 } },
 };
 
-// ─── Valorant Card ───
+// â”€â”€â”€ Valorant Card â”€â”€â”€
 const ValorantCard = ({ item, skinsMap, formatPrice }: { item: LztItem; skinsMap: Map<string, { name: string; image: string }>; formatPrice: (price: number, currency?: string) => string }) => {
   const navigate = useNavigate();
   const rank = item.riot_valorant_rank ? rankMap[item.riot_valorant_rank] : null;
@@ -410,7 +410,7 @@ const ValorantCard = ({ item, skinsMap, formatPrice }: { item: LztItem; skinsMap
 
         <div className="absolute left-3 top-3 z-10 flex gap-1.5">
           {hasKnife && (
-            <span className="rounded bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">🔪 Knife</span>
+            <span className="rounded bg-primary px-2.5 py-1 text-xs font-bold text-primary-foreground">ðŸ”ª Knife</span>
           )}
           {item.riot_valorant_rank_type === "ranked" && (
             <span className="rounded bg-success px-2.5 py-1 text-xs font-bold text-success-foreground">Ranked</span>
@@ -452,7 +452,7 @@ const ValorantCard = ({ item, skinsMap, formatPrice }: { item: LztItem; skinsMap
           </div>
           <div className="flex items-center gap-1.5">
             <svg className="h-4 w-4 text-success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 1.45-.39 2.81-1.06 3.97l1.47 1.47A9.953 9.953 0 0022 12c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V3.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-1.46-1.46A7.932 7.932 0 0112 19z"/><path d="M16 12l-4-4v3H8v2h4v3z"/></svg>
-            <span className="text-xs font-medium text-success">Entrega Automática</span>
+            <span className="text-xs font-medium text-success">Entrega AutomÃ¡tica</span>
           </div>
         </div>
 
@@ -474,7 +474,7 @@ const ValorantCard = ({ item, skinsMap, formatPrice }: { item: LztItem; skinsMap
   );
 };
 
-// ─── LoL Card ───
+// â”€â”€â”€ LoL Card â”€â”€â”€
 const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMap: Map<number, string>; formatPrice: (price: number, currency?: string) => string }) => {
   const navigate = useNavigate();
   const rankText = item.riot_lol_rank || "Unranked";
@@ -486,11 +486,11 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
   const level = item.riot_lol_level ?? 0;
   const winRate = item.riot_lol_rank_win_rate;
 
-  // Resolve LoL skin IDs via lolInventory (não valorantInventory!)
+  // Resolve LoL skin IDs via lolInventory (nÃ£o valorantInventory!)
   // skinId = champKey * 1000 + skinNum
   const lolInventory = (item as any).lolInventory as { Champion?: number[]; Skin?: number[] } | null | undefined;
   const skinPreviews = useMemo(() => {
-    // Tenta skins primeiro; se vazio, mostra campeões como preview
+    // Tenta skins primeiro; se vazio, mostra campeÃµes como preview
     const skinIds = Array.isArray(lolInventory?.Skin) ? lolInventory!.Skin! : [];
     const champIds = Array.isArray(lolInventory?.Champion) ? lolInventory!.Champion! : [];
     const results: { name: string; image: string }[] = [];
@@ -511,7 +511,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
       if (results.length >= 6) break;
     }
 
-    // Fallback: campeões (skin 0 = arte base)
+    // Fallback: campeÃµes (skin 0 = arte base)
     if (results.length === 0) {
       for (const champId of champIds) {
         const champName = champKeyMap.get(Number(champId));
@@ -533,7 +533,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
       className="group cursor-pointer overflow-hidden rounded-lg border border-border bg-card transition-all hover:border-[hsl(198,100%,45%)/40%] hover:shadow-[0_0_20px_hsl(198,100%,45%,0.12)]"
       onClick={() => navigate(`/lol/${item.item_id}`)}
     >
-      {/* Skin portrait grid — mesmo estilo do Valorant */}
+      {/* Skin portrait grid â€” mesmo estilo do Valorant */}
       <div className="relative flex h-48 items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[hsl(220,30%,10%)] via-[hsl(var(--background))] to-[hsl(220,30%,10%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,hsl(198,100%,45%,0.1),transparent_70%)]" />
@@ -572,7 +572,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
         ) : (
           <div className="flex flex-col h-full w-full items-center justify-center gap-2">
             <Shield className="h-12 w-12 text-muted-foreground/20" />
-            <span className="text-xs text-muted-foreground/40">{champCount} campeões</span>
+            <span className="text-xs text-muted-foreground/40">{champCount} campeÃµes</span>
           </div>
         )}
       </div>
@@ -596,7 +596,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div className="flex items-center gap-1.5 rounded bg-secondary/40 px-2.5 py-1.5">
             <Trophy className="h-3.5 w-3.5 text-[hsl(198,100%,45%)]" />
-            <span className="text-[11px] text-muted-foreground">{champCount} campeões</span>
+            <span className="text-[11px] text-muted-foreground">{champCount} campeÃµes</span>
           </div>
           <div className="flex items-center gap-1.5 rounded bg-secondary/40 px-2.5 py-1.5">
             <Star className="h-3.5 w-3.5 text-[hsl(198,100%,45%)]" />
@@ -611,7 +611,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
           </div>
           <div className="flex items-center gap-1.5">
             <svg className="h-4 w-4 text-[hsl(198,100%,45%)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 1.45-.39 2.81-1.06 3.97l1.47 1.47A9.953 9.953 0 0022 12c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V3.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-1.46-1.46A7.932 7.932 0 0112 19z"/><path d="M16 12l-4-4v3H8v2h4v3z"/></svg>
-            <span className="text-xs font-medium text-[hsl(198,100%,45%)]">Entrega Automática</span>
+            <span className="text-xs font-medium text-[hsl(198,100%,45%)]">Entrega AutomÃ¡tica</span>
           </div>
         </div>
 
@@ -633,7 +633,7 @@ const LolCard = ({ item, champKeyMap, formatPrice }: { item: LztItem; champKeyMa
   );
 };
 
-// ─── Fortnite Card ───
+// â”€â”€â”€ Fortnite Card â”€â”€â”€
 const FortniteCard = ({ item, skinsDb, formatPrice }: { item: LztItem; skinsDb: Map<string, { name: string; image: string }>; formatPrice: (price: number, currency?: string) => string }) => {
   const navigate = useNavigate();
   const raw = item as any;
@@ -759,7 +759,7 @@ const FortniteCard = ({ item, skinsDb, formatPrice }: { item: LztItem; skinsDb: 
           </div>
           <div className="flex items-center gap-1.5">
             <svg className="h-4 w-4 flex-shrink-0" style={{ color: FN_PURPLE }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 1.45-.39 2.81-1.06 3.97l1.47 1.47A9.953 9.953 0 0022 12c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V3.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-1.46-1.46A7.932 7.932 0 0112 19z"/><path d="M16 12l-4-4v3H8v2h4v3z"/></svg>
-            <span className="text-xs font-medium" style={{ color: FN_PURPLE }}>Entrega Automática</span>
+            <span className="text-xs font-medium" style={{ color: FN_PURPLE }}>Entrega AutomÃ¡tica</span>
           </div>
         </div>
 
@@ -774,7 +774,7 @@ const FortniteCard = ({ item, skinsDb, formatPrice }: { item: LztItem; skinsDb: 
   );
 };
 
-// ─── Minecraft Card ───
+// â”€â”€â”€ Minecraft Card â”€â”€â”€
 const MinecraftCard = ({ item, formatPrice }: { item: LztItem; formatPrice: (price: number, currency?: string) => string }) => {
   const navigate = useNavigate();
   const nickname = item.minecraft_nickname;
@@ -878,7 +878,7 @@ const MinecraftCard = ({ item, formatPrice }: { item: LztItem; formatPrice: (pri
           </div>
           <div className="flex items-center gap-1.5">
             <svg className="h-4 w-4 flex-shrink-0" style={{ color: MC_GREEN }} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 1.45-.39 2.81-1.06 3.97l1.47 1.47A9.953 9.953 0 0022 12c0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V3.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-1.46-1.46A7.932 7.932 0 0112 19z"/><path d="M16 12l-4-4v3H8v2h4v3z"/></svg>
-            <span className="text-xs font-medium" style={{ color: MC_GREEN }}>Entrega Automática</span>
+            <span className="text-xs font-medium" style={{ color: MC_GREEN }}>Entrega AutomÃ¡tica</span>
           </div>
         </div>
 
@@ -896,7 +896,7 @@ const MinecraftCard = ({ item, formatPrice }: { item: LztItem; formatPrice: (pri
   );
 };
 
-// ─── API ───
+// â”€â”€â”€ API â”€â”€â”€
 const fetchAccountsRaw = async (params: Record<string, string | string[]>) => {
   const queryParams = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -907,7 +907,7 @@ const fetchAccountsRaw = async (params: Record<string, string | string[]>) => {
   const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
   
   if (!projectUrl || !anonKey) {
-    throw new Error("Configuração do Supabase não encontrada. Verifique as variáveis de ambiente.");
+    throw new Error("ConfiguraÃ§Ã£o do Supabase nÃ£o encontrada. Verifique as variÃ¡veis de ambiente.");
   }
 
   try {
@@ -941,7 +941,7 @@ const fetchAccountsRaw = async (params: Record<string, string | string[]>) => {
     return res.json();
   } catch (err: any) {
     if (err.name === "TypeError" && err.message.includes("fetch")) {
-      throw new Error("Não foi possível conectar ao servidor. Verifique sua conexão e se a Edge Function está deployada.");
+      throw new Error("NÃ£o foi possÃ­vel conectar ao servidor. Verifique sua conexÃ£o e se a Edge Function estÃ¡ deployada.");
     }
     throw err;
   }
@@ -959,30 +959,30 @@ const Contas = () => {
     return "valorant";
   });
 
-  // ─── Valorant filters ───
+  // â”€â”€â”€ Valorant filters â”€â”€â”€
   const [selectedRank, setSelectedRank] = useState("todos");
   const [selectedWeapon, setSelectedWeapon] = useState("todos");
   const [onlyKnife, setOnlyKnife] = useState(false);
   const [valRegion, setValRegion] = useState("br");
 
-  // ─── LoL filters ───
+  // â”€â”€â”€ LoL filters â”€â”€â”€
   const [lolRank, setLolRank] = useState("todos");
   const [lolChampMin, setLolChampMin] = useState("");
   const [lolSkinsMin, setLolSkinsMin] = useState("");
   const [lolRegion, setLolRegion] = useState("all");
 
-  // ─── Fortnite filters ───
+  // â”€â”€â”€ Fortnite filters â”€â”€â”€
   const [fnVbMin, setFnVbMin] = useState("");
   const [fnSkinsMin, setFnSkinsMin] = useState("");
 
-  // ─── Minecraft filters ───
+  // â”€â”€â”€ Minecraft filters â”€â”€â”€
   const [mcJava, setMcJava] = useState(false);
   const [mcBedrock, setMcBedrock] = useState(false);
   const [mcHypixelLvlMin, setMcHypixelLvlMin] = useState("");
   const [mcCapesMin, setMcCapesMin] = useState("");
   const [mcNoBan, setMcNoBan] = useState(false);
 
-  // ─── Shared filters ───
+  // â”€â”€â”€ Shared filters â”€â”€â”€
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
   const [sortBy, setSortBy] = useState<string>("pdate_desc");
@@ -993,7 +993,7 @@ const Contas = () => {
   const [invMax, setInvMax] = useState("");
   const [page, setPage] = useState(1);
 
-  // ─── Sidebar collapse ───
+  // â”€â”€â”€ Sidebar collapse â”€â”€â”€
   const [rankOpen, setRankOpen] = useState(true);
   const [skinsOpen, setSkinsOpen] = useState(true);
   const [priceOpen, setPriceOpen] = useState(gameTab === "fortnite" || gameTab === "minecraft");
@@ -1013,7 +1013,7 @@ const Contas = () => {
     }
   }, [gameTab]);
 
-  // ─── Streaming state ───
+  // â”€â”€â”€ Streaming state â”€â”€â”€
   const [streamedItems, setStreamedItems] = useState<LztItem[]>([]);
   const [streamingDone, setStreamingDone] = useState(false);
   const [streamError, setStreamError] = useState<Error | null>(null);
@@ -1024,7 +1024,7 @@ const Contas = () => {
   const abortRef = useRef<AbortController | null>(null);
   const MAX_PAGES = 5;
 
-  // ─── Asset maps ───
+  // â”€â”€â”€ Asset maps â”€â”€â”€
   const { data: skinsMap = new Map() } = useQuery({
     queryKey: ["all-valorant-skins"],
     queryFn: fetchAllValorantSkins,
@@ -1047,7 +1047,7 @@ const Contas = () => {
   const buildParams = useCallback((pageNum: number = page): Record<string, string | string[]> => {
     const params: Record<string, string | string[]> = {};
     params.page = String(pageNum);
-    // Sempre adiciona order_by, mesmo que seja o padrão
+    // Sempre adiciona order_by, mesmo que seja o padrÃ£o
     params.order_by = sortBy || "pdate_desc";
     if (priceMin) params.pmin = priceMin;
     if (priceMax) params.pmax = priceMax;
@@ -1212,7 +1212,7 @@ const Contas = () => {
         const valueA = skinsA / (a.price || 1);
         const valueB = skinsB / (b.price || 1);
         if (Math.abs(valueB - valueA) > 0.0001) return valueB - valueA;
-        // Tiebreak: fewer skins → cheaper → first
+        // Tiebreak: fewer skins â†’ cheaper â†’ first
         return a.price - b.price;
       });
     }
@@ -1297,11 +1297,11 @@ const Contas = () => {
     : "text-[hsl(198,100%,45%)] border-[hsl(198,100%,45%)] bg-[hsl(198,100%,45%,0.1)]";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
 
-        {/* ─── Game Tab Switcher ─── */}
+        {/* â”€â”€â”€ Game Tab Switcher â”€â”€â”€ */}
         <div className="flex items-center gap-3 mb-8">
           <button
             onClick={() => switchTab("valorant")}
@@ -1361,7 +1361,7 @@ const Contas = () => {
               {isValorant ? "CONTAS VALORANT" : isFortnite ? "CONTAS FORTNITE" : isMinecraft ? "CONTAS MINECRAFT" : "CONTAS LOL"}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {isLoading ? "Buscando contas..." : isStreaming ? `Carregando... ${allItems.length} contas (página ${currentPage})` : `${allItems.length} contas · Página ${displayPage} de ${totalDisplayPages}`}
+              {isLoading ? "Buscando contas..." : isStreaming ? `Carregando... ${allItems.length} contas (pÃ¡gina ${currentPage})` : `${allItems.length} contas Â· PÃ¡gina ${displayPage} de ${totalDisplayPages}`}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -1393,7 +1393,7 @@ const Contas = () => {
         </div>
 
         <div className="mt-8 flex flex-col gap-8 lg:flex-row">
-          {/* ─── Sidebar ─── */}
+          {/* â”€â”€â”€ Sidebar â”€â”€â”€ */}
           <aside className="w-full shrink-0 lg:w-72">
             <div className="sticky top-28 space-y-4">
               <div className="rounded-lg border bg-card p-5 transition-colors duration-300" style={{ borderColor: isValorant ? 'hsl(var(--border))' : `${accentColor}25` }}>
@@ -1423,7 +1423,7 @@ const Contas = () => {
                   />
                 </div>
 
-                {/* ── Valorant-specific filters ── */}
+                {/* â”€â”€ Valorant-specific filters â”€â”€ */}
                 {isValorant && (
                   <>
                     <div className="mt-6">
@@ -1482,7 +1482,7 @@ const Contas = () => {
                           <div className="h-5 w-9 rounded-full border border-border bg-secondary transition-colors peer-checked:border-success peer-checked:bg-success" />
                           <div className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-foreground/60 transition-all peer-checked:left-[18px] peer-checked:bg-success-foreground" />
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground">🔪 Apenas com Knife</span>
+                        <span className="text-xs font-medium text-muted-foreground">ðŸ”ª Apenas com Knife</span>
                       </label>
                     </div>
 
@@ -1490,7 +1490,7 @@ const Contas = () => {
                     <div className="mt-6">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Globe className="h-4 w-4 text-success" />
-                        Região
+                        RegiÃ£o
                       </p>
                       <select
                         value={valRegion}
@@ -1505,7 +1505,7 @@ const Contas = () => {
                   </>
                 )}
 
-                {/* ── LoL-specific filters ── */}
+                {/* â”€â”€ LoL-specific filters â”€â”€ */}
                 {gameTab === "lol" && (
                   <>
                     <div className="mt-6">
@@ -1534,7 +1534,7 @@ const Contas = () => {
                     <div className="mt-6">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Trophy className="h-4 w-4 text-[hsl(198,100%,45%)]" />
-                        Mín. Campeões
+                        MÃ­n. CampeÃµes
                       </p>
                       <input
                         type="number"
@@ -1548,7 +1548,7 @@ const Contas = () => {
                     <div className="mt-4">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Star className="h-4 w-4 text-[hsl(198,100%,45%)]" />
-                        Mín. Skins LoL
+                        MÃ­n. Skins LoL
                       </p>
                       <input
                         type="number"
@@ -1563,7 +1563,7 @@ const Contas = () => {
                     <div className="mt-6">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Globe className="h-4 w-4 text-[hsl(198,100%,45%)]" />
-                        Região
+                        RegiÃ£o
                       </p>
                       <select
                         value={lolRegion}
@@ -1578,7 +1578,7 @@ const Contas = () => {
                   </>
                 )}
 
-                {/* ── Fortnite-specific filters ── */}
+                {/* â”€â”€ Fortnite-specific filters â”€â”€ */}
                 {isFortnite && (
                   <>
                     <div className="mt-6">
@@ -1589,7 +1589,7 @@ const Contas = () => {
                           <path d="M152 160 L256 352 L360 160" stroke="white" strokeWidth="52" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                           <path d="M200 240 L256 352 L312 240" stroke="white" strokeWidth="28" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
                         </svg>
-                        Mín. V-Bucks
+                        MÃ­n. V-Bucks
                       </p>
                       <input
                         type="number"
@@ -1604,7 +1604,7 @@ const Contas = () => {
                     <div className="mt-4">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Star className="h-4 w-4" style={{ color: FN_PURPLE }} />
-                        Mín. Skins
+                        MÃ­n. Skins
                       </p>
                       <input
                         type="number"
@@ -1619,20 +1619,20 @@ const Contas = () => {
                   </>
                 )}
 
-                {/* ── Minecraft-specific filters ── */}
+                {/* â”€â”€ Minecraft-specific filters â”€â”€ */}
                 {isMinecraft && (
                   <>
                     <div className="mt-6">
                       <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
                         <svg className="h-4 w-4" viewBox="0 0 24 24" fill={MC_GREEN}><path d="M4,2H20A2,2 0 0,1 22,4V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V4A2,2 0 0,1 4,2M6,6V10H10V12H8V18H10V16H14V18H16V12H14V10H18V6H14V10H10V6H6Z" /></svg>
-                        Edição
+                        EdiÃ§Ã£o
                       </p>
                       <div className="flex gap-2">
                         <label className="flex flex-1 cursor-pointer items-center gap-2 rounded-lg border border-border p-2.5 transition-all"
                           style={mcJava ? { borderColor: MC_GREEN, background: `${MC_GREEN}10` } : {}}>
                           <input type="checkbox" checked={mcJava} onChange={(e) => { setMcJava(e.target.checked); setPage(1); }} className="sr-only" />
                           <div className="h-3.5 w-3.5 rounded-sm border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: mcJava ? MC_GREEN : undefined, background: mcJava ? MC_GREEN : "transparent" }}>
-                            {mcJava && <span className="text-[8px] font-bold text-white">✓</span>}
+                            {mcJava && <span className="text-[8px] font-bold text-white">âœ“</span>}
                           </div>
                           <span className="text-xs font-medium" style={{ color: mcJava ? MC_GREEN : undefined }}>Java</span>
                         </label>
@@ -1640,7 +1640,7 @@ const Contas = () => {
                           style={mcBedrock ? { borderColor: MC_GREEN, background: `${MC_GREEN}10` } : {}}>
                           <input type="checkbox" checked={mcBedrock} onChange={(e) => { setMcBedrock(e.target.checked); setPage(1); }} className="sr-only" />
                           <div className="h-3.5 w-3.5 rounded-sm border-2 flex items-center justify-center flex-shrink-0" style={{ borderColor: mcBedrock ? MC_GREEN : undefined, background: mcBedrock ? MC_GREEN : "transparent" }}>
-                            {mcBedrock && <span className="text-[8px] font-bold text-white">✓</span>}
+                            {mcBedrock && <span className="text-[8px] font-bold text-white">âœ“</span>}
                           </div>
                           <span className="text-xs font-medium" style={{ color: mcBedrock ? MC_GREEN : undefined }}>Bedrock</span>
                         </label>
@@ -1649,7 +1649,7 @@ const Contas = () => {
                     <div className="mt-4">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Trophy className="h-4 w-4" style={{ color: MC_GREEN }} />
-                        Mín. Nível Hypixel
+                        MÃ­n. NÃ­vel Hypixel
                       </p>
                       <input
                         type="number"
@@ -1664,7 +1664,7 @@ const Contas = () => {
                     <div className="mt-4">
                       <p className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
                         <Star className="h-4 w-4" style={{ color: MC_GREEN }} />
-                        Mín. Capes
+                        MÃ­n. Capes
                       </p>
                       <input
                         type="number"
@@ -1683,7 +1683,7 @@ const Contas = () => {
                           <div className="h-5 w-9 rounded-full border border-border bg-secondary transition-colors peer-checked:border-[hsl(120,60%,45%)] peer-checked:bg-[hsl(120,60%,45%)]" />
                           <div className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-foreground/60 transition-all peer-checked:left-[18px] peer-checked:bg-white" />
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground">🚫 Sem Ban Hypixel</span>
+                        <span className="text-xs font-medium text-muted-foreground">ðŸš« Sem Ban Hypixel</span>
                       </label>
                     </div>
                   </>
@@ -1692,19 +1692,19 @@ const Contas = () => {
                 {/* Price (shared) */}
                 <div className="mt-6">
                   <button onClick={() => setPriceOpen(!priceOpen)} className="flex w-full items-center justify-between text-sm font-semibold text-foreground">
-                    <span className="flex items-center gap-2"><DollarSign className="h-4 w-4" style={{ color: accentColor }} />Faixa de Preço</span>
+                    <span className="flex items-center gap-2"><DollarSign className="h-4 w-4" style={{ color: accentColor }} />Faixa de PreÃ§o</span>
                     <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${priceOpen ? "rotate-180" : ""}`} />
                   </button>
                   {priceOpen && (
                     <div className="mt-3 flex items-center gap-2">
                       <div className="relative flex-1">
                         <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
-                        <input type="number" placeholder="Mín" value={priceMin} onChange={(e) => { setPriceMin(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full rounded-lg border border-border bg-secondary/50 py-2 pl-8 pr-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input type="number" placeholder="MÃ­n" value={priceMin} onChange={(e) => { setPriceMin(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full rounded-lg border border-border bg-secondary/50 py-2 pl-8 pr-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
-                      <span className="text-xs text-muted-foreground">—</span>
+                      <span className="text-xs text-muted-foreground">â€”</span>
                       <div className="relative flex-1">
                         <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">R$</span>
-                        <input type="number" placeholder="Máx" value={priceMax} onChange={(e) => { setPriceMax(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full rounded-lg border border-border bg-secondary/50 py-2 pl-8 pr-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                        <input type="number" placeholder="MÃ¡x" value={priceMax} onChange={(e) => { setPriceMax(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full rounded-lg border border-border bg-secondary/50 py-2 pl-8 pr-2 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
                       </div>
                     </div>
                   )}
@@ -1714,14 +1714,14 @@ const Contas = () => {
                 {isValorant && (
                 <div className="mt-6">
                   <button onClick={() => setInvOpen(!invOpen)} className="flex w-full items-center justify-between text-sm font-semibold text-foreground">
-                    <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" style={{ color: accentColor }} />Valor do Inventário</span>
+                    <span className="flex items-center gap-2"><TrendingUp className="h-4 w-4" style={{ color: accentColor }} />Valor do InventÃ¡rio</span>
                     <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${invOpen ? "rotate-180" : ""}`} />
                   </button>
                   {invOpen && (
                     <div className="mt-3 flex items-center gap-2">
-                      <input type="number" placeholder="Mín" value={invMin} onChange={(e) => { setInvMin(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
-                      <span className="text-xs text-muted-foreground">—</span>
-                      <input type="number" placeholder="Máx" value={invMax} onChange={(e) => { setInvMax(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                      <input type="number" placeholder="MÃ­n" value={invMin} onChange={(e) => { setInvMin(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                      <span className="text-xs text-muted-foreground">â€”</span>
+                      <input type="number" placeholder="MÃ¡x" value={invMax} onChange={(e) => { setInvMax(e.target.value.slice(0, 7)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
                     </div>
                   )}
                 </div>
@@ -1731,14 +1731,14 @@ const Contas = () => {
                 {(isValorant || gameTab === "lol") && (
                 <div className="mt-6">
                   <button onClick={() => setLvlOpen(!lvlOpen)} className="flex w-full items-center justify-between text-sm font-semibold text-foreground">
-                    <span className="flex items-center gap-2"><Star className="h-4 w-4" style={{ color: accentColor }} />Nível da Conta</span>
+                    <span className="flex items-center gap-2"><Star className="h-4 w-4" style={{ color: accentColor }} />NÃ­vel da Conta</span>
                     <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${lvlOpen ? "rotate-180" : ""}`} />
                   </button>
                   {lvlOpen && (
                     <div className="mt-3 flex items-center gap-2">
-                      <input type="number" placeholder="Mín" value={lvlMin} onChange={(e) => { setLvlMin(e.target.value.slice(0, 4)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
-                      <span className="text-xs text-muted-foreground">—</span>
-                      <input type="number" placeholder="Máx" value={lvlMax} onChange={(e) => { setLvlMax(e.target.value.slice(0, 4)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                      <input type="number" placeholder="MÃ­n" value={lvlMin} onChange={(e) => { setLvlMin(e.target.value.slice(0, 4)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
+                      <span className="text-xs text-muted-foreground">â€”</span>
+                      <input type="number" placeholder="MÃ¡x" value={lvlMax} onChange={(e) => { setLvlMax(e.target.value.slice(0, 4)); setPage(1); }} onFocus={e => (e.currentTarget.style.borderColor = `${accentColor}80`)} onBlur={e => (e.currentTarget.style.borderColor = '')} className="w-full flex-1 rounded-lg border border-border bg-secondary/50 py-2 px-3 text-sm text-foreground placeholder:text-muted-foreground outline-none transition-colors [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none" />
 
                     </div>
                   )}
@@ -1748,7 +1748,7 @@ const Contas = () => {
             </div>
           </aside>
 
-          {/* ─── Grid ─── */}
+          {/* â”€â”€â”€ Grid â”€â”€â”€ */}
           <div className="flex-1">
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-20">
@@ -1762,7 +1762,7 @@ const Contas = () => {
                 <p className="text-lg font-semibold text-destructive">Erro ao carregar contas</p>
                 <p className="mt-1 text-sm max-w-md text-center">{streamError.message || "Erro desconhecido ao buscar contas"}</p>
                 {(!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) && (
-                  <p className="mt-2 text-xs text-muted-foreground/70">⚠️ Verifique se as variáveis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY estão configuradas</p>
+                  <p className="mt-2 text-xs text-muted-foreground/70">âš ï¸ Verifique se as variÃ¡veis de ambiente VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY estÃ£o configuradas</p>
                 )}
                 <button
                   onClick={() => {
@@ -1784,7 +1784,7 @@ const Contas = () => {
                   <div className="mb-4 flex items-center gap-2 rounded-lg border px-4 py-2.5" style={{ borderColor: `${accentColor}30`, background: `${accentColor}08` }}>
                     <Loader2 className="h-4 w-4 animate-spin" style={{ color: accentColor }} />
                     <span className="text-xs font-medium" style={{ color: accentColor }}>
-                      Carregando contas... {items.length} encontradas (página {currentPage}/{MAX_PAGES})
+                      Carregando contas... {items.length} encontradas (pÃ¡gina {currentPage}/{MAX_PAGES})
                     </span>
                     <div className="ml-auto flex gap-1">
                       {[0, 1, 2].map((i) => (
@@ -1849,7 +1849,7 @@ const Contas = () => {
                         }, [])
                         .map((p, i) =>
                           p === 'ellipsis' ? (
-                            <span key={`e${i}`} className="flex h-9 w-9 items-center justify-center text-xs text-muted-foreground">…</span>
+                            <span key={`e${i}`} className="flex h-9 w-9 items-center justify-center text-xs text-muted-foreground">â€¦</span>
                           ) : (
                             <button
                               key={p}
@@ -1874,7 +1874,7 @@ const Contas = () => {
                       </button>
                     </div>
                     <span className="text-[11px] text-muted-foreground">
-                      Página {displayPage} de {totalDisplayPages} · {allItems.length} contas
+                      PÃ¡gina {displayPage} de {totalDisplayPages} Â· {allItems.length} contas
                     </span>
 
                     {hasNextPage && (

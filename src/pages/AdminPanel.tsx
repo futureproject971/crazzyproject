@@ -23,7 +23,7 @@ import SalesTab from "@/components/admin/SalesTab";
 import RewardsTab from "@/components/admin/RewardsTab";
 import { toast } from "@/hooks/use-toast";
 
-// ─── Types ───
+// â”€â”€â”€ Types â”€â”€â”€
 interface Game {
   id: string; name: string; slug: string | null; image_url: string | null;
   active: boolean; sort_order: number;
@@ -62,7 +62,7 @@ const tabs = [
   { id: "tickets", label: "Tickets", icon: Mail },
   { id: "status", label: "Status", icon: Shield },
   { id: "cupons", label: "Cupons", icon: Tag },
-  { id: "usuarios", label: "Usuários", icon: Users },
+  { id: "usuarios", label: "UsuÃ¡rios", icon: Users },
   { id: "credenciais", label: "Credenciais", icon: Key },
   { id: "vendas", label: "Vendas", icon: ShoppingBag },
   { id: "pagamentos", label: "Pagamentos", icon: CreditCard },
@@ -70,7 +70,7 @@ const tabs = [
 ] as const;
 type TabId = typeof tabs[number]["id"];
 
-// ─── Games Tab ───
+// â”€â”€â”€ Games Tab â”€â”€â”€
 const GamesTab = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loadingGames, setLoadingGames] = useState(true);
@@ -124,8 +124,8 @@ const GamesTab = () => {
   };
 
   const uploadFile = async (file: File) => {
-    if (!file.type.startsWith("image/")) { toast({ title: "Apenas imagens são aceitas", variant: "destructive" }); return; }
-    if (file.size > 5 * 1024 * 1024) { toast({ title: "Máximo 5MB", variant: "destructive" }); return; }
+    if (!file.type.startsWith("image/")) { toast({ title: "Apenas imagens sÃ£o aceitas", variant: "destructive" }); return; }
+    if (file.size > 5 * 1024 * 1024) { toast({ title: "MÃ¡ximo 5MB", variant: "destructive" }); return; }
     setUploading(true);
     const ext = file.name.split(".").pop() || "png";
     const path = `${crypto.randomUUID()}.${ext}`;
@@ -150,7 +150,7 @@ const GamesTab = () => {
     setGeneratingAI(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Não autenticado");
+      if (!session) throw new Error("NÃ£o autenticado");
       const res = await supabase.functions.invoke("generate-game-image", {
         body: { prompt },
         headers: { Authorization: `Bearer ${session.access_token}` },
@@ -204,7 +204,7 @@ const GamesTab = () => {
     if (!confirm(`Excluir "${game.name}"?`)) return;
     const { error } = await supabase.from("games").delete().eq("id", game.id);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
-    else { toast({ title: "Excluído!" }); fetchGames(); }
+    else { toast({ title: "ExcluÃ­do!" }); fetchGames(); }
   };
 
   return (
@@ -271,7 +271,7 @@ const GamesTab = () => {
                   {uploading ? (
                     <><Loader2 className="h-8 w-8 animate-spin text-success mb-2" /><p className="text-xs text-muted-foreground">Enviando...</p></>
                   ) : (
-                    <><Upload className="h-8 w-8 text-muted-foreground/40 mb-2" /><p className="text-sm font-medium text-muted-foreground">Arraste uma imagem ou clique para selecionar</p><p className="text-xs text-muted-foreground/60 mt-1">PNG, JPG, WEBP · Máx 5MB</p></>
+                    <><Upload className="h-8 w-8 text-muted-foreground/40 mb-2" /><p className="text-sm font-medium text-muted-foreground">Arraste uma imagem ou clique para selecionar</p><p className="text-xs text-muted-foreground/60 mt-1">PNG, JPG, WEBP Â· MÃ¡x 5MB</p></>
                   )}
                 </div>
               )}
@@ -313,7 +313,7 @@ const GamesTab = () => {
           <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-success" /></div>
         ) : games.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-20 text-muted-foreground">
-            <ImageIcon className="h-10 w-10 mb-3 opacity-40" /><p className="font-semibold">Nenhum jogo cadastrado</p><p className="mt-1 text-sm">Clique em "Novo Jogo" para começar</p>
+            <ImageIcon className="h-10 w-10 mb-3 opacity-40" /><p className="font-semibold">Nenhum jogo cadastrado</p><p className="mt-1 text-sm">Clique em "Novo Jogo" para comeÃ§ar</p>
           </div>
         ) : games.map((game, index) => (
           <div key={game.id}
@@ -346,7 +346,7 @@ const GamesTab = () => {
   );
 };
 
-// ─── Users Tab ───
+// â”€â”€â”€ Users Tab â”€â”€â”€
 const UsersTab = () => {
   const { user: currentUser } = useAuth();
   const navigate = useNavigate();
@@ -406,7 +406,7 @@ const UsersTab = () => {
   };
 
   const formatDate = (date: string | null) => {
-    if (!date) return "—";
+    if (!date) return "â€”";
     return new Date(date).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
   };
 
@@ -424,7 +424,7 @@ const UsersTab = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">Usuários ({users.length})</h2>
+        <h2 className="text-xl font-bold text-foreground">UsuÃ¡rios ({users.length})</h2>
         <button onClick={fetchUsers} className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:border-success hover:text-success">
           <RefreshCw className="h-3 w-3" /> Atualizar
         </button>
@@ -455,11 +455,11 @@ const UsersTab = () => {
       {showBanDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setShowBanDialog(null)}>
           <div className="mx-4 w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-lg font-bold text-destructive flex items-center gap-2"><Ban className="h-5 w-5" /> Banir Usuário</h3>
+            <h3 className="text-lg font-bold text-destructive flex items-center gap-2"><Ban className="h-5 w-5" /> Banir UsuÃ¡rio</h3>
             <p className="mt-2 text-sm text-muted-foreground">Banir <strong className="text-foreground">{showBanDialog.email}</strong>?</p>
             <div className="mt-4">
               <label className="text-xs font-medium text-muted-foreground">Motivo (opcional)</label>
-              <input type="text" value={banReason} onChange={(e) => setBanReason(e.target.value.slice(0, 200))} placeholder="Ex: Violação dos termos"
+              <input type="text" value={banReason} onChange={(e) => setBanReason(e.target.value.slice(0, 200))} placeholder="Ex: ViolaÃ§Ã£o dos termos"
                 className="mt-1 w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-destructive/50" />
             </div>
             <div className="mt-6 flex gap-3">
@@ -479,8 +479,8 @@ const UsersTab = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="mx-4 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-foreground">Detalhes do Usuário</h3>
-              <button onClick={() => setSelectedUser(null)} className="text-muted-foreground hover:text-foreground text-xl leading-none">×</button>
+              <h3 className="text-lg font-bold text-foreground">Detalhes do UsuÃ¡rio</h3>
+              <button onClick={() => setSelectedUser(null)} className="text-muted-foreground hover:text-foreground text-xl leading-none">Ã—</button>
             </div>
 
             <div className="mt-5 space-y-4">
@@ -509,8 +509,8 @@ const UsersTab = () => {
               {/* Info grid */}
               <div className="grid grid-cols-2 gap-3">
                 <InfoCard icon={<Calendar className="h-4 w-4 text-success" />} label="Criado em" value={formatDate(selectedUser.created_at)} />
-                <InfoCard icon={<Clock className="h-4 w-4 text-success" />} label="Último login" value={formatDate(selectedUser.last_sign_in_at)} />
-                <InfoCard icon={<Mail className="h-4 w-4 text-success" />} label="Email confirmado" value={selectedUser.email_confirmed_at ? "Sim" : "Não"} />
+                <InfoCard icon={<Clock className="h-4 w-4 text-success" />} label="Ãšltimo login" value={formatDate(selectedUser.last_sign_in_at)} />
+                <InfoCard icon={<Mail className="h-4 w-4 text-success" />} label="Email confirmado" value={selectedUser.email_confirmed_at ? "Sim" : "NÃ£o"} />
                 <InfoCard icon={<Shield className="h-4 w-4 text-success" />} label="Provider" value={selectedUser.provider} />
               </div>
 
@@ -530,10 +530,10 @@ const UsersTab = () => {
                 <InfoCard icon={<Package className="h-4 w-4 text-success" />} label="Total de Pedidos" value={String(selectedUser.total_orders)} />
               </div>
 
-              {/* Últimas 5 vendas */}
+              {/* Ãšltimas 5 vendas */}
               <div>
                 <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
-                  <Tag className="h-3.5 w-3.5 text-success" /> Últimas 5 Vendas
+                  <Tag className="h-3.5 w-3.5 text-success" /> Ãšltimas 5 Vendas
                 </p>
                 {selectedUser.recent_payments.length > 0 ? (
                   <div className="space-y-1.5">
@@ -544,12 +544,12 @@ const UsersTab = () => {
                             {p.cart_snapshot?.[0]?.productName || "Produto"}
                           </p>
                           <p className="text-[10px] text-muted-foreground">
-                            {p.cart_snapshot?.[0]?.planName || "—"} · {new Date(p.created_at).toLocaleDateString("pt-BR")}
+                            {p.cart_snapshot?.[0]?.planName || "â€”"} Â· {new Date(p.created_at).toLocaleDateString("pt-BR")}
                           </p>
                         </div>
                         <div className="flex flex-col items-end shrink-0 ml-2">
                           {p.coupon_code ? (
-                            <span className="text-[10px] text-muted-foreground">Cupom {p.coupon_code} · </span>
+                            <span className="text-[10px] text-muted-foreground">Cupom {p.coupon_code} Â· </span>
                           ) : null}
                           <span className="text-xs font-bold text-foreground">R$ {(p.amount / 100).toFixed(2)}</span>
                           <span className={`text-[10px] font-bold ${p.status === "COMPLETED" ? "text-success" : p.status === "ACTIVE" ? "text-amber-400" : "text-muted-foreground"}`}>
@@ -586,7 +586,7 @@ const UsersTab = () => {
 
               {/* Actions */}
               <div className="border-t border-border pt-4">
-                <p className="text-xs font-medium text-muted-foreground mb-3">Ações</p>
+                <p className="text-xs font-medium text-muted-foreground mb-3">AÃ§Ãµes</p>
                 <div className="flex flex-wrap gap-2">
                   {/* Ver Pedidos */}
                   <button
@@ -638,7 +638,7 @@ const UsersTab = () => {
                   )}
 
                   {selectedUser.id === currentUser?.id && (
-                    <p className="text-xs text-muted-foreground italic">Você não pode executar ações em si mesmo</p>
+                    <p className="text-xs text-muted-foreground italic">VocÃª nÃ£o pode executar aÃ§Ãµes em si mesmo</p>
                   )}
                 </div>
               </div>
@@ -653,7 +653,7 @@ const UsersTab = () => {
           <div className="flex items-center justify-center py-20"><Loader2 className="h-6 w-6 animate-spin text-success" /></div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-20 text-muted-foreground">
-            <Users className="h-10 w-10 mb-3 opacity-40" /><p className="font-semibold">Nenhum usuário encontrado</p>
+            <Users className="h-10 w-10 mb-3 opacity-40" /><p className="font-semibold">Nenhum usuÃ¡rio encontrado</p>
           </div>
         ) : filtered.map((u) => (
           <button key={u.id} onClick={() => setSelectedUser(u)}
@@ -715,7 +715,7 @@ const UsersTab = () => {
                           )}
                           <div className="min-w-0">
                             <p className="text-sm font-semibold text-foreground truncate">{order.product_name}</p>
-                            <p className="text-[10px] text-muted-foreground">{order.plan_name} · R$ {Number(order.plan_price).toFixed(2)}</p>
+                            <p className="text-[10px] text-muted-foreground">{order.plan_name} Â· R$ {Number(order.plan_price).toFixed(2)}</p>
                           </div>
                         </div>
                         <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold shrink-0 ${statusColor}`}>
@@ -729,7 +729,7 @@ const UsersTab = () => {
 
                       {order.stock_content && (
                         <div className="rounded bg-background border border-border p-2">
-                          <p className="text-[10px] font-medium text-muted-foreground mb-1">🔑 Chave Entregue:</p>
+                          <p className="text-[10px] font-medium text-muted-foreground mb-1">ðŸ”‘ Chave Entregue:</p>
                           <p className="text-xs font-mono text-foreground break-all select-all">{typeof order.stock_content === "string" ? order.stock_content : JSON.stringify(order.stock_content)}</p>
                         </div>
                       )}
@@ -752,7 +752,7 @@ const InfoCard = ({ icon, label, value }: { icon: React.ReactNode; label: string
   </div>
 );
 
-// ─── Main Admin ───
+// â”€â”€â”€ Main Admin â”€â”€â”€
 const AdminPanel = () => {
   const { user, loading, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -767,12 +767,12 @@ const AdminPanel = () => {
   if (!user || !isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <div className="mx-auto max-w-7xl px-6 pt-28 pb-20">
         <div className="flex items-center gap-2 mb-2">
           <ShieldAlert className="h-5 w-5 text-success" />
-          <p className="text-sm font-medium uppercase tracking-[0.3em] text-success">Administração</p>
+          <p className="text-sm font-medium uppercase tracking-[0.3em] text-success">AdministraÃ§Ã£o</p>
         </div>
         <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Valorant', sans-serif" }}>PAINEL ADMIN</h1>
 
