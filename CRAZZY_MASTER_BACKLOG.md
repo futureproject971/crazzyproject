@@ -65,7 +65,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 47. Garantir idempotência de webhook/pagamento no código e no schema versionado.
 - [ ] 48. Validar fluxo de cartão/crédito quando realmente habilitado.
 - [ ] 49. Validar Litecoin/cripto quando realmente habilitado.
-- [ ] 50. Garantir que chaves/segredos de gateway só existam no backend.
+- [x] 50. Garantir que chaves/segredos de gateway só existam no backend: build da Vercel rejeita `VITE_*` com SECRET/SERVICE_ROLE/tokens privados, JWT `service_role`, `sb_secret_*` e chaves PurinCash privadas; testes de regressão cobrem o guard.
 - [ ] 51. Validar sandbox/ambiente de teste sem contaminar produção.
 - [x] 52. Revisar ciclo completo de pedidos no código: checkout, conciliação, entrega e tickets.
 - [x] 53. Corrigir/impedir pagamentos presos em FULFILLING no código.
@@ -114,7 +114,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 96. Ajustar HUD/microcopy técnica da Home.
 - [ ] 97. Ajustar glow/glass/shadows para light.
 - [ ] 98. Ajustar glow/glass/shadows para dark.
-- [ ] 99. Otimizar imagens críticas e evitar carregar resolução máxima desnecessária.
+- [x] 99. Otimizar imagens críticas: wallpapers já estão em WebP (~214/228 KB), cards ocultos não recebem background remoto e Vite agora externaliza assets >4 KB em vez de embutir wallpapers em base64 no JavaScript.
 - [ ] 100. Corrigir warnings de console relacionados à Home.
 - [x] 101. Validar/reforçar navegação por teclado e focus-visible: coverflow suporta setas/Home/End, anuncia item ativo, marca dot atual e categorias/cards preservam foco visível.
 - [x] 102. Confirmar `products.is_new` no Supabase CRAZZY `nnmglkdpmffmaiuwbcct`; coluna verificada no banco novo após bootstrap.
@@ -177,5 +177,5 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 159. Abastecer catálogo real e planos, e confirmar identidade do primeiro Admin: banco novo consultado com zero usuários, admins, produtos e planos. Não importar dados do Supabase antigo sem autorização específica.
 - [x] 160. Remover do checkout o desconto visual legado controlável por parâmetro de URL; desconto exibido passa a vir somente da resposta autoritativa do backend.
 - [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
-- [x] 162. Confirmar GitHub CI verde no HEAD `6785e95` após os ajustes de checkout e acessibilidade da Home.
+- [x] 162. Confirmar GitHub CI verde após os ajustes de checkout, acessibilidade e performance da Home; último HEAD validado deste bloco: `28131f3`.
 - [ ] 163. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
