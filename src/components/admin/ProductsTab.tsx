@@ -20,6 +20,7 @@ interface ProductPlan {
   name: string;
   price: number;
   active: boolean;
+  is_new?: boolean;
   sort_order: number;
 }
 
@@ -96,6 +97,8 @@ const ProductsTab = () => {
   const [formImageUrl, setFormImageUrl] = useState("");
   const [formGameId, setFormGameId] = useState("");
   const [formActive, setFormActive] = useState(true);
+  const [formIsNew, setFormIsNew] = useState(false);
+  const [supportsIsNew, setSupportsIsNew] = useState(true);
   const [formPlans, setFormPlans] = useState<ProductPlan[]>(defaultPlans);
   const [imageMode, setImageMode] = useState<"url" | "upload">("url");
   const [uploading, setUploading] = useState(false);
@@ -118,12 +121,14 @@ const ProductsTab = () => {
   const tutorialFileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchData = async () => {
-    const [gamesRes, productsRes] = await Promise.all([
+    const [gamesRes, productsRes, newFlagProbe] = await Promise.all([
       supabase.from("games").select("id, name, slug, active").order("sort_order"),
       supabase.from("products").select("*, product_plans(*)").order("sort_order"),
+      supabase.from("products").select("id, is_new").limit(1),
     ]);
     if (gamesRes.data) setGames(gamesRes.data);
     if (productsRes.data) setProducts(productsRes.data as any);
+    setSupportsIsNew(!newFlagProbe.error);
     setLoading(false);
   };
 
@@ -131,7 +136,7 @@ const ProductsTab = () => {
 
   const resetForm = () => {
     setFormName(""); setFormDescription(""); setFormFeaturesText(""); setFormImageUrl(""); setFormGameId("");
-    setFormActive(true); setFormPlans([...defaultPlans]); setEditing(null);
+    setFormActive(true); setFormIsNew(false); setFormPlans([...defaultPlans]); setEditing(null);
     setShowForm(false); setImageMode("url"); setImagePreview(null);
     setFormMedia([]); setMediaUrlInput(""); setMediaTypeInput("image");
     setFormFeatures([...defaultFeatures]);
@@ -146,6 +151,7 @@ const ProductsTab = () => {
     setFormImageUrl(product.image_url || "");
     setFormGameId(product.game_id);
     setFormActive(product.active);
+    setFormIsNew(Boolean(product.is_new));
     setImagePreview(product.image_url || null);
     setImageMode("url");
     setFormTutorialText(product.tutorial_text || "");
@@ -236,13 +242,16 @@ const ProductsTab = () => {
 
     try {
       if (editing) {
-        const { error } = await supabase.from("products").update({
+        const updatePayload: any = {
           name: formName.trim(), description: formDescription.trim() || null,
           features_text: formFeaturesText.trim() || null,
           image_url: formImageUrl.trim() || null, game_id: formGameId, active: formActive,
           tutorial_text: formTutorialText.trim() || null,
           tutorial_file_url: formTutorialFileUrl.trim() || null,
-        } as any).eq("id", editing.id);
+        };
+        if (supportsIsNew) updatePayload.is_new = formIsNew;
+
+        const { error } = await supabase.from("products").update(updatePayload).eq("id", editing.id);
         if (error) throw error;
 
         // Sync plans: update existing, insert new, delete removed
@@ -292,14 +301,17 @@ const ProductsTab = () => {
         }
         toast({ title: "Produto atualizado!" });
       } else {
-        const { data, error } = await supabase.from("products").insert({
+        const insertPayload: any = {
           name: formName.trim(), description: formDescription.trim() || null,
           features_text: formFeaturesText.trim() || null,
           image_url: formImageUrl.trim() || null, game_id: formGameId, active: formActive,
           sort_order: products.length,
           tutorial_text: formTutorialText.trim() || null,
           tutorial_file_url: formTutorialFileUrl.trim() || null,
-        }).select().single();
+        };
+        if (supportsIsNew) insertPayload.is_new = formIsNew;
+
+        const { data, error } = await supabase.from("products").insert(insertPayload).select().single();
         if (error) throw error;
 
         const plansToInsert = formPlans.filter(p => p.name.trim()).map((p, i) => ({
@@ -685,6 +697,27 @@ const ProductsTab = () => {
               </div>
               <span className="text-xs font-medium text-muted-foreground">Ativo</span>
             </label>
+
+            {/* New / featured on Home */}
+            <label className={`flex items-center gap-3 ${supportsIsNew ? "cursor-pointer" : "cursor-not-allowed opacity-55"}`}>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  checked={formIsNew}
+                  onChange={(e) => setFormIsNew(e.target.checked)}
+                  disabled={!supportsIsNew}
+                  className="peer sr-only"
+                />
+                <div className="h-5 w-9 rounded-full border border-border bg-secondary transition-colors peer-checked:border-blue-500 peer-checked:bg-blue-600" />
+                <div className="absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-foreground/60 transition-all peer-checked:left-[18px] peer-checked:bg-white" />
+              </div>
+              <span className="text-xs font-medium text-muted-foreground">NOVO / destacar na Home</span>
+            </label>
+            {!supportsIsNew ? (
+              <p className="sm:col-span-2 text-[10px] text-yellow-500">
+                A migration de destaque ainda não foi aplicada neste Supabase. O cadastro continua funcionando, mas o destaque NOVO está temporariamente indisponível.
+              </p>
+            ) : null}
           </div>
 
           <div className="mt-6 flex gap-3">
@@ -743,6 +776,7 @@ const ProductsTab = () => {
                 <div className="flex items-center gap-2">
                   <h4 className="text-sm font-bold text-foreground truncate">{product.name}</h4>
                   <span className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${product.active ? "bg-success/20 text-success" : "bg-destructive/20 text-destructive"}`}>{product.active ? "Ativo" : "Inativo"}</span>
+                  {product.is_new ? <span className="rounded bg-blue-600/20 px-1.5 py-0.5 text-[10px] font-bold text-blue-500">NOVO</span> : null}
                 </div>
                 <p className="text-xs text-muted-foreground truncate">{getGameName(product.game_id)} · {product.product_plans?.length || 0} planos</p>
               </div>
