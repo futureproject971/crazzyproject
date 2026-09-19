@@ -37,9 +37,14 @@ const Checkout = () => {
   const [checking, setChecking] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<string>("ACTIVE");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const [enabledMethods, setEnabledMethods] = useState<Record<string, boolean>>({ pix: true, card: false, crypto: true });
+  const [enabledMethods, setEnabledMethods] = useState<Record<string, boolean>>({ pix: false, card: false, crypto: false });
+  const [paymentSettingsLoading, setPaymentSettingsLoading] = useState(true);
   const hasLztItems = items.some((i) => i.type === "lzt-account");
   const cardCheckoutEnabled = enabledMethods.card === true && import.meta.env.VITE_ENABLE_CARD_CHECKOUT === "true";
+  const hasAvailablePaymentMethod =
+    enabledMethods.pix === true ||
+    enabledMethods.crypto === true ||
+    (cardCheckoutEnabled && !hasLztItems);
   const couponId = searchParams.get("coupon_id");
   // Price is calculated from cart items — never trust URL params
   const cartTotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -59,13 +64,33 @@ const Checkout = () => {
   }, [authLoading, user, items.length, navigate, paymentId]);
 
   useEffect(() => {
-    supabase.from("payment_settings").select("method, enabled").then(({ data }) => {
-      if (data) {
-        const map: Record<string, boolean> = {};
-        data.forEach((r: any) => { map[r.method] = r.enabled; });
+    let mounted = true;
+    const loadPaymentSettings = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("payment_settings")
+          .select("method, enabled");
+        if (!mounted) return;
+        if (error) throw error;
+
+        const map: Record<string, boolean> = { pix: false, card: false, crypto: false };
+        (data || []).forEach((row: any) => {
+          if (row.method in map) map[row.method] = row.enabled === true;
+        });
         setEnabledMethods(map);
+      } catch (error) {
+        console.error("[checkout] payment settings unavailable", error);
+        if (mounted) {
+          // Fail closed: a settings/read failure must never expose a payment option.
+          setEnabledMethods({ pix: false, card: false, crypto: false });
+        }
+      } finally {
+        if (mounted) setPaymentSettingsLoading(false);
       }
-    });
+    };
+
+    loadPaymentSettings();
+    return () => { mounted = false; };
   }, []);
 
   const buildCartSnapshot = () =>
@@ -434,8 +459,31 @@ const Checkout = () => {
 
             {/* Payment methods */}
             <div className="flex flex-col gap-3 max-w-lg mx-auto">
+              {paymentSettingsLoading ? (
+                <div className="rounded-lg border border-border/70 bg-card px-6 py-8 text-center">
+                  <Loader2 className="mx-auto h-5 w-5 animate-spin text-success" />
+                  <p className="mt-3 text-sm font-medium text-foreground">Verificando formas de pagamento</p>
+                  <p className="mt-1 text-xs text-muted-foreground">Nenhuma cobrança é criada até a configuração ser confirmada.</p>
+                </div>
+              ) : !hasAvailablePaymentMethod ? (
+                <div className="rounded-lg border border-border/70 bg-card px-6 py-8 text-center">
+                  <ShieldCheck className="mx-auto h-7 w-7 text-muted-foreground" />
+                  <p className="mt-3 text-sm font-semibold text-foreground">Pagamentos temporariamente indisponíveis</p>
+                  <p className="mx-auto mt-2 max-w-sm text-xs leading-relaxed text-muted-foreground">
+                    Os métodos estão desativados até a configuração do gateway ser validada. Seu carrinho continua salvo.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/carrinho")}
+                    className="mt-5 rounded-md border border-border px-4 py-2 text-xs font-bold text-foreground transition-colors hover:bg-secondary"
+                  >
+                    Voltar ao carrinho
+                  </button>
+                </div>
+              ) : null}
+
               {/* PIX */}
-              {enabledMethods.pix !== false && (
+              {!paymentSettingsLoading && enabledMethods.pix === true && (
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -460,7 +508,7 @@ const Checkout = () => {
               )}
 
               {/* Card — hidden for LZT account purchases */}
-              {cardCheckoutEnabled && !hasLztItems && (
+              {!paymentSettingsLoading && cardCheckoutEnabled && !hasLztItems && (
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -485,7 +533,7 @@ const Checkout = () => {
               )}
 
               {/* Crypto Litecoin */}
-              {enabledMethods.crypto !== false && (
+              {!paymentSettingsLoading && enabledMethods.crypto === true && (
                 <motion.button
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
