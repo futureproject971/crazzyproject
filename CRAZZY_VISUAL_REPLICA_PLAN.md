@@ -27,11 +27,11 @@ Até a Home desktop estar visualmente estável e sem sobreposição, NÃO avanç
 Condições mínimas para liberar as próximas tarefas:
 - [ ] Home sem categorias sobrepostas entre si.
 - [ ] Home sem categorias invadindo logo, coverflow, trust bar ou header.
-- [ ] Somente IA Universal como categoria universal de IA na Home.
-- [ ] Coverflow independente das categorias e exibindo destaques/NOVO.
+- [x] Somente IA Universal como categoria universal de IA na Home.
+- [x] Coverflow independente das categorias e exibindo destaques/NOVO.
 - [ ] Logo central, header, categorias, coverflow, trust bar e footer visualmente coerentes com a referência.
 - [ ] Light e Dark sem regressão visível.
-- [ ] Build Vercel verde após o último ajuste da Home.
+- [x] Build Vercel verde após o último ajuste da Home.
 
 ## A. COMPOSIÇÃO GERAL / ENQUADRAMENTO
 
