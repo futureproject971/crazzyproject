@@ -630,6 +630,305 @@ export type Database = {
         }
         Relationships: []
       }
+      reward_campaign_products: {
+        Row: {
+          active: boolean
+          auto_delay_seconds: number
+          campaign_id: string
+          created_at: string
+          delivery_mode: string
+          id: string
+          product_id: string
+          product_plan_id: string | null
+          sort_order: number
+          trial_duration_minutes: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          auto_delay_seconds?: number
+          campaign_id: string
+          created_at?: string
+          delivery_mode?: string
+          id?: string
+          product_id: string
+          product_plan_id?: string | null
+          sort_order?: number
+          trial_duration_minutes?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          auto_delay_seconds?: number
+          campaign_id?: string
+          created_at?: string
+          delivery_mode?: string
+          id?: string
+          product_id?: string
+          product_plan_id?: string | null
+          sort_order?: number
+          trial_duration_minutes?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_campaign_products_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "reward_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_campaign_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_campaign_products_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_campaigns: {
+        Row: {
+          active: boolean
+          cooldown_hours: number
+          created_at: string
+          description: string
+          id: string
+          required_watch_seconds: number
+          requirements: Json
+          sort_order: number
+          title: string
+          updated_at: string
+          video_provider: string
+          video_url: string
+        }
+        Insert: {
+          active?: boolean
+          cooldown_hours?: number
+          created_at?: string
+          description?: string
+          id?: string
+          required_watch_seconds?: number
+          requirements?: Json
+          sort_order?: number
+          title: string
+          updated_at?: string
+          video_provider?: string
+          video_url: string
+        }
+        Update: {
+          active?: boolean
+          cooldown_hours?: number
+          created_at?: string
+          description?: string
+          id?: string
+          required_watch_seconds?: number
+          requirements?: Json
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          video_provider?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      reward_deliveries: {
+        Row: {
+          content: string
+          created_at: string
+          delivered_at: string
+          delivered_by: string | null
+          delivery_mode: string
+          expires_at: string | null
+          id: string
+          session_id: string
+          trial_stock_item_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_mode?: string
+          expires_at?: string | null
+          id?: string
+          session_id: string
+          trial_stock_item_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_mode?: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string
+          trial_stock_item_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_deliveries_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "reward_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_deliveries_trial_stock_item_id_fkey"
+            columns: ["trial_stock_item_id"]
+            isOneToOne: false
+            referencedRelation: "trial_stock_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_sessions: {
+        Row: {
+          campaign_id: string
+          campaign_product_id: string
+          completed_at: string | null
+          cooldown_until: string | null
+          created_at: string
+          delivered_at: string | null
+          eligible_delivery_at: string | null
+          heartbeat_count: number
+          id: string
+          last_heartbeat_at: string | null
+          last_video_position: number | null
+          product_id: string
+          product_plan_id: string | null
+          requested_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          visibility_failures: number
+          watched_seconds: number
+        }
+        Insert: {
+          campaign_id: string
+          campaign_product_id: string
+          completed_at?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eligible_delivery_at?: string | null
+          heartbeat_count?: number
+          id?: string
+          last_heartbeat_at?: string | null
+          last_video_position?: number | null
+          product_id: string
+          product_plan_id?: string | null
+          requested_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          visibility_failures?: number
+          watched_seconds?: number
+        }
+        Update: {
+          campaign_id?: string
+          campaign_product_id?: string
+          completed_at?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eligible_delivery_at?: string | null
+          heartbeat_count?: number
+          id?: string
+          last_heartbeat_at?: string | null
+          last_video_position?: number | null
+          product_id?: string
+          product_plan_id?: string | null
+          requested_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          visibility_failures?: number
+          watched_seconds?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_sessions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "reward_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_campaign_product_id_fkey"
+            columns: ["campaign_product_id"]
+            isOneToOne: false
+            referencedRelation: "reward_campaign_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trial_stock_items: {
+        Row: {
+          content: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          product_plan_id: string
+          used: boolean
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          product_plan_id: string
+          used?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          product_plan_id?: string
+          used?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_stock_items_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reseller_products: {
         Row: {
           id: string
