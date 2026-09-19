@@ -281,7 +281,7 @@ const MeusPedidos = () => {
               {search ? "Nenhum resultado encontrado" : statusFilter !== "all" ? "Nenhum pedido com esse status" : isContas ? "Nenhuma conta encontrada" : "Nenhum produto encontrado"}
             </p>
             <p className="mt-1.5 text-sm text-muted-foreground">
-              {search ? "Tente uma busca diferente." : statusFilter !== "all" ? "Tente outro filtro." : "Suas compras aparecerÃ£o aqui."}
+              {search ? "Tente uma busca diferente." : statusFilter !== "all" ? "Tente outro filtro." : "Suas compras aparecerão aqui."}
             </p>
             {!search && statusFilter === "all" && (
               <button
