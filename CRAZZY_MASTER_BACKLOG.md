@@ -30,7 +30,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 12. Refinar enquadramento do wallpaper por breakpoint.
 - [ ] 13. Refinar chuva no tema claro.
 - [ ] 14. Refinar chuva no tema escuro.
-- [ ] 15. Implementar cursor personalizado CRAZZY com fallback seguro.
+- [x] 15. Implementar cursor personalizado CRAZZY com fallback seguro para mouse/trackpad, preservando cursor de texto e touch.
 - [ ] 16. Fazer revisão visual completa da Home em light.
 - [ ] 17. Fazer revisão visual completa da Home em dark.
 - [ ] 18. Validar Home em 1920x1080.
@@ -74,13 +74,13 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 56. Validar hostname/allowlist de proxy externo.
 - [x] 57. Remover exposição de payload bruto de fornecedor em entrega/diagnóstico ao cliente.
 - [x] 58. Evitar persistir resposta sensível bruta de fornecedor em estoque/tickets.
-- [ ] 59. Separar estoque pago do estoque de trial/recompensa.
+- [x] 59. Separar estoque pago do estoque de trial/recompensa no schema versionado (`stock_items` x `trial_stock_items`).
 - [ ] 60. Revisar RLS/grants das tabelas expostas.
-- [ ] 61. Impedir sender_role/role de staff forjado pelo cliente.
-- [ ] 62. Restringir RPCs sensíveis de revendedor ao backend/service role.
+- [x] 61. Impedir sender_role/role de staff forjado pelo cliente no bootstrap e migrations de hardening.
+- [x] 62. Restringir RPCs sensíveis de revendedor ao backend/service role no schema versionado.
 - [ ] 63. Manter bootstrap Supabase limpo para instalação nova.
 - [x] 64. Refletir migrations novas no bootstrap antigo/base para o pacote atual.
-- [ ] 65. Atualizar tipos TypeScript sempre que schema mudar.
+- [x] 65. Atualizar tipos TypeScript para as mudanças atuais de checkout, destaques e Rewards.
 - [ ] 66. Atualizar Admin sempre que surgir dado configurável novo.
 - [ ] 67. Atualizar frontend de leitura para toda feature nova.
 - [ ] 68. Atualizar backend/Edge Function quando o browser não puder ser confiado.
@@ -122,17 +122,17 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
 - [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
 - [ ] 106. Só após HOME GATE: implementar trial grátis de 1 hora com regras reais.
-- [ ] 107. Implementar área de recompensas/missões.
-- [ ] 108. Permitir escolha de produto/recompensa conforme regra real.
-- [ ] 109. Implementar progresso de vídeo/missão sem confiar no cliente.
-- [ ] 110. Pausar progresso quando aba perde foco ou mídia é pausada, quando aplicável.
-- [ ] 111. Validar recompensa no backend.
-- [ ] 112. Implementar cooldown e histórico de rewards/trials.
-- [ ] 113. Manter estoque de trial separado.
+- [x] 107. Implementar área de recompensas/missões no frontend e Edge Function.
+- [x] 108. Permitir escolha de produto/recompensa conforme campanha e produto ativo.
+- [x] 109. Implementar progresso de vídeo/missão validado por heartbeat server-side com limites de avanço.
+- [x] 110. Pausar progresso quando aba perde foco, documento não está visível ou mídia não está tocando.
+- [x] 111. Validar campanha, produto, plano, sessão e conclusão da recompensa no backend.
+- [x] 112. Implementar cooldown e histórico por `reward_sessions`/`reward_deliveries`.
+- [x] 113. Manter estoque de trial separado em `trial_stock_items`, com claim e devolução em falha.
 - [ ] 114. Implementar fila de staff para aprovar/recusar quando necessária.
-- [ ] 115. Implementar entrega automática/manual conforme produto.
-- [ ] 116. Expor status claro da solicitação para usuário/staff.
-- [ ] 117. Preparar estrutura para campanhas/recompensas futuras.
+- [x] 115. Implementar entrega automática/manual conforme configuração da campanha.
+- [x] 116. Expor status da sessão/entrega ao usuário e fila de pendências ao staff.
+- [x] 117. Preparar estrutura persistente de campanhas, produtos, sessões, estoque de trial e entregas.
 - [ ] 118. Só depois da réplica base: implementar EDITOR VISUAL ADMIN.
 - [ ] 119. Editor visual: modo Editar Site apenas para admin.
 - [ ] 120. Editor visual: drag/drop respeitando zonas seguras.
@@ -157,4 +157,9 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 139. Alinhar limite de quantidade do carrinho ao máximo aceito pelo backend.
 - [x] 140. Preservar anexos/áudio de tickets com política de storage limitada ao dono do ticket.
 - [x] 141. Adicionar CI independente da Vercel para validar build e testes no GitHub.
-- [ ] 142. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 142. Versionar schema completo de Rewards/Trials em migration, bootstrap e tipos TypeScript.
+- [ ] 143. Aplicar no Supabase CRAZZY live as migrations pendentes de destaques, checkout, hardening e Rewards quando o projeto `teyqtfdeugldgtzkyybg` estiver acessível ao conector.
+- [ ] 144. Deployar/verificar no Supabase CRAZZY live as Edge Functions `purincash-payment` e `rewards` com os secrets necessários, sem expor seus valores.
+- [ ] 145. Validar Rewards live: catálogo, heartbeat, conclusão, cooldown, fila staff e entrega manual/automática.
+- [ ] 146. Executar build/CI final após o rate-limit da Vercel liberar e confirmar produção no HEAD final.
+- [ ] 147. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
