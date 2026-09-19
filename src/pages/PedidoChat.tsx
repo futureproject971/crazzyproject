@@ -467,14 +467,14 @@ const PedidoChat = () => {
               </button>
               {expandedSection === "riot" && (
                 <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground space-y-1.5 leading-relaxed">
-                  <p>1ï¸âƒ£ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a></p>
-                  <p>2ï¸âƒ£ Faça login com o email e senha acima</p>
-                  <p>3ï¸âƒ£ Vá em <strong className="text-foreground">Configurações da Conta</strong></p>
-                  <p>4ï¸âƒ£ Na seção <strong className="text-foreground">RIOT ID</strong>, clique em editar para alterar nome e tag</p>
-                  <p>5ï¸âƒ£ Na seção <strong className="text-foreground">SENHA</strong>, clique em "Alterar senha"</p>
+                  <p>1️⃣ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a></p>
+                  <p>2️⃣ Faça login com o email e senha acima</p>
+                  <p>3️⃣ Vá em <strong className="text-foreground">Configurações da Conta</strong></p>
+                  <p>4️⃣ Na seção <strong className="text-foreground">RIOT ID</strong>, clique em editar para alterar nome e tag</p>
+                  <p>5️⃣ Na seção <strong className="text-foreground">SENHA</strong>, clique em "Alterar senha"</p>
                   <p className="pl-4">• Coloque a senha atual (fornecida acima)</p>
                   <p className="pl-4">• Defina sua nova senha</p>
-                  <p className="mt-2 text-amber-400 font-medium">⚠️ï¸ Altere a senha IMEDIATAMENTE para garantir a segurança.</p>
+                  <p className="mt-2 text-amber-400 font-medium">⚠️ Altere a senha IMEDIATAMENTE para garantir a segurança.</p>
                 </div>
               )}
             </div>
@@ -491,13 +491,13 @@ const PedidoChat = () => {
               </button>
               {expandedSection === "email" && (
                 <div className="border-t border-border px-4 py-3 text-xs text-muted-foreground space-y-1.5 leading-relaxed">
-                  <p>1ï¸âƒ£ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a> e faça login</p>
-                  <p>2ï¸âƒ£ Vá em <strong className="text-foreground">Configurações da Conta</strong> {'>'} <strong className="text-foreground">EMAIL</strong></p>
-                  <p>3ï¸âƒ£ Clique em <strong className="text-foreground">"Alterar email"</strong></p>
-                  <p>4ï¸âƒ£ Um código será enviado para o email atual</p>
+                  <p>1️⃣ Acesse <a href="https://account.riotgames.com" target="_blank" rel="noopener noreferrer" className="text-success underline">account.riotgames.com</a> e faça login</p>
+                  <p>2️⃣ Vá em <strong className="text-foreground">Configurações da Conta</strong> {'>'} <strong className="text-foreground">EMAIL</strong></p>
+                  <p>3️⃣ Clique em <strong className="text-foreground">"Alterar email"</strong></p>
+                  <p>4️⃣ Um código será enviado para o email atual</p>
                   <p className="pl-4">• Se não tiver acesso, clique em "Não tenho acesso"</p>
-                  <p>5ï¸âƒ£ Digite o seu novo email pessoal</p>
-                  <p>6ï¸âƒ£ Confirme o código enviado ao seu novo email</p>
+                  <p>5️⃣ Digite o seu novo email pessoal</p>
+                  <p>6️⃣ Confirme o código enviado ao seu novo email</p>
                   <p className="mt-2 text-success font-medium">✅ Pronto! A conta estará 100% no seu nome.</p>
                 </div>
               )}
