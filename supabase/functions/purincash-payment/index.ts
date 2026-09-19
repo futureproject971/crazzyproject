@@ -207,7 +207,7 @@ async function claimAndFulfill(
       cart_snapshot: proof.cartSnapshot,
     });
 
-    await supabaseAdmin
+    const { data: completedPayment, error: completeError } = await supabaseAdmin
       .from("payments")
       .update({
         status: "COMPLETED",
@@ -216,7 +216,19 @@ async function claimAndFulfill(
         updated_at: new Date().toISOString(),
       })
       .eq("id", payment.id)
-      .eq("status", "FULFILLING");
+      .eq("status", "FULFILLING")
+      .select("id,status")
+      .maybeSingle();
+
+    if (completeError || !completedPayment) {
+      console.error("[purincash] payment completion write failed", payment.id, completeError);
+      await supabaseAdmin
+        .from("payments")
+        .update({ status: "ACTIVE", updated_at: new Date().toISOString() })
+        .eq("id", payment.id)
+        .eq("status", "FULFILLING");
+      return { ok: false, status: 500, error: "Entrega concluída, mas o pagamento precisa ser conciliado novamente" };
+    }
 
     return { ok: true, alreadyClaimed: false };
   } catch (error) {
