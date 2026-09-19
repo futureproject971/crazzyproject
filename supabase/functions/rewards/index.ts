@@ -302,6 +302,28 @@ serve(async (req) => {
     return json({ sessions: data || [] });
   }
 
+  if (action === "admin-reject" && req.method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const sessionId = String(body?.session_id || "");
+    const reason = String(body?.reason || "").trim().slice(0, 500);
+    if (!sessionId) return json({ error: "Sessão inválida" }, 400);
+
+    const { data: rejected, error } = await admin
+      .from("reward_sessions")
+      .update({
+        status: "rejected",
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", sessionId)
+      .in("status", ["completed", "requested"])
+      .select("id,status,user_id")
+      .maybeSingle();
+
+    if (error) return json({ error: error.message }, 500);
+    if (!rejected) return json({ error: "Sessão não está disponível para recusa" }, 409);
+    return json({ ok: true, session: rejected, reason: reason || null });
+  }
+
   if (action === "admin-deliver" && req.method === "POST") {
     const body = await req.json().catch(() => ({}));
     const sessionId = String(body?.session_id || "");
