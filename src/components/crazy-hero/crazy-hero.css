@@ -1853,7 +1853,7 @@
   }
 
   .crazy-category-cloud {
-    inset-bottom: calc(10.9rem + 238px + .9rem);
+    bottom: calc(10.9rem + 238px + .9rem);
   }
 
   .crazy-hero__center {
