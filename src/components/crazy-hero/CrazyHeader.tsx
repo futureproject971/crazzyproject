@@ -14,11 +14,11 @@ const links = [
   { label: "Contas", to: "/contas", icon: Grid2X2 },
   { label: "Status", to: "/status", icon: CircleHelp },
   { label: "Avaliações", to: "/avaliacoes", icon: Star },
+  { label: "Rewards", to: "/rewards", icon: Star },
   { label: "FAQ", to: "/faq", icon: CircleHelp },
 ];
 
 const mobileExtraLinks = [
-  { label: "Rewards", to: "/rewards", icon: Star },
   { label: "Meus Pedidos", to: "/meus-pedidos", icon: Grid2X2 },
 ];
 
