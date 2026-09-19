@@ -420,6 +420,20 @@ CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON public.order_tickets FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+-- Cliente só lê conteúdo de estoque que foi efetivamente entregue em um pedido próprio.
+CREATE POLICY "Users can view delivered own stock"
+ON public.stock_items
+FOR SELECT
+TO authenticated
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.order_tickets ot
+    WHERE ot.stock_item_id = stock_items.id
+      AND ot.user_id = auth.uid()
+  )
+);
+
 -- Avaliações só podem ser criadas/alteradas por quem possui pedido real do produto.
 CREATE POLICY "Users can insert purchased product reviews"
 ON public.product_reviews
