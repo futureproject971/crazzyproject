@@ -13,6 +13,7 @@ interface AppliedCoupon {
   code: string;
   discount_type: "percentage" | "fixed";
   discount_value: number;
+  allowedProductIds: string[];
 }
 
 const Carrinho = () => {
@@ -113,15 +114,26 @@ const Carrinho = () => {
       code: coupon.code,
       discount_type: coupon.discount_type as "percentage" | "fixed",
       discount_value: Number(coupon.discount_value),
+      allowedProductIds: (allowedProducts || []).map((p: any) => p.product_id),
     });
     toast({ title: "Cupom aplicado!", description: `${coupon.code} - ${coupon.discount_type === "percentage" ? `${coupon.discount_value}% de desconto` : `R$ ${Number(coupon.discount_value).toFixed(2)} de desconto`}` });
     setCouponLoading(false);
   };
 
+  const couponBase = appliedCoupon?.allowedProductIds.length
+    ? items.reduce(
+        (sum, item) =>
+          appliedCoupon.allowedProductIds.includes(item.productId)
+            ? sum + item.price * item.quantity
+            : sum,
+        0,
+      )
+    : totalPrice;
+
   const discountAmount = appliedCoupon
     ? appliedCoupon.discount_type === "percentage"
-      ? totalPrice * (appliedCoupon.discount_value / 100)
-      : Math.min(appliedCoupon.discount_value, totalPrice)
+      ? couponBase * (appliedCoupon.discount_value / 100)
+      : Math.min(appliedCoupon.discount_value, couponBase)
     : 0;
 
   const finalPrice = Math.max(0, totalPrice - discountAmount);
@@ -204,7 +216,8 @@ const Carrinho = () => {
                       <span className="w-8 text-center text-sm font-bold text-foreground">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.productId, item.planId, item.quantity + 1)}
-                        className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-success hover:text-success"
+                        disabled={item.quantity >= 20}
+                        className="flex h-7 w-7 items-center justify-center rounded-md border border-border text-muted-foreground transition-colors hover:border-success hover:text-success disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:border-border disabled:hover:text-muted-foreground"
                       >
                         <Plus className="h-3 w-3" />
                       </button>
@@ -257,7 +270,7 @@ const Carrinho = () => {
                   <div key={`${item.productId}-${item.planId}`} className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <p className="text-xs font-medium text-foreground truncate">{item.productName}</p>
-                      <p className="text-[10px] text-muted-foreground">{item.planName} Ã— {item.quantity}</p>
+                      <p className="text-[10px] text-muted-foreground">{item.planName} × {item.quantity}</p>
                     </div>
                     <span className="text-xs font-bold text-foreground shrink-0">
                       R$ {(item.price * item.quantity).toFixed(2)}

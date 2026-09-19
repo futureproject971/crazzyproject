@@ -153,4 +153,6 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 135. Confirmar produção pronta para venda sem componentes órfãos.
 - [x] 136. Registrar e restaurar a rota /carrinho usada pelo checkout e cancelamento do gateway.
 - [x] 137. Preservar o carrinho até confirmação real do pagamento e migrar o storage legado para CRAZZY PROJECT.
-- [ ] 138. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 138. Espelhar no carrinho o desconto real de cupons restritos por produto.
+- [x] 139. Alinhar limite de quantidade do carrinho ao máximo aceito pelo backend.
+- [ ] 140. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.

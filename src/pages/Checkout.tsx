@@ -303,7 +303,7 @@ const Checkout = () => {
               transition={{ delay: 0.5 }}
               className="text-sm text-muted-foreground mb-12 max-w-md mx-auto"
             >
-              Seus produtos já estão disponíveis. Obrigado por comprar na CRAZZY PROJECT!
+              Pagamento confirmado. Acompanhe a entrega em Meus Pedidos; itens sem estoque automático serão atendidos pelo suporte.
             </motion.p>
 
             <motion.div

@@ -87,7 +87,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       if (existing) {
         return prev.map((i) =>
           i.productId === item.productId && i.planId === item.planId
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, quantity: Math.min(20, i.quantity + 1) }
             : i
         );
       }
@@ -107,10 +107,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       removeItem(productId, planId);
       return;
     }
+    const safeQuantity = Math.min(20, Math.max(1, Math.trunc(quantity)));
     setItems((prev) =>
       prev.map((i) =>
         i.productId === productId && i.planId === planId
-          ? { ...i, quantity }
+          ? { ...i, quantity: safeQuantity }
           : i
       )
     );
