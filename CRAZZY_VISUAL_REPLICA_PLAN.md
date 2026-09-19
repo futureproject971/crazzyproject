@@ -295,3 +295,25 @@ Somente depois deste passe:
 - [ ] T15. Uma feature só recebe status "concluída" quando UI, banco, lógica, permissão e fluxo real estiverem conectados.
 
 Regra de ouro: **nada de componente órfão**. Se aparece na tela, precisa ter origem, comportamento, persistência e permissão coerentes.
+
+
+## U. ITEM FINAL OBRIGATÓRIO — REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA
+
+**Este bloco deve ser SEMPRE o último item da lista.**
+Se novas tarefas forem adicionadas, este bloco deve ser movido novamente para o final.
+
+- [ ] U1. Só gerar o relatório de auditoria depois que todos os itens anteriores estiverem concluídos.
+- [ ] U2. Registrar o HEAD/commit final do GitHub e a branch usada.
+- [ ] U3. Registrar todos os arquivos relevantes alterados.
+- [ ] U4. Registrar migrations SQL adicionadas/aplicadas e o estado do bootstrap.
+- [ ] U5. Registrar o projeto Supabase correto e quais migrations foram realmente aplicadas nele.
+- [ ] U6. Registrar estado da Vercel, URL de produção e último deploy validado.
+- [ ] U7. Registrar decisões arquiteturais importantes e regras de negócio.
+- [ ] U8. Registrar o que é dado real, o que é configurável e o que é apenas visual.
+- [ ] U9. Registrar integrações externas e segredos necessários SEM expor valores secretos.
+- [ ] U10. Registrar riscos, limitações e qualquer pendência remanescente.
+- [ ] U11. Registrar checklist de testes executados e respectivos resultados.
+- [ ] U12. Produzir instruções claras para outra IA continuar sem sobrescrever trabalho existente.
+- [ ] U13. Incluir a ordem de leitura obrigatória: AGENTS.md, plano de implementação, plano visual e status final.
+- [ ] U14. O relatório deve ser refeito do zero após a última alteração do projeto, nunca reutilizado desatualizado.
+- [ ] U15. Não considerar o projeto “handoff-ready” se o relatório não refletir exatamente o estado final do repositório e da infraestrutura.
