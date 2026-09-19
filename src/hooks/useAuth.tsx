@@ -40,12 +40,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const checkAdmin = async (userId: string) => {
     try {
-      // Use the SECURITY DEFINER function for tamper-proof admin check
-      const { data, error } = await supabase.rpc("has_role", {
-        _user_id: userId,
-        _role: "admin",
-      });
-      if (isMountedRef.current) setIsAdmin(error ? false : !!data);
+      // The role helper lives in a private schema and is intentionally not exposed
+      // as a browser RPC. Read only the signed-in user's own role through RLS instead.
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (isMountedRef.current) setIsAdmin(!error && data?.role === "admin");
     } catch {
       if (isMountedRef.current) setIsAdmin(false);
     }
