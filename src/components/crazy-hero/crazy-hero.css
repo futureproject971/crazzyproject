@@ -1016,7 +1016,9 @@
 
 @media (min-aspect-ratio: 21/10) and (min-width: 1281px) {
   .crazy-scene__wallpaper { object-fit: cover; object-position: center center; }
-  .crazy-hero__center { top: 42%; }
+  .crazy-hero__center { top: 31%; }
+  .crazy-category-cloud { max-width: 2200px; margin-inline: auto; }
+  .crazy-home-featured { max-width: 1700px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
