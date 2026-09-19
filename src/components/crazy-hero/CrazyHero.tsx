@@ -63,11 +63,11 @@ const buildCategoryFromGame = (game: GameRow, index: number): HomeCategoryConfig
 
 export function CrazyHero() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const [games, setGames] = useState<GameRow[]>([]);
   const [products, setProducts] = useState<HeroProduct[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSlug, setSelectedSlug] = useState<string | null>("valorant");
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -125,9 +125,8 @@ export function CrazyHero() {
       return;
     }
 
-    if (!loading && categories.length > 0 && !categories.some((category) => category.slug === selectedSlug)) {
-      const preferred = categories.find((category) => category.slug === "valorant") || categories[0];
-      setSelectedSlug(preferred?.slug || null);
+    if (!requestedSlug && selectedSlug !== null) {
+      setSelectedSlug(null);
     }
   }, [categories, loading, searchParams, selectedSlug]);
 
