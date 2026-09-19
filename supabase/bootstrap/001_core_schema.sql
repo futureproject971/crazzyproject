@@ -411,10 +411,13 @@ CREATE TABLE public.order_tickets (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.order_tickets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view own tickets" ON public.order_tickets FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert own tickets" ON public.order_tickets FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own tickets" ON public.order_tickets FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Users can view own tickets" ON public.order_tickets FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL
+  TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON public.order_tickets FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Avaliações só podem ser criadas/alteradas por quem possui pedido real do produto.
