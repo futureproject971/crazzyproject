@@ -1582,6 +1582,17 @@
 .crazy-featured__dots button { width: 8px; height: 8px; border: 0; border-radius: 999px; background: rgba(140,160,200,.45); cursor: pointer; transition: .3s; padding: 0; }
 .crazy-featured__dots button.is-active { width: 22px; background: #0b5cff; }
 
+.crazy-featured__card:focus-visible,
+.crazy-featured__arrow:focus-visible,
+.crazy-featured__dots button:focus-visible {
+  outline: 3px solid rgba(121, 203, 255, .96);
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 2px rgba(4, 27, 67, .92),
+    0 0 22px rgba(35, 136, 255, .7);
+}
+
+
 
 /* ========================= PRODUCT DOCK CAROUSEL ========================= */
 .crazy-product-dock__carousel {
