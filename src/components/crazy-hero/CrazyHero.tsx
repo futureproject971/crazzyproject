@@ -136,20 +136,25 @@ export function CrazyHero() {
     navigate(category.action.destination);
   };
 
-  const featuredItems = useMemo<FeaturedCarouselItem[]>(
-    () =>
-      products
-        .filter((product) => product.is_new === true)
-        .sort((a, b) => a.sort_order - b.sort_order)
-        .map((product) => ({
-          id: product.id,
-          title: product.name,
-          subtitle: product.description || "Confira os planos disponíveis para este produto.",
-          image: product.image_url,
-          badge: "NOVO",
-        })),
-    [products],
-  );
+  const featuredItems = useMemo<FeaturedCarouselItem[]>(() => {
+    const schemaHasNewFlag = products.some((product) =>
+      Object.prototype.hasOwnProperty.call(product, "is_new"),
+    );
+
+    const source = schemaHasNewFlag
+      ? products.filter((product) => product.is_new === true)
+      : products.slice(0, 5);
+
+    return source
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((product) => ({
+        id: product.id,
+        title: product.name,
+        subtitle: product.description || "Confira os planos disponíveis para este produto.",
+        image: product.image_url,
+        badge: schemaHasNewFlag ? "NOVO" : "DESTAQUE",
+      }));
+  }, [products]);
 
   return (
     <main className="crazy-home">
