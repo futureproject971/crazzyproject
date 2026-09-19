@@ -93,9 +93,14 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
           const visible = distance <= 2;
           const scale = offset === 0 ? 1 : distance === 1 ? 0.78 : 0.61;
           const depth = offset === 0 ? 80 : distance === 1 ? -40 : -160;
-          const xStep = distance === 1 ? 54 : 82;
+          const step = distance === 1 ? "var(--coverflow-step-1)" : "var(--coverflow-step-2)";
+          const x = offset === 0
+            ? "-50%"
+            : offset > 0
+              ? `calc(-50% + ${step})`
+              : `calc(-50% - ${step})`;
           const style: CSSProperties = {
-            transform: `translateX(calc(-50% + ${Math.sign(offset) * xStep}%)) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -30 : 30}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.4 : -1.4}deg)`,
+            transform: `translateX(${x}) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -30 : 30}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.4 : -1.4}deg)`,
             opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.95 : 0.72) : 0,
             zIndex: offset === 0 ? 30 : distance === 1 ? 20 : 10,
             pointerEvents: visible ? "auto" : "none",
