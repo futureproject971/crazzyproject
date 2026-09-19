@@ -43,8 +43,10 @@ const Checkout = () => {
   const couponId = searchParams.get("coupon_id");
   // Price is calculated from cart items — never trust URL params
   const cartTotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const discountAmount = parseFloat(searchParams.get("discount") || "0");
-  const cartFinalPrice = Math.max(0, cartTotal - discountAmount);
+  // Never accept a display discount from the URL. The authoritative discount is
+  // returned by the checkout Edge Function after server-side coupon validation.
+  const discountAmount = 0;
+  const cartFinalPrice = cartTotal;
   // Store the display price so it survives cart clearing
   const [displayPrice, setDisplayPrice] = useState<{ total: number; final: number; discount: number } | null>(null);
   const totalPrice = displayPrice?.total ?? cartTotal;
