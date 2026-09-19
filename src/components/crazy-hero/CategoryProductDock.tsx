@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronRight, Headphones, Home, Package, RefreshCcw, ShieldCheck, ShoppingCart, X } from "lucide-react";
+import { ChevronRight, Headphones, Home, Package, RefreshCcw, ShieldCheck, X } from "lucide-react";
+import { FeaturedCarousel, type FeaturedCarouselItem } from "./FeaturedCarousel";
 
 export interface HeroProductPlan {
   id: string;
@@ -30,20 +31,6 @@ interface CategoryProductDockProps {
   onOpenAll: () => void;
 }
 
-const currency = new Intl.NumberFormat("pt-BR", {
-  style: "currency",
-  currency: "BRL",
-  minimumFractionDigits: 2,
-});
-
-const lowestPrice = (product: HeroProduct) => {
-  const plans = (product.product_plans || []).filter((plan) => plan.active);
-  if (!plans.length) return null;
-  return Math.min(...plans.map((plan) => Number(plan.price)));
-};
-
-const CARD_LABELS = ["BÁSICO", "POPULAR", "MAIS COMPLETO"];
-
 export function CategoryProductDock({
   categoryName,
   categoryImage,
@@ -53,6 +40,14 @@ export function CategoryProductDock({
   onOpenProduct,
   onOpenAll,
 }: CategoryProductDockProps) {
+  const carouselItems: FeaturedCarouselItem[] = products.map((product) => ({
+    id: product.id,
+    title: product.name,
+    subtitle: product.description || "Confira os planos disponíveis para este produto.",
+    image: product.image_url,
+    badge: product.status_label || null,
+  }));
+
   return (
     <AnimatePresence>
       {categoryName ? (
@@ -97,46 +92,12 @@ export function CategoryProductDock({
             </div>
           </div>
 
-          <div className="crazy-product-dock__products">
-            {loading ? (
-              <div className="crazy-product-dock__empty">Carregando produtos...</div>
-            ) : products.length === 0 ? (
-              <div className="crazy-product-dock__empty">Nenhum produto ativo nesta categoria no momento.</div>
-            ) : (
-              products.slice(0, 3).map((product, index) => {
-                const price = lowestPrice(product);
-                return (
-                  <motion.article
-                    key={product.id}
-                    className={`crazy-product-card ${index === 1 ? "crazy-product-card--popular" : ""}`}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.26, delay: index * 0.04 }}
-                  >
-                    <div className="crazy-product-card__topline">
-                      <span className="crazy-product-card__tier">{CARD_LABELS[index] || "SOFTWARE"}</span>
-                      <ChevronDown aria-hidden="true" />
-                    </div>
-                    <div className="crazy-product-card__body">
-                      <h3>{product.name}</h3>
-                      <p>{product.description || "Confira os planos disponíveis para este produto."}</p>
-                    </div>
-                    <div className="crazy-product-card__price">
-                      <strong>{price === null ? "Consultar" : currency.format(price)}</strong>
-                      {price !== null ? <small>/ plano</small> : null}
-                    </div>
-                    <div className="crazy-product-card__actions">
-                      <button type="button" className="crazy-product-card__details" onClick={() => onOpenProduct(product.id)}>
-                        Ver detalhes
-                      </button>
-                      <button type="button" className="crazy-product-card__buy" onClick={() => onOpenProduct(product.id)}>
-                        <ShoppingCart aria-hidden="true" /> Comprar
-                      </button>
-                    </div>
-                  </motion.article>
-                );
-              })
-            )}
+          <div className="crazy-product-dock__carousel">
+            <FeaturedCarousel
+              items={carouselItems}
+              loading={loading}
+              onOpen={onOpenProduct}
+            />
           </div>
 
           <button type="button" className="crazy-product-dock__all" onClick={onOpenAll}>

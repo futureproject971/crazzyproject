@@ -12,7 +12,6 @@ import {
 import { CategoryCloud } from "./CategoryCloud";
 import { CategoryProductDock, type HeroProduct } from "./CategoryProductDock";
 import { CrazyLogo } from "./CrazyLogo";
-import { FeaturedCarousel } from "./FeaturedCarousel";
 import { FuturisticBackground } from "./FuturisticBackground";
 import { FuturisticPlatform } from "./FuturisticPlatform";
 import { HudDecoration } from "./HudDecoration";
@@ -152,7 +151,7 @@ export function CrazyHero() {
 
         <div className="crazy-hero__center">
           <h1 id="crazy-home-title" className="sr-only">Crazzy Project</h1>
-          <FeaturedCarousel />
+          <CrazyLogo />
           {loading ? (
             <motion.div
               className="crazy-hero__loading"
