@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gift, Loader2, PackagePlus, Plus, RefreshCw, Save, Send, Settings2, ToggleLeft, ToggleRight } from "lucide-react";
+import { Ban, Gift, Loader2, PackagePlus, Plus, RefreshCw, Save, Send, Settings2, ToggleLeft, ToggleRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -207,6 +207,19 @@ export default function RewardsTab() {
     }
   };
 
+  const rejectSession = async (id: string) => {
+    setBusy(`reject-${id}`);
+    try {
+      await adminRewards("admin-reject", { method: "POST", body: JSON.stringify({ session_id: id }) });
+      toast({ title: "Solicitação recusada" });
+      await load();
+    } catch (e: any) {
+      toast({ title: "Não foi possível recusar", description: e.message, variant: "destructive" });
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const deliver = async (id: string) => {
     setBusy(id);
     try {
@@ -318,7 +331,10 @@ export default function RewardsTab() {
                 </div>
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">
                   <input value={manual[s.id] || ""} onChange={(e) => setManual((m) => ({ ...m, [s.id]: e.target.value }))} placeholder="Conteúdo manual (opcional; vazio tenta estoque de trial)" className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm" />
-                  <button onClick={() => deliver(s.id)} disabled={busy === s.id} className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50">
+                  <button onClick={() => rejectSession(s.id)} disabled={busy !== null} className="flex items-center justify-center gap-2 rounded-lg border border-destructive/40 px-4 py-2 text-sm font-bold text-destructive disabled:opacity-50">
+                    {busy === `reject-${s.id}` ? <Loader2 className="h-4 w-4 animate-spin" /> : <Ban className="h-4 w-4" />} Recusar
+                  </button>
+                  <button onClick={() => deliver(s.id)} disabled={busy !== null} className="flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50">
                     {busy === s.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Entregar
                   </button>
                 </div>
