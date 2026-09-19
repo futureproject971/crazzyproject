@@ -24,6 +24,7 @@ import MeusPedidos from "./pages/MeusPedidos";
 import PedidoChat from "./pages/PedidoChat";
 import Checkout from "./pages/Checkout";
 import Rewards from "./pages/Rewards";
+import Faq from "./pages/Faq";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({});
@@ -57,6 +58,7 @@ const App = () => (
               <Route path="/pedido/:id" element={<PedidoChat />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/rewards" element={<Rewards />} />
+              <Route path="/faq" element={<Faq />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
