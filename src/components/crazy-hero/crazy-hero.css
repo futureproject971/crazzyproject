@@ -281,20 +281,20 @@
 .crazy-category-slot--left-top,
 .crazy-category-slot--left-middle,
 .crazy-category-slot--left-bottom {
-  --slot-yaw: 6deg;
-  --slot-roll: -1.2deg;
+  --slot-yaw: 10deg;
+  --slot-roll: -2.2deg;
 }
 
 .crazy-category-slot--right-top,
 .crazy-category-slot--right-middle,
 .crazy-category-slot--right-bottom {
-  --slot-yaw: -6deg;
-  --slot-roll: 1.2deg;
+  --slot-yaw: -10deg;
+  --slot-roll: 2.2deg;
 }
 
 .crazy-category-slot--bottom-right {
-  --slot-yaw: -2.5deg;
-  --slot-roll: .45deg;
+  --slot-yaw: -5deg;
+  --slot-roll: 1deg;
 }
 
 .crazy-category-slot:hover {
@@ -312,9 +312,9 @@
   transform:
     translate3d(var(--slot-x), calc(var(--slot-y) - 4px), 0)
     perspective(900px)
-    rotateY(calc(var(--slot-yaw) * .55))
-    rotateZ(calc(var(--slot-roll) * .45))
-    scale(1.065);
+    rotateY(calc(var(--slot-yaw) * .42))
+    rotateZ(calc(var(--slot-roll) * .35))
+    scale(1.08);
   filter: drop-shadow(0 16px 22px rgba(0, 76, 255, .25));
 }
 
@@ -412,18 +412,22 @@
   text-transform: uppercase;
 }
 
-.crazy-category-card__selected {
+.crazy-category-slot__selected {
   position: absolute;
-  top: -1px;
-  right: 9px;
-  padding: .16rem .42rem;
-  border-radius: 0 0 6px 6px;
-  background: rgba(255,255,255,.94);
+  z-index: 30;
+  top: -11px;
+  right: 8px;
+  padding: .2rem .48rem;
+  border: 1px solid rgba(255,255,255,.92);
+  border-radius: 6px 6px 2px 2px;
+  background: rgba(255,255,255,.97);
   color: #003adc;
+  box-shadow: 0 5px 16px rgba(0,79,255,.24);
   font-size: .45rem;
   font-weight: 900;
   letter-spacing: .06em;
   text-transform: uppercase;
+  pointer-events: none;
 }
 
 .crazy-category-card__shine {
