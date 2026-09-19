@@ -6,9 +6,13 @@ import {
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { getYouTubeId, getYouTubeThumbnail, detectMediaType } from "@/lib/videoUtils";
+import { DEFAULT_HOME_CATEGORIES, normalizeSlug } from "@/config/homeCategories";
 
 interface Game {
-  id: string; name: string;
+  id: string;
+  name: string;
+  slug: string | null;
+  active: boolean;
 }
 
 interface ProductPlan {
@@ -60,6 +64,13 @@ const defaultFeatures: FeatureItem[] = [
   { label: "HVCI (Core Isolation)", value: "ON / OFF supported", sort_order: 3 },
 ];
 
+const HOME_CATEGORY_ORDER = new Map(
+  DEFAULT_HOME_CATEGORIES.map((category, index) => [category.slug, index]),
+);
+
+const gameSlug = (game: Game) => normalizeSlug(game.slug || game.name);
+const isHomeCategory = (game: Game) => HOME_CATEGORY_ORDER.has(gameSlug(game));
+
 const ITEMS_PER_PAGE = 10;
 
 const ProductsTab = () => {
@@ -70,6 +81,13 @@ const ProductsTab = () => {
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+
+  const homeCategoryGames = games
+    .filter(isHomeCategory)
+    .sort((a, b) => (HOME_CATEGORY_ORDER.get(gameSlug(a)) ?? 999) - (HOME_CATEGORY_ORDER.get(gameSlug(b)) ?? 999));
+  const extraGames = games
+    .filter((game) => !isHomeCategory(game))
+    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 
   // Form state
   const [formName, setFormName] = useState("");
@@ -101,7 +119,7 @@ const ProductsTab = () => {
 
   const fetchData = async () => {
     const [gamesRes, productsRes] = await Promise.all([
-      supabase.from("games").select("id, name").order("sort_order"),
+      supabase.from("games").select("id, name, slug, active").order("sort_order"),
       supabase.from("products").select("*, product_plans(*)").order("sort_order"),
     ]);
     if (gamesRes.data) setGames(gamesRes.data);
@@ -364,14 +382,30 @@ const ProductsTab = () => {
         <div className="mt-6 rounded-lg border border-border bg-card p-6">
           <h3 className="text-lg font-bold text-foreground">{editing ? "Editar Produto" : "Novo Produto"}</h3>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {/* Game select */}
+            {/* Catalog category select */}
             <div>
-              <label className="text-xs font-medium text-muted-foreground">Jogo</label>
+              <label className="text-xs font-medium text-muted-foreground">Categoria do catálogo</label>
               <select value={formGameId} onChange={(e) => setFormGameId(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-border bg-secondary/50 px-4 py-2.5 text-sm text-foreground outline-none focus:border-success/50">
-                <option value="">Selecione...</option>
-                {games.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                <option value="">Selecione uma categoria...</option>
+                {homeCategoryGames.length > 0 ? (
+                  <optgroup label="Categorias oficiais da Home">
+                    {homeCategoryGames.map((game) => (
+                      <option key={game.id} value={game.id}>{game.name}</option>
+                    ))}
+                  </optgroup>
+                ) : null}
+                {extraGames.length > 0 ? (
+                  <optgroup label="Outras categorias">
+                    {extraGames.map((game) => (
+                      <option key={game.id} value={game.id}>{game.name}</option>
+                    ))}
+                  </optgroup>
+                ) : null}
               </select>
+              <p className="mt-1 text-[10px] text-muted-foreground/70">
+                As categorias oficiais aparecem na Home e levam o cliente aos produtos correspondentes.
+              </p>
             </div>
 
             {/* Name */}
@@ -668,8 +702,17 @@ const ProductsTab = () => {
         <div className="mt-4">
           <select value={filterGameId} onChange={(e) => setFilterGameId(e.target.value)}
             className="rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50">
-            <option value="all">Todos os jogos</option>
-            {games.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+            <option value="all">Todas as categorias</option>
+            {homeCategoryGames.length > 0 ? (
+              <optgroup label="Categorias oficiais da Home">
+                {homeCategoryGames.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
+              </optgroup>
+            ) : null}
+            {extraGames.length > 0 ? (
+              <optgroup label="Outras categorias">
+                {extraGames.map((game) => <option key={game.id} value={game.id}>{game.name}</option>)}
+              </optgroup>
+            ) : null}
           </select>
         </div>
       )}
