@@ -164,6 +164,7 @@ CREATE TABLE public.products (
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can view products" ON public.products FOR SELECT USING (true);
 CREATE POLICY "Admins can manage products" ON public.products FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+CREATE INDEX products_active_is_new_sort_idx ON public.products (active, is_new, sort_order);
 CREATE TRIGGER update_products_updated_at BEFORE UPDATE ON public.products FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
 -- ============================================
