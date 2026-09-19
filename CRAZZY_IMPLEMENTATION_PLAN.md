@@ -10,7 +10,7 @@ Regra de execução: fazer uma etapa por vez. Antes de cada etapa, ler o HEAD at
 - [x] 4. Integrar clique/seleção das categorias da Home com os produtos da categoria.
 - [x] 5. Restaurar a logo CRAZZY PROJECT ao centro e mover o coverflow para o dock de produtos.
 - [x] 6. Fazer o carrossel rodar lentamente sozinho e pausar/retomar de forma correta após interação manual.
-- [ ] 7. Reproduzir a inclinação e o destaque das categorias conforme a referência.
+- [x] 7. Reproduzir a inclinação e o destaque das categorias conforme a referência.
 - [ ] 8. Eliminar sobreposições entre header, categorias, hero, carrossel, dock, trust bar e footer em desktop/ultrawide/tablet/mobile.
 - [ ] 9. Corrigir wallpaper e chuva da Home no tema claro sem quebrar a troca real de wallpaper no tema escuro.
 - [ ] 10. Implementar suporte a cursor personalizado do site com fallback seguro.
