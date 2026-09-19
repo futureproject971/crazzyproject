@@ -11,6 +11,7 @@ Apply in order:
 2. `002_security_hardening.sql` — locks payments, stock, admin helpers and paid delivery.
 3. `003_rewards.sql` — CRAZZY Rewards / one-hour trial subsystem.
 4. `004_access_grants.sql` — explicit Data API grants for a fresh project.
+5. `005_performance_indexes.sql` — indexes foreign keys used by joins, tickets, checkout, catalog and Rewards.
 
 After applying, create the first admin through Supabase Auth, add its UUID to
 `public.user_roles` with role `admin`, set Edge Function secrets, deploy functions, then
