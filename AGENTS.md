@@ -178,3 +178,15 @@ Exemplos de erro:
 - migration adicionada sem atualizar o bootstrap
 
 Antes de concluir, confirmar que UI -> lógica -> banco/backend -> leitura novamente formam um ciclo funcional.
+
+
+## 12. AUDITORIA FINAL É SEMPRE O ÚLTIMO ITEM
+
+Toda lista de tarefas do CRAZZY PROJECT deve terminar com um item obrigatório de **Registro de Auditoria / Handoff para outra IA**.
+
+Regras:
+- qualquer tarefa nova entra ANTES da auditoria;
+- a auditoria continua sendo sempre o último item;
+- ela só pode ser produzida depois que todo o resto estiver concluído;
+- após qualquer alteração posterior, a auditoria anterior fica inválida e deve ser refeita;
+- o handoff final deve permitir que outra IA continue o projeto sem inferir estado, branch, schema, deploy, migrations ou decisões.
