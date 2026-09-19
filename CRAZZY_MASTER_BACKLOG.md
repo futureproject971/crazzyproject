@@ -71,14 +71,14 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 53. Corrigir/impedir pagamentos presos em FULFILLING no código.
 - [x] 54. Garantir payments.updated_at e trigger no bootstrap/migration.
 - [x] 55. Manter compra externa fail-closed no backend versionado.
-- [ ] 56. Validar hostname/allowlist de proxy externo.
+- [x] 56. Validar hostname/allowlist de proxy externo: `image-proxy` exige HTTPS e restringe a `lzt.market`/subdomínios; versão atual sincronizada no Supabase.
 - [x] 57. Remover exposição de payload bruto de fornecedor em entrega/diagnóstico ao cliente.
 - [x] 58. Evitar persistir resposta sensível bruta de fornecedor em estoque/tickets.
 - [x] 59. Separar estoque pago do estoque de trial/recompensa no schema versionado (`stock_items` x `trial_stock_items`).
-- [ ] 60. Revisar RLS/grants das tabelas expostas.
+- [x] 60. Revisar RLS/grants das tabelas expostas: allowlist de Data API aplicada no banco novo e Security Advisor permanece com 0 alertas.
 - [x] 61. Impedir sender_role/role de staff forjado pelo cliente no bootstrap e migrations de hardening.
 - [x] 62. Restringir RPCs sensíveis de revendedor ao backend/service role no schema versionado.
-- [ ] 63. Manter bootstrap Supabase limpo para instalação nova.
+- [x] 63. Manter bootstrap Supabase limpo para instalação nova: core/hardening/rewards/grants consolidados e setup completo executado com sucesso no banco novo.
 - [x] 64. Refletir migrations novas no bootstrap antigo/base para o pacote atual.
 - [x] 65. Atualizar tipos TypeScript para as mudanças atuais de checkout, destaques e Rewards.
 - [ ] 66. Atualizar Admin sempre que surgir dado configurável novo.
@@ -116,8 +116,8 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 98. Ajustar glow/glass/shadows para dark.
 - [ ] 99. Otimizar imagens críticas e evitar carregar resolução máxima desnecessária.
 - [ ] 100. Corrigir warnings de console relacionados à Home.
-- [ ] 101. Validar navegação por teclado e focus-visible.
-- [ ] 102. Aplicar migration products.is_new no Supabase CRAZZY correto (nnmglkdpmffmaiuwbcct) quando a conexão estiver disponível.
+- [x] 101. Validar/reforçar navegação por teclado e focus-visible: coverflow suporta setas/Home/End, anuncia item ativo, marca dot atual e categorias/cards preservam foco visível.
+- [x] 102. Confirmar `products.is_new` no Supabase CRAZZY `nnmglkdpmffmaiuwbcct`; coluna verificada no banco novo após bootstrap.
 - [ ] 103. Validar criação/edição real de produto NOVO no Admin contra o banco CRAZZY.
 - [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
 - [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
@@ -159,7 +159,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 141. Adicionar CI independente da Vercel para validar build e testes no GitHub.
 - [x] 142. Versionar schema completo de Rewards/Trials em migration, bootstrap e tipos TypeScript.
 - [x] 143. Criar e inicializar o novo Supabase CRAZZY `nnmglkdpmffmaiuwbcct`, aplicar `CRAZZY_SETUP_COMPLETO.sql` e confirmar tabelas/migration essenciais no banco vazio.
-- [x] 144. Publicar no novo Supabase as 7 Edge Functions atuais: `admin-config-status`, `admin-users`, `generate-game-image`, `lzt-market`, `rewards`, `track-login` e `purincash-payment` (deploy confirmado; integrações externas ainda dependem de secrets).
+- [x] 144. Publicar/sincronizar no novo Supabase as 8 Edge Functions atuais: `admin-config-status`, `admin-users`, `generate-game-image`, `lzt-market`, `rewards`, `track-login`, `coupon-validate` e `purincash-payment`. Sete foram republicadas do HEAD atual; `purincash-payment` foi verificada byte a byte idêntica ao GitHub live.
 - [x] 145. Rodar advisors de segurança no novo Supabase e zerar os alertas de segurança, movendo `has_role` para schema privado e revogando RPC pública dos helpers internos.
 - [ ] 146. Configurar no Supabase os secrets externos necessários: `PURINCASH_API_KEY`, `PURINCASH_WEBHOOK_SECRET`, `CHECKOUT_SIGNING_SECRET`, `PUBLIC_SITE_URL`/`SITE_URL`, `LZT_MARKET_TOKEN`, `LOVABLE_API_KEY` e toggles habilitados conscientemente (`ENABLE_CARD_CHECKOUT`, `ENABLE_LZT_AUTO_BUY`).
 - [x] 147. Completar Admin Rewards com criação/ativação de campanhas, vínculo produto/plano e abastecimento de estoque exclusivo de trial.
@@ -175,4 +175,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 157. Executar CI/build final no HEAD de produção e confirmar Vercel verde após o rate-limit liberar.
 - [x] 158. Validar configuração no build Vercel: rejeitar URL/ref divergentes, chaves privadas em VITE_* e JWT anon de outro projeto; usar a precedência real de env do Vite. Adicionados testes de regressão.
 - [ ] 159. Abastecer catálogo real e planos, e confirmar identidade do primeiro Admin: banco novo consultado com zero usuários, admins, produtos e planos. Não importar dados do Supabase antigo sem autorização específica.
-- [ ] 160. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 160. Remover do checkout o desconto visual legado controlável por parâmetro de URL; desconto exibido passa a vir somente da resposta autoritativa do backend.
+- [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
+- [x] 162. Confirmar GitHub CI verde no HEAD `6785e95` após os ajustes de checkout e acessibilidade da Home.
+- [ ] 163. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
