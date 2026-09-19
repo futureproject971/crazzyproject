@@ -1249,12 +1249,16 @@ commit;
 -- ============================================================
 
 -- CRAZZY PROJECT - explicit Data API grants for fresh Supabase projects.
--- RLS remains the authorization layer. These grants only expose the operations that
--- each browser role may attempt; the policies decide which rows are actually allowed.
+-- RLS remains the row-authorization layer, but grants are now an allowlist:
+-- browser roles lose all automatic table privileges first, then receive only what the app needs.
 
 begin;
 
 grant usage on schema public to anon, authenticated, service_role;
+
+-- Remove Supabase/Postgres automatic table exposure for browser roles.
+revoke all privileges on all tables in schema public from anon, authenticated;
+revoke all privileges on all sequences in schema public from anon, authenticated;
 
 -- Public storefront catalog.
 grant select on table
@@ -1266,6 +1270,9 @@ grant select on table
   public.product_reviews,
   public.payment_settings
   to anon;
+
+-- Public profile surface is intentionally column-limited.
+grant select (user_id, username, avatar_url) on public.profiles to anon, authenticated;
 
 -- Authenticated storefront/customer reads.
 grant select on table
@@ -1297,6 +1304,7 @@ grant select on table
 grant insert, update, delete on public.product_reviews to authenticated;
 grant insert on public.user_login_ips to authenticated;
 grant insert on public.ticket_messages to authenticated;
+grant update (username, avatar_url) on public.profiles to authenticated;
 
 -- Admin panel mutations. Normal customers still fail RLS because every write policy on
 -- these tables is admin-only. Payment facts and coupon_usage are deliberately excluded.
@@ -1321,11 +1329,10 @@ grant insert, update, delete on table
   public.user_roles
   to authenticated;
 
--- Only the Discord invite row is visible publicly, enforced by the RLS policy created in
--- the hardening step. Secrets never live in this table.
+-- Only the Discord invite row is visible publicly, enforced by RLS.
 grant select on public.system_credentials to anon;
 
--- Rewards: customers can read catalog + own status; admin policies permit management.
+-- Rewards: public catalog + signed-in own state; admin writes are RLS-gated.
 grant select on public.reward_campaigns, public.reward_campaign_products to anon;
 grant select, insert, update, delete on table
   public.reward_campaigns,
