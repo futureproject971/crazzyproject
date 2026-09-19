@@ -105,7 +105,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
             >
               <div
                 className="crazy-featured__media"
-                style={item.image ? { backgroundImage: `url(${item.image})` } : undefined}
+                style={item.image && visible ? { backgroundImage: `url(${item.image})` } : undefined}
               />
               <div className="crazy-featured__shade" />
               {offset === 0 ? (
