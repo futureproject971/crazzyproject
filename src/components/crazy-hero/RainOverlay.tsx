@@ -1,15 +1,35 @@
 import { useEffect, useRef } from "react";
 import { useReducedMotion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 /**
- * Pixel-rain layer for the hero background.
+ * Pixel-rain layer for the whole site background.
  * Raindrops fall over the wallpaper; the mouse acts like an umbrella,
- * carving a dry dome that follows the cursor (drops are deflected around it).
- * Purely decorative: pointer-events none, sits inside the .crazy-scene layer.
+ * carving a dry dome that follows the cursor.
+ * The rain color reacts to the theme: soft blue in dark mode, and a bright
+ * NEON blue in light mode (otherwise it is invisible over the light wallpaper).
+ * Purely decorative: pointer-events none, sits in the fixed .crazy-scene layer.
  */
 export function RainOverlay() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduced = useReducedMotion();
+  const { resolvedTheme } = useTheme();
+
+  // Style is read inside the animation loop via a ref, so switching theme
+  // recolors the rain live without restarting the animation.
+  const styleRef = useRef({
+    line: "rgba(150,190,255,0.34)",
+    dome: "rgba(150,190,255,0.12)",
+    width: 1.2,
+    glow: 0,
+  });
+
+  useEffect(() => {
+    const dark = resolvedTheme === "dark";
+    styleRef.current = dark
+      ? { line: "rgba(150,190,255,0.34)", dome: "rgba(150,190,255,0.12)", width: 1.2, glow: 0 }
+      : { line: "rgba(0,140,255,0.75)", dome: "rgba(0,140,255,0.30)", width: 1.5, glow: 6 };
+  }, [resolvedTheme]);
 
   useEffect(() => {
     if (reduced) return;
@@ -47,10 +67,13 @@ export function RainOverlay() {
 
     let raf = 0;
     const tick = () => {
+      const style = styleRef.current;
       ctx.clearRect(0, 0, width, height);
-      ctx.strokeStyle = "rgba(150,190,255,0.34)";
-      ctx.lineWidth = 1.2;
+      ctx.strokeStyle = style.line;
+      ctx.lineWidth = style.width;
       ctx.lineCap = "round";
+      ctx.shadowBlur = style.glow;
+      ctx.shadowColor = style.glow ? style.line : "transparent";
 
       for (const d of drops) {
         d.y += d.speed;
@@ -60,7 +83,6 @@ export function RainOverlay() {
           const dx = d.x - mouse.x;
           const dy = d.y - mouse.y;
           if (dx * dx + dy * dy < UMBRELLA * UMBRELLA) {
-            // hit the umbrella: slide off and respawn at the top
             d.y = -24;
             d.x = Math.random() * width;
             continue;
@@ -79,10 +101,9 @@ export function RainOverlay() {
       }
 
       if (mouse.active) {
-        // faint umbrella dome + splash ring
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, UMBRELLA, Math.PI, 0);
-        ctx.strokeStyle = "rgba(150,190,255,0.12)";
+        ctx.strokeStyle = style.dome;
         ctx.lineWidth = 2;
         ctx.stroke();
       }
