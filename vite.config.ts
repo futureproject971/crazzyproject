@@ -4,12 +4,23 @@ import { validateSupabaseTarget } from "./scripts/supabase-target.mjs";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { CRAZZY_SUPABASE_PUBLIC } from "./src/config/supabasePublic";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   if (command === "build" && process.env.VERCEL === "1") {
     const config = fs.readFileSync("supabase/config.toml", "utf8");
-    validateSupabaseTarget(loadEnv(mode, process.cwd(), "VITE_"), config.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1]);
+    const env = loadEnv(mode, process.cwd(), "VITE_");
+    validateSupabaseTarget(
+      {
+        ...env,
+        VITE_SUPABASE_PROJECT_ID: env.VITE_SUPABASE_PROJECT_ID || CRAZZY_SUPABASE_PUBLIC.projectId,
+        VITE_SUPABASE_URL: env.VITE_SUPABASE_URL || CRAZZY_SUPABASE_PUBLIC.url,
+        VITE_SUPABASE_PUBLISHABLE_KEY:
+          env.VITE_SUPABASE_PUBLISHABLE_KEY || CRAZZY_SUPABASE_PUBLIC.publishableKey,
+      },
+      config.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1],
+    );
   }
   return ({
   server: {
