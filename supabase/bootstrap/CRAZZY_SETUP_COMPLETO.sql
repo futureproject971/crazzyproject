@@ -649,25 +649,60 @@ begin;
 
 
 -- ============================================================
--- ADMIN ROLE HELPER: callers may only ask about their own role. This keeps the
--- SECURITY DEFINER helper useful for RLS without turning it into a role-enumeration API.
+-- ADMIN ROLE HELPER: move the SECURITY DEFINER helper out of the exposed public
+-- schema. Policies keep working by dependency, but the function is no longer a public
+-- RPC endpoint. Admin policies are scoped to authenticated callers only.
 -- ============================================================
-create or replace function public.has_role(_user_id uuid, _role public.app_role)
+create schema if not exists private;
+revoke all on schema private from public;
+grant usage on schema private to authenticated, service_role;
+
+alter function public.has_role(uuid, public.app_role) set schema private;
+
+create or replace function private.has_role(_user_id uuid, _role public.app_role)
 returns boolean
 language sql
 stable
 security definer
 set search_path = public
-as $$
+as $
   select _user_id = (select auth.uid())
     and exists (
       select 1 from public.user_roles
       where user_id = _user_id and role = _role
     );
-$$;
+$;
 
-revoke all on function public.has_role(uuid, public.app_role) from public;
-grant execute on function public.has_role(uuid, public.app_role) to anon, authenticated;
+revoke all on function private.has_role(uuid, public.app_role) from public, anon;
+grant execute on function private.has_role(uuid, public.app_role) to authenticated, service_role;
+
+do $
+declare
+  pol record;
+begin
+  for pol in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and (
+        coalesce(qual, '') ilike '%has_role%'
+        or coalesce(with_check, '') ilike '%has_role%'
+      )
+  loop
+    execute format(
+      'alter policy %I on %I.%I to authenticated',
+      pol.policyname,
+      pol.schemaname,
+      pol.tablename
+    );
+  end loop;
+end
+$;
+
+-- Trigger/event-trigger helpers are internal infrastructure and must not be callable
+-- through the Data API.
+revoke all on function public.handle_new_user() from public, anon, authenticated, service_role;
+revoke all on function public.rls_auto_enable() from public, anon, authenticated, service_role;
 
 -- ============================================================
 -- PAYMENTS: browser may read its own rows, but must NEVER create/modify payment facts.
@@ -780,8 +815,9 @@ begin
   end if;
 end $$;
 
-create unique index if not exists coupon_usage_coupon_user_unique
-  on public.coupon_usage(coupon_id, user_id);
+-- public.coupon_usage already has UNIQUE (coupon_id, user_id) in the core schema,
+-- so do not create a duplicate unique index here.
+drop index if exists public.coupon_usage_coupon_user_unique;
 
 -- ============================================================
 -- PROFILES: browser cannot alter ban fields or another identity. Public/profile UI only
@@ -1137,28 +1173,28 @@ create policy "Users can view own reward deliveries"
 -- Admin policies. Normal browser users receive no INSERT/UPDATE/DELETE policy for server-owned state.
 drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
 create policy "Admins manage reward campaigns" on public.reward_campaigns for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward products" on public.reward_campaign_products;
 create policy "Admins manage reward products" on public.reward_campaign_products for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage trial stock" on public.trial_stock_items;
 create policy "Admins manage trial stock" on public.trial_stock_items for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
 create policy "Admins manage reward sessions" on public.reward_sessions for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
 create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 -- Explicit grants: user cannot forge progress or claim inventory through Data API.
 revoke insert, update, delete on public.reward_sessions from anon, authenticated;
