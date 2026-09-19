@@ -91,8 +91,8 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
           if (offset < -count / 2) offset += count;
           const distance = Math.abs(offset);
           const visible = distance <= 2;
-          const scale = offset === 0 ? 1 : distance === 1 ? 0.78 : 0.61;
-          const depth = offset === 0 ? 80 : distance === 1 ? -40 : -160;
+          const scale = offset === 0 ? 1 : distance === 1 ? 0.74 : 0.57;
+          const depth = offset === 0 ? 120 : distance === 1 ? -80 : -230;
           const step = distance === 1 ? "var(--coverflow-step-1)" : "var(--coverflow-step-2)";
           const x = offset === 0
             ? "-50%"
@@ -100,8 +100,8 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
               ? `calc(-50% + ${step})`
               : `calc(-50% - ${step})`;
           const style: CSSProperties = {
-            transform: `translateX(${x}) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -30 : 30}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.4 : -1.4}deg)`,
-            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.95 : 0.72) : 0,
+            transform: `translateX(${x}) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -34 : 34}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.8 : -1.8}deg)`,
+            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.9 : 0.58) : 0,
             zIndex: offset === 0 ? 30 : distance === 1 ? 20 : 10,
             pointerEvents: visible ? "auto" : "none",
           };
