@@ -20,11 +20,11 @@ update public.products p
 set game_id = ia.id
 from public.games duplicate_game
 join public.games ia on ia.slug = 'ia-universal'
-where duplicate_game.slug = 'aimbot-universal'
+where duplicate_game.slug in ('aim-universal', 'aimbot-universal')
   and p.game_id = duplicate_game.id;
 
 update public.games
 set active = false
-where slug = 'aimbot-universal';
+where slug in ('aim-universal', 'aimbot-universal');
 
 commit;
