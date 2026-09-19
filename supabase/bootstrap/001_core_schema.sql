@@ -114,6 +114,34 @@ ALTER TABLE public.games ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can view games" ON public.games FOR SELECT USING (true);
 CREATE POLICY "Admins can manage games" ON public.games FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
+
+-- Categorias oficiais da Home CRAZZY PROJECT.
+-- Nao impede que o admin tenha categorias extras; apenas garante o conjunto canonico.
+INSERT INTO public.games (name, slug, active, sort_order)
+VALUES
+  ('Call of Duty Warzone', 'warzone', true, 0),
+  ('Valorant', 'valorant', true, 1),
+  ('Apex', 'apex', true, 2),
+  ('FiveM', 'fivem', true, 3),
+  ('GTA Online', 'gta-online', true, 4),
+  ('BloodStrike', 'bloodstrike', true, 5),
+  ('IA Universal', 'ia-universal', true, 6),
+  ('AIM Universal', 'aim-universal', true, 7),
+  ('Aimbot Universal', 'aimbot-universal', true, 8),
+  ('Dead by Daylight', 'dead-by-daylight', true, 9),
+  ('ARC Raiders', 'arc-raiders', true, 10),
+  ('Vanguard Emulator', 'vanguard-emulator', true, 11),
+  ('Rust', 'rust', true, 12),
+  ('Hell Let Loose', 'hell-let-loose', true, 13),
+  ('SCUM', 'scum', true, 14),
+  ('Squad', 'squad', true, 15),
+  ('War Dogs', 'war-dogs', true, 16),
+  ('Counter-Strike 2', 'counter-strike-2', true, 17)
+ON CONFLICT (slug) DO UPDATE
+SET name = EXCLUDED.name,
+    active = true,
+    sort_order = EXCLUDED.sort_order;
+
 -- ============================================
 -- PRODUCTS
 -- ============================================
