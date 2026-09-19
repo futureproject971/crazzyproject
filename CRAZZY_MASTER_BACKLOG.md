@@ -117,7 +117,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 99. Otimizar imagens críticas e evitar carregar resolução máxima desnecessária.
 - [ ] 100. Corrigir warnings de console relacionados à Home.
 - [ ] 101. Validar navegação por teclado e focus-visible.
-- [ ] 102. Aplicar migration products.is_new no Supabase CRAZZY correto (teyqtfdeugldgtzkyybg) quando a conexão estiver disponível.
+- [ ] 102. Aplicar migration products.is_new no Supabase CRAZZY correto (nnmglkdpmffmaiuwbcct) quando a conexão estiver disponível.
 - [ ] 103. Validar criação/edição real de produto NOVO no Admin contra o banco CRAZZY.
 - [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
 - [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
@@ -170,7 +170,9 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 152. Confirmar GitHub CI verde no HEAD `c2bffeb`: build + testes concluídos com sucesso.
 - [ ] 153. Validar Rewards live no novo Supabase: catálogo, heartbeat, conclusão, cooldown, fila staff, recusa e entrega manual/automática.
 - [ ] 154. Validar PurinCash live no novo Supabase: create/status/webhook HMAC, reconciliação, idempotência, pedido e entrega.
-- [ ] 155. Atualizar a Vercel de produção para usar `https://nnmglkdpmffmaiuwbcct.supabase.co` e a publishable key do novo projeto; o conector Vercel atual só enxerga o time IFOOD sem projetos e o status GitHub está bloqueado por build-rate-limit.
+- [x] 155. Salvar na Vercel de produção as três variáveis públicas do novo Supabase (PROJECT_ID, URL e PUBLISHABLE_KEY). Confirmado pelo painel web de crazzy-project; o conector lista projetos vazios. Ativação no frontend depende de novo deploy (itens 156/157).
 - [ ] 156. Confirmar frontend em produção conectado ao Supabase novo e executar smoke test produto → carrinho → checkout → pagamento → pedido → entrega.
 - [ ] 157. Executar CI/build final no HEAD de produção e confirmar Vercel verde após o rate-limit liberar.
-- [ ] 158. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 158. Validar configuração no build Vercel: rejeitar URL/ref divergentes, chaves privadas em VITE_* e JWT anon de outro projeto; usar a precedência real de env do Vite. Adicionados testes de regressão.
+- [ ] 159. Abastecer catálogo real e planos, e confirmar identidade do primeiro Admin: banco novo consultado com zero usuários, admins, produtos e planos. Não importar dados do Supabase antigo sem autorização específica.
+- [ ] 160. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
