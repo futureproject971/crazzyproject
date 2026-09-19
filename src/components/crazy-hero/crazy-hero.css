@@ -1302,37 +1302,43 @@
   }
   .crazy-category-zone { gap:.72rem; width:auto; }
   .crazy-category-zone--left-top {
-    left:1.2%; top:2.4%; width:min(30.4vw,520px);
+    left:1.2%; top:2%; width:min(30.4vw,520px);
     grid-template-columns:repeat(3,minmax(0,1fr));
     align-items:start;
   }
-  .crazy-category-zone--left-top > .crazy-category-slot:nth-child(2) { --slot-y: 17px; }
-  .crazy-category-zone--left-top > .crazy-category-slot:nth-child(3) { --slot-y: 35px; }
+  .crazy-category-zone--left-top > .crazy-category-slot:nth-child(2) { --slot-y: 12px; }
+  .crazy-category-zone--left-top > .crazy-category-slot:nth-child(3) { --slot-y: 25px; }
+
   .crazy-category-zone--left-middle {
-    left:4.1%; top:35%; width:min(24.2vw,410px);
+    left:4.1%; top:36%; width:min(24.2vw,410px);
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
+
   .crazy-category-zone--left-bottom {
-    left:6.8%; top:auto; bottom:0; width:min(22.6vw,390px);
+    left:6.8%; top:69%; bottom:auto; width:min(22.6vw,390px);
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
-  .crazy-category-zone--left-bottom > :last-child:nth-child(odd) { grid-column:1/-1; width:58%; justify-self:center; }
+
   .crazy-category-zone--right-top {
-    right:1.25%; top:3%; width:min(23.8vw,410px);
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    right:2.2%; top:3%; width:min(15.8vw,275px);
+    grid-template-columns:1fr;
   }
-  .crazy-category-zone--right-top > .crazy-category-slot:first-child { --slot-y: 20px; }
+  .crazy-category-zone--right-top > .crazy-category-slot:first-child { --slot-y: 0px; }
+
   .crazy-category-zone--right-middle {
     right:3.65%; top:35%; width:min(22.5vw,385px);
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
+
   .crazy-category-zone--right-bottom {
-    right:5.8%; top:auto; bottom:0; width:min(21.4vw,365px);
+    right:5.8%; top:63%; bottom:auto; width:min(21.4vw,365px);
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
+
   .crazy-category-zone--bottom-right {
-    right:.6%; bottom:0; width:min(26.3vw,455px);
-    grid-template-columns:repeat(4,minmax(0,1fr)); gap:.58rem;
+    right:.6%; top:83%; bottom:auto; width:min(26.3vw,455px);
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.58rem;
   }
 
   .crazy-category-card {
