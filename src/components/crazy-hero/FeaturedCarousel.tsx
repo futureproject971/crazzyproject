@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
 export interface FeaturedCarouselItem {
@@ -17,20 +17,38 @@ interface FeaturedCarouselProps {
 
 export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCarouselProps) {
   const [active, setActive] = useState(0);
+  const [manualPause, setManualPause] = useState(false);
+  const resumeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     setActive((current) => Math.min(current, Math.max(0, items.length - 1)));
   }, [items.length]);
 
-  // Autoplay exists already; task 6 will refine timing/pause semantics.
   useEffect(() => {
-    if (items.length < 2) return;
+    if (items.length < 2 || manualPause) return;
     const timer = window.setInterval(
       () => setActive((current) => (current + 1) % items.length),
-      5200,
+      7200,
     );
     return () => window.clearInterval(timer);
-  }, [items.length]);
+  }, [items.length, manualPause]);
+
+  useEffect(() => () => {
+    if (resumeTimerRef.current !== null) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+  }, []);
+
+  const pauseAfterManualSelection = () => {
+    setManualPause(true);
+    if (resumeTimerRef.current !== null) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+    resumeTimerRef.current = window.setTimeout(() => {
+      setManualPause(false);
+      resumeTimerRef.current = null;
+    }, 12000);
+  };
 
   if (loading) {
     return <div className="crazy-featured crazy-featured--empty">Carregando produtos...</div>;
@@ -40,13 +58,17 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
     return <div className="crazy-featured crazy-featured--empty">Nenhum produto ativo nesta categoria no momento.</div>;
   }
 
-  const go = (index: number) => setActive(((index % items.length) + items.length) % items.length);
+  const go = (index: number, manual = false) => {
+    if (manual) pauseAfterManualSelection();
+    setActive(((index % items.length) + items.length) % items.length);
+  };
 
   const onCardClick = (index: number, item: FeaturedCarouselItem) => {
     if (index !== active) {
-      go(index);
+      go(index, true);
       return;
     }
+    pauseAfterManualSelection();
     onOpen(item.id);
   };
 
@@ -103,7 +125,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
             <button
               type="button"
               className="crazy-featured__arrow crazy-featured__arrow--left"
-              onClick={() => go(active - 1)}
+              onClick={() => go(active - 1, true)}
               aria-label="Produto anterior"
             >
               <ChevronLeft />
@@ -111,7 +133,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
             <button
               type="button"
               className="crazy-featured__arrow crazy-featured__arrow--right"
-              onClick={() => go(active + 1)}
+              onClick={() => go(active + 1, true)}
               aria-label="Próximo produto"
             >
               <ChevronRight />
@@ -127,7 +149,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
               key={item.id}
               type="button"
               className={index === active ? "is-active" : ""}
-              onClick={() => go(index)}
+              onClick={() => go(index, true)}
               aria-label={`Ir para o produto ${index + 1}`}
             />
           ))}
