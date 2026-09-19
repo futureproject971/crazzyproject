@@ -566,8 +566,7 @@ async function fulfillLztAccount(supabaseAdmin: any, payment: any, item: any) {
 
   const LZT_TOKEN = Deno.env.get("LZT_MARKET_TOKEN");
   if (!LZT_TOKEN) {
-    console.error("LZT_MARKET_TOKEN not configured for account purchase");
-    return;
+    throw new Error("LZT_MARKET_TOKEN not configured for account purchase");
   }
 
   const itemId = item.lztItemId;
@@ -589,8 +588,7 @@ async function fulfillLztAccount(supabaseAdmin: any, payment: any, item: any) {
   }
 
   if (!price) {
-    console.error(`Cannot purchase LZT item ${itemId}: no price available`);
-    return;
+    throw new Error(`Cannot purchase LZT item ${itemId}: no price available`);
   }
 
   console.log(`Purchasing LZT account ${itemId} at price ${price} ${currency}`);
@@ -657,7 +655,7 @@ async function fulfillLztAccount(supabaseAdmin: any, payment: any, item: any) {
       : rawCredentials
         ? rawCredentials
         : buyRes.ok
-          ? `Conta #${itemId} - Dados: ${JSON.stringify(buyData).substring(0, 500)}`
+          ? `Conta #${itemId} - entrega manual pendente`
           : `Erro na compra #${itemId}`;
 
     // Use productId and planId directly from the cart item snapshot
@@ -706,8 +704,7 @@ async function fulfillLztAccount(supabaseAdmin: any, payment: any, item: any) {
     }
 
     if (!resolvedProductId || !resolvedPlanId) {
-      console.error("No product/plan found for LZT account ticket");
-      return;
+      throw new Error("No product/plan found for LZT account ticket");
     }
 
     // Create stock item
@@ -790,5 +787,6 @@ async function fulfillLztAccount(supabaseAdmin: any, payment: any, item: any) {
 
   } catch (err) {
     console.error("LZT account purchase error:", err);
+    throw err;
   }
 }
