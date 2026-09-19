@@ -1254,13 +1254,13 @@
   .crazy-scene__vignette { box-shadow: inset 0 0 110px rgba(5,55,145,.035); background:none; }
 
   .crazy-hero__center {
-    top: 31.7%;
-    width: min(40vw, 690px);
+    top: 31.2%;
+    width: min(44vw, 770px);
   }
-  .crazy-logo__crazzy { font-size: clamp(2.6rem, 3.5vw, 4.6rem); }
-  .crazy-logo__project { margin-top:.34em; font-size:clamp(2.4rem, 3.2vw, 4.2rem); }
-  .crazy-logo__tagline { margin-top:1.65rem; font-size:clamp(.62rem,.73vw,.84rem); letter-spacing:.42em; }
-  .crazy-logo__features { margin-top:1.05rem; gap:.35rem; }
+  .crazy-logo__crazzy { font-size: clamp(3rem, 4vw, 5.25rem); }
+  .crazy-logo__project { margin-top:.31em; font-size:clamp(2.75rem, 3.65vw, 4.8rem); }
+  .crazy-logo__tagline { margin-top:1.55rem; font-size:clamp(.64rem,.76vw,.9rem); letter-spacing:.42em; }
+  .crazy-logo__features { margin-top:1rem; gap:.42rem; }
   .crazy-logo__features > span { min-height:31px; padding:.36rem .58rem; border-radius:7px; background:rgba(255,255,255,.7); font-size:.5rem; }
   .crazy-logo__microcopy { display:none; }
 
