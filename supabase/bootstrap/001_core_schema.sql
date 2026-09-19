@@ -408,7 +408,7 @@ CREATE TABLE public.payment_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   method TEXT NOT NULL UNIQUE,
   label TEXT NOT NULL,
-  enabled BOOLEAN NOT NULL DEFAULT true,
+  enabled BOOLEAN NOT NULL DEFAULT false,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.payment_settings ENABLE ROW LEVEL SECURITY;
@@ -416,9 +416,9 @@ CREATE POLICY "Anyone can view payment settings" ON public.payment_settings FOR 
 CREATE POLICY "Admins can manage payment settings" ON public.payment_settings FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 INSERT INTO public.payment_settings (method, label, enabled) VALUES
-  ('pix', 'PIX', true),
+  ('pix', 'PIX', false),
   ('card', 'Cartão de Crédito', false),
-  ('crypto', 'Litecoin (LTC)', true);
+  ('crypto', 'Litecoin (LTC)', false);
 
 -- ============================================
 -- COUPONS
