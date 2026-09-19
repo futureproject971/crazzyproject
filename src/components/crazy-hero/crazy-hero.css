@@ -1830,8 +1830,8 @@
 
 @media (max-width: 700px) {
   .crazy-home-featured .crazy-featured {
-    --coverflow-step-1: 54vw;
-    --coverflow-step-2: 82vw;
+    --coverflow-step-1: 51vw;
+    --coverflow-step-2: 76vw;
   }
 
   .crazy-home-featured .crazy-featured__stage {
@@ -1952,8 +1952,8 @@
 }
 
 .crazy-home-featured .crazy-featured {
-  --coverflow-step-1: min(25vw, 390px);
-  --coverflow-step-2: min(41vw, 640px);
+  --coverflow-step-1: min(22vw, 350px);
+  --coverflow-step-2: min(36vw, 580px);
   width: 100%;
 }
 
@@ -1969,10 +1969,12 @@
   border-radius: 14px;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  will-change: transform, opacity;
 }
 
 .crazy-home-featured .crazy-featured__card:not(.is-active) {
-  filter: saturate(.92) brightness(.82);
+  filter: saturate(.88) brightness(.76);
+  box-shadow: 0 18px 42px rgba(0, 18, 62, .42);
 }
 
 .crazy-home-featured .crazy-featured__card.is-active {
