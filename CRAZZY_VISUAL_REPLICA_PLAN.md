@@ -20,6 +20,19 @@ o conteúdo por dados reais/admin.
 
 ---
 
+## HOME GATE — PRIORIDADE BLOQUEANTE
+
+Até a Home desktop estar visualmente estável e sem sobreposição, NÃO avançar para polimento de páginas internas.
+
+Condições mínimas para liberar as próximas tarefas:
+- [ ] Home sem categorias sobrepostas entre si.
+- [ ] Home sem categorias invadindo logo, coverflow, trust bar ou header.
+- [ ] Somente IA Universal como categoria universal de IA na Home.
+- [ ] Coverflow independente das categorias e exibindo destaques/NOVO.
+- [ ] Logo central, header, categorias, coverflow, trust bar e footer visualmente coerentes com a referência.
+- [ ] Light e Dark sem regressão visível.
+- [ ] Build Vercel verde após o último ajuste da Home.
+
 ## A. COMPOSIÇÃO GERAL / ENQUADRAMENTO
 
 - [ ] A1. Fazer a Home desktop funcionar como uma composição única de primeira dobra, visualmente próxima de 16:9.
@@ -71,7 +84,7 @@ o conteúdo por dados reais/admin.
 
 ## E. CATEGORIAS DA HOME — GEOMETRIA
 
-- [x] E1. Manter exatamente as 17 categorias oficiais definidas no catálogo; Aimbot Universal foi consolidado em IA Universal.
+- [x] E1. Manter exatamente as 16 categorias oficiais definidas no catálogo; AIM Universal e Aimbot Universal foram consolidados em IA Universal.
 - [x] E2. Distribuir categorias de forma ASSIMÉTRICA ao redor da logo, não em grade comum.
 - [ ] E3. Grupo superior esquerdo com três cards.
 - [ ] E4. Grupo médio esquerdo com dois cards.
