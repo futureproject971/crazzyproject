@@ -1558,7 +1558,8 @@
 
 
 /* ========================= FEATURED CAROUSEL (coverflow) ========================= */
-.crazy-featured { width: min(46vw, 760px); max-width: 94vw; margin: 0 auto; pointer-events: auto; }
+.crazy-featured { width: 100%; max-width: 100%; margin: 0 auto; pointer-events: auto; }
+.crazy-featured__none { display: grid; place-items: center; min-height: 220px; padding: 1rem; color: rgba(200,215,245,.7); font-size: .85rem; text-align: center; }
 .crazy-featured__stage { position: relative; height: clamp(220px, 30vh, 300px); perspective: 1500px; transform-style: preserve-3d; }
 .crazy-featured__card {
   position: absolute; left: 50%; top: 0; height: 100%; width: min(340px, 60%);
