@@ -24,8 +24,8 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 6. Implementar autoplay lento no coverflow.
 - [x] 7. Pausar temporariamente o autoplay após interação manual.
 - [x] 8. Reproduzir inclinação/perspectiva 3D das categorias.
-- [ ] 9. Eliminar 100% das sobreposições entre categorias na Home desktop.
-- [ ] 10. Eliminar invasão entre categorias, logo, coverflow, trust bar, header e footer.
+- [x] 9. Eliminar 100% das sobreposições entre categorias na Home desktop; Playwright confirmou 0 colisões em 1920×1080, 2560×1440 e 3440×1440.
+- [x] 10. Eliminar invasão entre categorias, logo, coverflow, trust bar, header e footer; auditoria geométrica automatizada confirmou 0 colisões nos cinco breakpoints testados.
 - [x] 11. Trocar wallpaper real entre tema claro e escuro.
 - [ ] 12. Refinar enquadramento do wallpaper por breakpoint.
 - [ ] 13. Refinar chuva no tema claro.
@@ -33,11 +33,11 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 15. Implementar cursor personalizado CRAZZY com fallback seguro para mouse/trackpad, preservando cursor de texto e touch.
 - [ ] 16. Fazer revisão visual completa da Home em light.
 - [ ] 17. Fazer revisão visual completa da Home em dark.
-- [ ] 18. Validar Home em 1920x1080.
-- [ ] 19. Validar Home em 2560x1440.
-- [ ] 20. Validar Home em ultrawide.
-- [ ] 21. Validar Home em tablet.
-- [ ] 22. Validar Home em mobile.
+- [x] 18. Validar Home em 1920x1080: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 19. Validar Home em 2560x1440: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 20. Validar Home em ultrawide 3440x1440: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 21. Validar Home em tablet 1024x1366: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 22. Validar Home em mobile 390x844: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
 - [x] 23. Preservar header funcional da source.
 - [x] 24. Preservar busca funcional.
 - [x] 25. Preservar Login/Auth.
@@ -108,8 +108,8 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 90. Refinar side cards para fidelidade visual da referência.
 - [x] 91. Separar fisicamente coverflow de categorias.
 - [x] 92. Separar fisicamente trust bar do footer em desktop.
-- [ ] 93. Validar que nenhuma categoria sobrepõe outra após o passe de geometria.
-- [ ] 94. Validar que nenhum card do coverflow invade trust bar/footer.
+- [x] 93. Validar que nenhuma categoria sobrepõe outra após o passe de geometria; teste automatizado confirmou 0 colisões entre os 16 cards.
+- [x] 94. Validar que nenhum card do coverflow invade trust bar/footer; Chromium confirmou separação em desktop, ultrawide, tablet e mobile.
 - [ ] 95. Ajustar logo central/negative space comparando lado a lado com a referência.
 - [ ] 96. Ajustar HUD/microcopy técnica da Home.
 - [ ] 97. Ajustar glow/glass/shadows para light.
@@ -178,4 +178,5 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 160. Remover do checkout o desconto visual legado controlável por parâmetro de URL; desconto exibido passa a vir somente da resposta autoritativa do backend.
 - [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
 - [x] 162. Confirmar GitHub CI verde após os ajustes de checkout, acessibilidade e performance da Home; último HEAD validado deste bloco: `28131f3`.
-- [ ] 163. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 163. Adicionar workflow `CRAZZY Home Layout` com Chromium, mocks do Supabase, relatório JSON e screenshots para 1920×1080, 2560×1440, 3440×1440, tablet e mobile; run 35475996040 aprovado.
+- [ ] 164. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
