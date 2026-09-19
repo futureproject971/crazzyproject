@@ -1672,6 +1672,45 @@
     0 0 34px rgba(0, 105, 255, .34);
 }
 
+.crazy-home-featured .crazy-featured__card.is-active .crazy-featured__media {
+  left: 42%;
+  background-position: center;
+  border-left: 1px solid rgba(94, 170, 255, .16);
+}
+
+.crazy-home-featured .crazy-featured__card.is-active .crazy-featured__shade {
+  background:
+    linear-gradient(90deg,
+      rgba(2, 12, 32, .985) 0%,
+      rgba(3, 22, 55, .97) 36%,
+      rgba(4, 28, 67, .76) 52%,
+      rgba(3, 16, 40, .16) 76%,
+      rgba(3, 12, 30, .06) 100%);
+}
+
+.crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content {
+  left: 1.65rem;
+  right: 48%;
+  bottom: 1.45rem;
+  z-index: 5;
+}
+
+.crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content h3 {
+  font-size: clamp(1.6rem, 2.2vw, 2.35rem);
+}
+
+.crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content p {
+  display: -webkit-box;
+  overflow: hidden;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.crazy-home-featured .crazy-featured__card:not(.is-active) .crazy-featured__shade {
+  background: linear-gradient(180deg, rgba(3, 10, 27, .06), rgba(3, 10, 27, .82));
+}
+
 
 .crazy-home-featured .crazy-featured__arrow--left {
   left: calc(50% - 326px);
@@ -1741,5 +1780,27 @@
 
   .crazy-home-featured .crazy-featured__card {
     width: min(300px, 74%);
+  }
+
+  .crazy-home-featured .crazy-featured__card.is-active .crazy-featured__media {
+    left: 0;
+  }
+
+  .crazy-home-featured .crazy-featured__card.is-active .crazy-featured__shade {
+    background: linear-gradient(180deg, rgba(3,10,27,.18), rgba(3,10,27,.9));
+  }
+
+  .crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content h3 {
+    font-size: 1.35rem;
+  }
+
+  .crazy-home-featured .crazy-featured__card.is-active .crazy-featured__content p {
+    -webkit-line-clamp: 2;
   }
 }
