@@ -57,7 +57,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
   }
 
   if (items.length === 0) {
-    return <div className="crazy-featured crazy-featured--empty">Nenhum produto ativo nesta categoria no momento.</div>;
+    return null;
   }
 
   const go = (index: number, manual = false) => {
@@ -75,7 +75,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
   };
 
   return (
-    <div className="crazy-featured" aria-label="Produtos da categoria em destaque">
+    <div className="crazy-featured" aria-label="Produtos novos em destaque">
       <div className="crazy-featured__stage">
         {items.map((item, index) => {
           const count = items.length;
@@ -117,7 +117,13 @@ export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCar
                     <span className="crazy-featured__play" aria-hidden="true"><Play /></span>
                   </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="crazy-featured__side-content">
+                  {item.badge ? <span className="crazy-featured__badge">{item.badge}</span> : null}
+                  <strong>{item.title}</strong>
+                  <span>Ver agora</span>
+                </div>
+              )}
             </button>
           );
         })}
