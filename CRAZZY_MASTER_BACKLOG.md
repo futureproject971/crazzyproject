@@ -158,14 +158,19 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 140. Preservar anexos/áudio de tickets com política de storage limitada ao dono do ticket.
 - [x] 141. Adicionar CI independente da Vercel para validar build e testes no GitHub.
 - [x] 142. Versionar schema completo de Rewards/Trials em migration, bootstrap e tipos TypeScript.
-- [ ] 143. Aplicar no Supabase CRAZZY live as migrations pendentes de destaques, checkout, hardening e Rewards quando o projeto `teyqtfdeugldgtzkyybg` estiver acessível ao conector.
-- [ ] 144. Deployar/verificar no Supabase CRAZZY live as Edge Functions `purincash-payment` e `rewards` com os secrets necessários, sem expor seus valores.
-- [ ] 145. Validar Rewards live: catálogo, heartbeat, conclusão, cooldown, fila staff e entrega manual/automática.
-- [ ] 146. Executar build/CI final após o rate-limit da Vercel liberar e confirmar produção no HEAD final.
+- [x] 143. Criar e inicializar o novo Supabase CRAZZY `nnmglkdpmffmaiuwbcct`, aplicar `CRAZZY_SETUP_COMPLETO.sql` e confirmar tabelas/migration essenciais no banco vazio.
+- [x] 144. Publicar no novo Supabase as 7 Edge Functions atuais: `admin-config-status`, `admin-users`, `generate-game-image`, `lzt-market`, `rewards`, `track-login` e `purincash-payment` (deploy confirmado; integrações externas ainda dependem de secrets).
+- [x] 145. Rodar advisors de segurança no novo Supabase e zerar os alertas de segurança, movendo `has_role` para schema privado e revogando RPC pública dos helpers internos.
+- [ ] 146. Configurar no Supabase os secrets externos necessários: `PURINCASH_API_KEY`, `PURINCASH_WEBHOOK_SECRET`, `CHECKOUT_SIGNING_SECRET`, `PUBLIC_SITE_URL`/`SITE_URL`, `LZT_MARKET_TOKEN`, `LOVABLE_API_KEY` e toggles habilitados conscientemente (`ENABLE_CARD_CHECKOUT`, `ENABLE_LZT_AUTO_BUY`).
 - [x] 147. Completar Admin Rewards com criação/ativação de campanhas, vínculo produto/plano e abastecimento de estoque exclusivo de trial.
 - [x] 148. Restringir avaliações a compradores reais e impedir duplicata por usuário/produto no schema versionado.
 - [x] 149. Bloquear criação/edição client-side de `order_tickets`; pedidos passam a nascer somente pelo backend/service role.
 - [x] 150. Tornar `coupon_usage` um ledger backend-only, mantendo ao usuário apenas leitura do próprio histórico.
 - [x] 151. Permitir ao cliente ler somente a chave de estoque efetivamente vinculada a um pedido próprio.
 - [x] 152. Confirmar GitHub CI verde no HEAD `c2bffeb`: build + testes concluídos com sucesso.
-- [ ] 153. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [ ] 153. Validar Rewards live no novo Supabase: catálogo, heartbeat, conclusão, cooldown, fila staff, recusa e entrega manual/automática.
+- [ ] 154. Validar PurinCash live no novo Supabase: create/status/webhook HMAC, reconciliação, idempotência, pedido e entrega.
+- [ ] 155. Atualizar a Vercel de produção para usar `https://nnmglkdpmffmaiuwbcct.supabase.co` e a publishable key do novo projeto; o conector Vercel atual só enxerga o time IFOOD sem projetos e o status GitHub está bloqueado por build-rate-limit.
+- [ ] 156. Confirmar frontend em produção conectado ao Supabase novo e executar smoke test produto → carrinho → checkout → pagamento → pedido → entrega.
+- [ ] 157. Executar CI/build final no HEAD de produção e confirmar Vercel verde após o rate-limit liberar.
+- [ ] 158. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
