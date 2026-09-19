@@ -48,7 +48,6 @@ export const DEFAULT_HOME_CATEGORIES: HomeCategoryConfig[] = [
   category("ia-universal", "IA Universal", "brain", "left-bottom"),
   category("aim-universal", "AIM Universal", "target", "left-bottom"),
 
-  category("aimbot-universal", "Aimbot Universal", "focus", "right-top", true),
   category("dead-by-daylight", "Dead by Daylight", "scan", "right-top"),
 
   category("arc-raiders", "ARC Raiders", "rocket", "right-middle"),
