@@ -274,3 +274,24 @@ Somente depois deste passe:
 1. revisão funcional final;
 2. revisão de acessibilidade/performance;
 3. editor visual Admin completo para permitir reorganização futura sem código.
+
+
+## T. REGRA 92 — FEATURE COMPLETA / NADA PODE FICAR "VOANDO"
+
+- [ ] T1. Toda feature nova deve ser analisada ponta a ponta antes de ser considerada pronta.
+- [ ] T2. Se a feature cria dado novo, atualizar schema/migration e também o bootstrap do projeto novo.
+- [ ] T3. Atualizar os tipos TypeScript gerados/espelhados quando o banco mudar.
+- [ ] T4. Atualizar Admin para criar/editar o dado quando ele for configurável.
+- [ ] T5. Atualizar leitura pública/privada no frontend conforme a regra real.
+- [ ] T6. Atualizar RLS/grants/permissões quando a nova feature alterar superfície de acesso.
+- [ ] T7. Atualizar Edge Function/backend quando a ação não puder confiar no browser.
+- [ ] T8. Garantir fallback para bases antigas durante rollout quando necessário.
+- [ ] T9. Não criar botão, badge, card, toggle ou campo que não esteja conectado a uma lógica real.
+- [ ] T10. Não criar coluna/tabela que não seja usada por Admin + frontend/backend correspondente.
+- [ ] T11. Toda alteração que substitua comportamento antigo deve migrar dados existentes quando necessário.
+- [ ] T12. Toda migration nova também deve ser refletida nos arquivos de bootstrap para instalações novas.
+- [ ] T13. Após mudança de banco, validar schema real do Supabase conectado antes de declarar a feature funcional.
+- [ ] T14. Após mudança frontend/backend, validar build/deploy e pelo menos o fluxo principal de leitura/gravação.
+- [ ] T15. Uma feature só recebe status "concluída" quando UI, banco, lógica, permissão e fluxo real estiverem conectados.
+
+Regra de ouro: **nada de componente órfão**. Se aparece na tela, precisa ter origem, comportamento, persistência e permissão coerentes.
