@@ -45,7 +45,7 @@ export const DEFAULT_HOME_CATEGORIES: HomeCategoryConfig[] = [
   category("gta-online", "GTA Online", "car", "left-middle"),
 
   category("bloodstrike", "BloodStrike", "zap", "left-bottom"),
-  category("ia-universal", "IA Universal", "brain", "left-bottom"),
+  category("ia-universal", "IA Universal", "brain", "right-top", true),
   category("aim-universal", "AIM Universal", "target", "left-bottom"),
 
   category("dead-by-daylight", "Dead by Daylight", "scan", "right-top"),
