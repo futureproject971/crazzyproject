@@ -129,7 +129,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 111. Validar campanha, produto, plano, sessão e conclusão da recompensa no backend.
 - [x] 112. Implementar cooldown e histórico por `reward_sessions`/`reward_deliveries`.
 - [x] 113. Manter estoque de trial separado em `trial_stock_items`, com claim e devolução em falha.
-- [ ] 114. Implementar fila de staff para aprovar/recusar quando necessária.
+- [x] 114. Implementar fila de staff para aprovar/recusar quando necessária, usando entrega ou recusa pela Edge Function.
 - [x] 115. Implementar entrega automática/manual conforme configuração da campanha.
 - [x] 116. Expor status da sessão/entrega ao usuário e fila de pendências ao staff.
 - [x] 117. Preparar estrutura persistente de campanhas, produtos, sessões, estoque de trial e entregas.
@@ -162,4 +162,10 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 144. Deployar/verificar no Supabase CRAZZY live as Edge Functions `purincash-payment` e `rewards` com os secrets necessários, sem expor seus valores.
 - [ ] 145. Validar Rewards live: catálogo, heartbeat, conclusão, cooldown, fila staff e entrega manual/automática.
 - [ ] 146. Executar build/CI final após o rate-limit da Vercel liberar e confirmar produção no HEAD final.
-- [ ] 147. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 147. Completar Admin Rewards com criação/ativação de campanhas, vínculo produto/plano e abastecimento de estoque exclusivo de trial.
+- [x] 148. Restringir avaliações a compradores reais e impedir duplicata por usuário/produto no schema versionado.
+- [x] 149. Bloquear criação/edição client-side de `order_tickets`; pedidos passam a nascer somente pelo backend/service role.
+- [x] 150. Tornar `coupon_usage` um ledger backend-only, mantendo ao usuário apenas leitura do próprio histórico.
+- [x] 151. Permitir ao cliente ler somente a chave de estoque efetivamente vinculada a um pedido próprio.
+- [x] 152. Confirmar GitHub CI verde no HEAD `c2bffeb`: build + testes concluídos com sucesso.
+- [ ] 153. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
