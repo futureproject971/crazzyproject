@@ -523,12 +523,13 @@ export async function fulfillOrder(supabaseAdmin: any, payment: any) {
           paid_price: item.price || 0,
         });
 
-        await supabaseAdmin.rpc("increment_reseller_purchases", { _reseller_id: resellerData.id }).catch(() => {
-          supabaseAdmin
-            .from("resellers")
-            .update({ total_purchases: (resellerData.total_purchases || 0) + 1 })
-            .eq("id", resellerData.id);
-        });
+        const { error: resellerIncrementError } = await supabaseAdmin.rpc(
+          "increment_reseller_purchases",
+          { _reseller_id: resellerData.id },
+        );
+        if (resellerIncrementError) {
+          console.error("[checkout] failed to increment reseller purchases", resellerIncrementError);
+        }
       }
     }
   }

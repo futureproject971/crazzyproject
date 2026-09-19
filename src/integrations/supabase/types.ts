@@ -246,6 +246,9 @@ export type Database = {
           created_at: string
           id: string
           metadata: Json | null
+          payment_id: string | null
+          payment_item_index: number | null
+          payment_unit_index: number | null
           product_id: string
           product_plan_id: string
           status: string
@@ -259,6 +262,9 @@ export type Database = {
           created_at?: string
           id?: string
           metadata?: Json | null
+          payment_id?: string | null
+          payment_item_index?: number | null
+          payment_unit_index?: number | null
           product_id: string
           product_plan_id: string
           status?: string
@@ -272,6 +278,9 @@ export type Database = {
           created_at?: string
           id?: string
           metadata?: Json | null
+          payment_id?: string | null
+          payment_item_index?: number | null
+          payment_unit_index?: number | null
           product_id?: string
           product_plan_id?: string
           status?: string
@@ -281,6 +290,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "order_tickets_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "order_tickets_product_id_fkey"
             columns: ["product_id"]

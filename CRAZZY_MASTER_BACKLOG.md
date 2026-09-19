@@ -62,14 +62,14 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 44. Validar consulta de status da PurinCash.
 - [ ] 45. Validar webhook assinado da PurinCash.
 - [ ] 46. Validar valor efetivamente pago antes de liberar pedido.
-- [ ] 47. Garantir idempotência de webhook/pagamento.
+- [x] 47. Garantir idempotência de webhook/pagamento no código e no schema versionado.
 - [ ] 48. Validar fluxo de cartão/crédito quando realmente habilitado.
 - [ ] 49. Validar Litecoin/cripto quando realmente habilitado.
 - [ ] 50. Garantir que chaves/segredos de gateway só existam no backend.
 - [ ] 51. Validar sandbox/ambiente de teste sem contaminar produção.
 - [ ] 52. Revisar ciclo completo de pedidos.
-- [ ] 53. Corrigir/impedir pagamentos presos em FULFILLING.
-- [ ] 54. Garantir payments.updated_at e demais timestamps coerentes.
+- [x] 53. Corrigir/impedir pagamentos presos em FULFILLING no código.
+- [x] 54. Garantir payments.updated_at e trigger no bootstrap/migration.
 - [ ] 55. Manter compra externa fail-closed.
 - [ ] 56. Validar hostname/allowlist de proxy externo.
 - [ ] 57. Remover exposição de token/resposta de diagnóstico.
@@ -79,7 +79,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 61. Impedir sender_role/role de staff forjado pelo cliente.
 - [ ] 62. Restringir RPCs sensíveis de revendedor ao backend/service role.
 - [ ] 63. Manter bootstrap Supabase limpo para instalação nova.
-- [ ] 64. Refletir toda migration nova no bootstrap antigo/base.
+- [x] 64. Refletir migrations novas no bootstrap antigo/base para o pacote atual.
 - [ ] 65. Atualizar tipos TypeScript sempre que schema mudar.
 - [ ] 66. Atualizar Admin sempre que surgir dado configurável novo.
 - [ ] 67. Atualizar frontend de leitura para toda feature nova.
