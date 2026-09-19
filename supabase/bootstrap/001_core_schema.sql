@@ -220,15 +220,13 @@ CREATE TABLE public.product_reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL,
-  rating INTEGER NOT NULL DEFAULT 5,
+  rating INTEGER NOT NULL DEFAULT 5 CHECK (rating BETWEEN 1 AND 5),
   comment TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, product_id)
 );
 ALTER TABLE public.product_reviews ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can view reviews" ON public.product_reviews FOR SELECT USING (true);
-CREATE POLICY "Users can insert own reviews" ON public.product_reviews FOR INSERT WITH CHECK (auth.uid() = user_id);
-CREATE POLICY "Users can update own reviews" ON public.product_reviews FOR UPDATE USING (auth.uid() = user_id);
-CREATE POLICY "Users can delete own reviews" ON public.product_reviews FOR DELETE USING (auth.uid() = user_id);
 
 -- ============================================
 -- STOCK ITEMS
@@ -418,6 +416,53 @@ CREATE POLICY "Users can insert own tickets" ON public.order_tickets FOR INSERT 
 CREATE POLICY "Users can update own tickets" ON public.order_tickets FOR UPDATE USING (auth.uid() = user_id);
 CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON public.order_tickets FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+-- Avaliações só podem ser criadas/alteradas por quem possui pedido real do produto.
+CREATE POLICY "Users can insert purchased product reviews"
+ON public.product_reviews
+FOR INSERT
+TO authenticated
+WITH CHECK (
+  auth.uid() = user_id
+  AND rating BETWEEN 1 AND 5
+  AND EXISTS (
+    SELECT 1
+    FROM public.order_tickets ot
+    WHERE ot.user_id = auth.uid()
+      AND ot.product_id = product_reviews.product_id
+      AND ot.status IN ('delivered', 'resolved', 'closed', 'finished')
+  )
+);
+
+CREATE POLICY "Users can update purchased product reviews"
+ON public.product_reviews
+FOR UPDATE
+TO authenticated
+USING (auth.uid() = user_id)
+WITH CHECK (
+  auth.uid() = user_id
+  AND rating BETWEEN 1 AND 5
+  AND EXISTS (
+    SELECT 1
+    FROM public.order_tickets ot
+    WHERE ot.user_id = auth.uid()
+      AND ot.product_id = product_reviews.product_id
+      AND ot.status IN ('delivered', 'resolved', 'closed', 'finished')
+  )
+);
+
+CREATE POLICY "Users can delete own reviews"
+ON public.product_reviews
+FOR DELETE
+TO authenticated
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Admins can manage reviews"
+ON public.product_reviews
+FOR ALL
+TO authenticated
+USING (public.has_role(auth.uid(), 'admin'))
+WITH CHECK (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
 -- TICKET MESSAGES
