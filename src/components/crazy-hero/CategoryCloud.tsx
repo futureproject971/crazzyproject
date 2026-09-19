@@ -43,6 +43,7 @@ export function CategoryCloud({ categories, productCounts, selectedSlug, onActiv
                 key={category.id}
                 className={`crazy-category-slot crazy-category-slot--${zone} ${selected ? "is-selected" : ""}`}
               >
+                {selected ? <span className="crazy-category-slot__selected">Selecionado</span> : null}
                 <CategoryCard
                   category={category}
                   index={index}
