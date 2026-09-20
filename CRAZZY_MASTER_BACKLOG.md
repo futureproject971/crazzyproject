@@ -185,9 +185,11 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 167. Versionar a roleta diária de cupons com os sete prêmios oficiais (5%, 10%, 15%, 20%, R$ 5, R$ 10 e R$ 20), um giro por conta/dia e resultado autoritativo no servidor.
 - [x] 168. Integrar a roleta ao carrinho/checkout usando cupom normal restrito ao vencedor, validação server-side e consumo somente após pagamento confirmado.
 - [x] 169. Remover validação client-side de cupons do CartSheet e preparar a remoção da enumeração pública de cupons personalizados.
-- [ ] 170. Aplicar/sincronizar a migration e Edge Function daily-wheel no Supabase live depois do CI/deploy verde e confirmar advisors.
+- [x] 170. Aplicar/sincronizar a migration e Edge Function daily-wheel no Supabase live depois do CI/deploy verde e confirmar advisors. Migration aplicada, daily-wheel v2 ativa, Security Advisor com 0 alertas e FK de pagamento coberta por índice.
 - [ ] 171. Smoke test autenticado da roleta → cupom → carrinho → checkout assim que existir uma conta de teste e catálogo/plano ativo.
 - [ ] 172. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
 
 
 Registro de execução 20/09/2026: Home publicada na main em 4cb4860, Vercel produção concluída (6dyQ4G11qEBYR9fasoj6nmBgPSyC), CI build-test aprovado e layout de prévia aprovado nos dez cenários. Navegador confirmou Home, temas, categorias e abertura do carrinho. Catálogo live continua vazio; compra, pagamento e entrega não validados. Bootstrap reparado apenas nos arquivos, sem execução no banco existente.
+
+Continuidade 20/09/2026: Home recebeu sidebar + topbar no desktop; roleta diária de cupons foi ligada ao backend com prêmios 5%, 10%, 15%, 20%, R$ 5, R$ 10 e R$ 20. O Supabase live recebeu as migrations da roleta, índice de payment_id e consolidação RLS da raspadinha; daily-wheel foi republicada em v2. Security Advisor = 0 alertas. Smoke autenticado permanece bloqueado porque o banco ainda tem 0 usuários, 0 produtos e 0 planos.
