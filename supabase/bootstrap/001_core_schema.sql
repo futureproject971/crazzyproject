@@ -458,7 +458,7 @@ CREATE TABLE public.coupons (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view coupons" ON public.coupons FOR SELECT USING (true);
+CREATE POLICY "Admins can view coupons" ON public.coupons FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins can manage coupons" ON public.coupons FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
@@ -470,7 +470,7 @@ CREATE TABLE public.coupon_products (
   product_id UUID REFERENCES public.products(id) ON DELETE CASCADE NOT NULL
 );
 ALTER TABLE public.coupon_products ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view coupon products" ON public.coupon_products FOR SELECT USING (true);
+CREATE POLICY "Admins can view coupon products" ON public.coupon_products FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins can manage coupon products" ON public.coupon_products FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
@@ -482,7 +482,7 @@ CREATE TABLE public.coupon_users (
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL
 );
 ALTER TABLE public.coupon_users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can view coupon users" ON public.coupon_users FOR SELECT USING (true);
+CREATE POLICY "Admins can view coupon users" ON public.coupon_users FOR SELECT TO authenticated USING (public.has_role(auth.uid(), 'admin'));
 CREATE POLICY "Admins can manage coupon users" ON public.coupon_users FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
@@ -503,6 +503,92 @@ CREATE POLICY "Admins can manage coupon usage" ON public.coupon_usage FOR ALL
   TO authenticated
   USING (public.has_role(auth.uid(), 'admin'))
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
+
+-- ============================================
+-- DAILY WHEEL
+-- ============================================
+CREATE TABLE public.wheel_prizes (
+  id TEXT PRIMARY KEY,
+  label TEXT NOT NULL,
+  discount_type TEXT NOT NULL CHECK (discount_type IN ('percentage','fixed')),
+  discount_value NUMERIC NOT NULL CHECK (discount_value > 0),
+  sort_order INTEGER NOT NULL UNIQUE
+);
+ALTER TABLE public.wheel_prizes ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public wheel catalogue" ON public.wheel_prizes
+  FOR SELECT TO anon, authenticated USING (true);
+
+INSERT INTO public.wheel_prizes (id,label,discount_type,discount_value,sort_order) VALUES
+  ('percent5','5% OFF','percentage',5,0),
+  ('percent10','10% OFF','percentage',10,1),
+  ('fixed5','R$ 5','fixed',5,2),
+  ('percent15','15% OFF','percentage',15,3),
+  ('percent20','20% OFF','percentage',20,4),
+  ('fixed10','R$ 10','fixed',10,5),
+  ('fixed20','R$ 20','fixed',20,6);
+
+CREATE TABLE public.wheel_spins (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  spin_date DATE NOT NULL,
+  prize_id TEXT NOT NULL REFERENCES public.wheel_prizes(id),
+  coupon_id UUID NOT NULL UNIQUE REFERENCES public.coupons(id),
+  payment_id UUID REFERENCES public.payments(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, spin_date)
+);
+ALTER TABLE public.wheel_spins ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Own wheel spins" ON public.wheel_spins
+  FOR SELECT TO authenticated USING (auth.uid() = user_id);
+
+CREATE OR REPLACE FUNCTION public.claim_daily_wheel(p_user_id UUID)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $
+DECLARE
+  s public.wheel_spins;
+  p public.wheel_prizes;
+  c public.coupons;
+  d DATE := (now() AT TIME ZONE 'America/Sao_Paulo')::date;
+  next_at TIMESTAMPTZ := ((d + 1)::timestamp AT TIME ZONE 'America/Sao_Paulo');
+BEGIN
+  IF p_user_id IS NULL THEN RAISE EXCEPTION 'User required'; END IF;
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_user_id::text, 617));
+
+  SELECT * INTO s FROM public.wheel_spins WHERE user_id=p_user_id AND spin_date=d;
+  IF NOT FOUND THEN
+    SELECT * INTO p FROM public.wheel_prizes ORDER BY random() LIMIT 1;
+    IF p.id IS NULL THEN RAISE EXCEPTION 'No wheel prizes configured'; END IF;
+
+    INSERT INTO public.coupons(code,discount_type,discount_value,max_uses,min_order_value,active)
+    VALUES (
+      'CP'||upper(replace(gen_random_uuid()::text,'-',''))::varchar(26),
+      p.discount_type,p.discount_value,1,
+      CASE WHEN p.discount_type='fixed' THEN p.discount_value+1 ELSE 1 END,
+      true
+    ) RETURNING * INTO c;
+
+    INSERT INTO public.coupon_users(coupon_id,user_id) VALUES(c.id,p_user_id);
+    INSERT INTO public.wheel_spins(user_id,spin_date,prize_id,coupon_id)
+    VALUES(p_user_id,d,p.id,c.id) RETURNING * INTO s;
+  ELSE
+    SELECT * INTO p FROM public.wheel_prizes WHERE id=s.prize_id;
+    SELECT * INTO c FROM public.coupons WHERE id=s.coupon_id;
+  END IF;
+
+  RETURN jsonb_build_object(
+    'id',s.id,'prize_id',p.id,'label',p.label,'sort_order',p.sort_order,
+    'discount_type',p.discount_type,'discount_value',p.discount_value,
+    'coupon_id',c.id,'code',c.code,'min_order_value',c.min_order_value,
+    'spin_date',s.spin_date,'next_spin_at',next_at
+  );
+END;
+$;
+REVOKE ALL ON FUNCTION public.claim_daily_wheel(UUID) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.claim_daily_wheel(UUID) FROM anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.claim_daily_wheel(UUID) TO service_role;
 
 -- ============================================
 -- RESELLERS
