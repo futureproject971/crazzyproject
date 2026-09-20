@@ -175,6 +175,41 @@ end $$;
 -- so do not create a duplicate unique index here.
 drop index if exists public.coupon_usage_coupon_user_unique;
 
+-- Personalized coupon codes must not be enumerable from browser roles.
+drop policy if exists "Anyone can view coupons" on public.coupons;
+drop policy if exists "Admins can view coupons" on public.coupons;
+create policy "Admins can view coupons" on public.coupons
+  for select to authenticated
+  using (private.has_role((select auth.uid()), 'admin'::public.app_role));
+
+drop policy if exists "Anyone can view coupon users" on public.coupon_users;
+drop policy if exists "Admins can view coupon users" on public.coupon_users;
+create policy "Admins can view coupon users" on public.coupon_users
+  for select to authenticated
+  using (private.has_role((select auth.uid()), 'admin'::public.app_role));
+
+drop policy if exists "Anyone can view coupon products" on public.coupon_products;
+drop policy if exists "Admins can view coupon products" on public.coupon_products;
+create policy "Admins can view coupon products" on public.coupon_products
+  for select to authenticated
+  using (private.has_role((select auth.uid()), 'admin'::public.app_role));
+
+revoke select on table public.coupons from anon;
+revoke select on table public.coupon_users from anon;
+revoke select on table public.coupon_products from anon;
+grant select on table public.coupons to authenticated;
+grant select on table public.coupon_users to authenticated;
+grant select on table public.coupon_products to authenticated;
+
+alter table public.wheel_prizes enable row level security;
+alter table public.wheel_spins enable row level security;
+revoke all on table public.wheel_prizes from anon, authenticated;
+grant select on table public.wheel_prizes to anon, authenticated;
+revoke all on table public.wheel_spins from anon, authenticated;
+grant select on table public.wheel_spins to authenticated;
+revoke all on function public.claim_daily_wheel(uuid) from public, anon, authenticated;
+grant execute on function public.claim_daily_wheel(uuid) to service_role;
+
 -- ============================================================
 -- PROFILES: browser cannot alter ban fields or another identity. Public/profile UI only
 -- needs basic profile columns. Admin bans already go through the admin-users Edge Function.
