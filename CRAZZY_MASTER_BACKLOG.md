@@ -179,4 +179,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
 - [x] 162. Confirmar GitHub CI verde após os ajustes de checkout, acessibilidade e performance da Home; último HEAD validado deste bloco: `28131f3`.
 - [x] 163. Adicionar workflow `CRAZZY Home Layout` com Chromium, mocks do Supabase, relatório JSON e screenshots para 1920×1080, 2560×1440, 3440×1440, tablet e mobile; run 35475996040 aprovado.
-- [ ] 164. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [ ] 164. SUPERADO pela nova referência Sharpify enviada pelo usuário em 20/09; preservar componentes antigos. Refinar centro da Home conforme referência: marca maior, contraste por tema, slogan legível e quatro benefícios alinhados; validar sem colisões em todos os breakpoints.
+- [ ] 165. SUPERADO pela nova Home de catálogo solicitada pelo usuário em 20/09. Finalizar etapas 3/4: card central dominante e dois níveis laterais em perspectiva; validar com catálogo real e preservar navegação independente das categorias.
+- [ ] 166. Implementar e validar Home com sidebar, introdução e fileiras de produtos por categoria baseada na source fornecida; manter wallpaper, chuva, temas e todas as rotas.
+- [ ] 167. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
