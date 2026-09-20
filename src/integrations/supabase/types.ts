@@ -1250,6 +1250,82 @@ export type Database = {
           },
         ]
       }
+      wheel_prizes: {
+        Row: {
+          discount_type: string
+          discount_value: number
+          id: string
+          label: string
+          sort_order: number
+        }
+        Insert: {
+          discount_type: string
+          discount_value: number
+          id: string
+          label: string
+          sort_order: number
+        }
+        Update: {
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          label?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      wheel_spins: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          id: string
+          payment_id: string | null
+          prize_id: string
+          spin_date: string
+          user_id: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          id?: string
+          payment_id?: string | null
+          prize_id: string
+          spin_date: string
+          user_id: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          id?: string
+          payment_id?: string | null
+          prize_id?: string
+          spin_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wheel_spins_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: true
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wheel_spins_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "wheel_spins_prize_id_fkey"
+            columns: ["prize_id"]
+            isOneToOne: false
+            referencedRelation: "wheel_prizes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_login_ips: {
         Row: {
           id: string
@@ -1294,6 +1370,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_daily_wheel: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
       claim_paid_delivery: {
         Args: {
           p_item_index: number
