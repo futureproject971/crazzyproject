@@ -179,6 +179,9 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
 - [x] 162. Confirmar GitHub CI verde após os ajustes de checkout, acessibilidade e performance da Home; último HEAD validado deste bloco: `28131f3`.
 - [x] 163. Adicionar workflow `CRAZZY Home Layout` com Chromium, mocks do Supabase, relatório JSON e screenshots para 1920×1080, 2560×1440, 3440×1440, tablet e mobile; run 35475996040 aprovado.
-- [ ] 164. Validar e publicar nova Home de catálogo conforme source Sharpify enviada em 20/09: menu lateral, categorias e fileiras; wallpaper, chuva, temas e funcionalidades preservados. Esta solicitação substitui o HOME GATE visual anterior de coverflow.
-- [ ] 165. Reparar bootstrap consolidado com conflitos de merge e delimitadores SQL inválidos; não executar bootstrap no banco live.
+- [x] 164. Validar e publicar nova Home de catálogo conforme source Sharpify enviada em 20/09: menu lateral, categorias e fileiras; wallpaper, chuva, temas e funcionalidades preservados. Esta solicitação substitui o HOME GATE visual anterior de coverflow.
+- [x] 165. Reparar bootstrap consolidado com conflitos de merge e delimitadores SQL inválidos; não executar bootstrap no banco live.
 - [ ] 166. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+
+
+Registro de execução 20/09/2026: Home publicada na main em 4cb4860, Vercel produção concluída (6dyQ4G11qEBYR9fasoj6nmBgPSyC), CI build-test aprovado e layout de prévia aprovado nos dez cenários. Navegador confirmou Home, temas, categorias e abertura do carrinho. Catálogo live continua vazio; compra, pagamento e entrega não validados. Bootstrap reparado apenas nos arquivos, sem execução no banco existente.
