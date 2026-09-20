@@ -25,7 +25,7 @@ interface Reveal {
 
 const resultCopy = {
   rewards_trial: {
-    kicker: "TRIAL LIBERADO",
+    kicker: "CONHEÇA OS TESTES",
     title: "Você encontrou um atalho para o Rewards",
     description: "Complete a missão de vídeo e dispute seu teste grátis de 1 hora.",
   },
@@ -294,7 +294,7 @@ export default function Experiencias() {
                       <Trophy className="h-8 w-8" />
                     </div>
                     <h3 className="mt-5 text-xl font-black text-white">Sua raspadinha de hoje</h3>
-                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-400">O resultado é gerado no servidor e fica preso à sua conta durante o dia.</p>
+                    <p className="mt-2 max-w-sm text-sm leading-relaxed text-zinc-400">Você pode raspar uma vez por dia. Volte amanhã para uma nova chance.</p>
                     <button
                       type="button"
                       onClick={loadReveal}

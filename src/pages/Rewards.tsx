@@ -6,10 +6,8 @@ import {
   Eye,
   Gift,
   Loader2,
-  LockKeyhole,
   PauseCircle,
   PlayCircle,
-  ShieldCheck,
 } from "lucide-react";
 import { CrazyHeader } from "@/components/crazy-hero/CrazyHeader";
 import AuthModal from "@/components/AuthModal";
@@ -384,7 +382,7 @@ export default function Rewards() {
         // The normal player control remains available.
       }
     } catch (e: any) {
-      toast({ title: "Checkpoint não confirmado", description: e.message, variant: "destructive" });
+      toast({ title: "Não foi possível confirmar", description: e.message, variant: "destructive" });
     } finally {
       setBusy(false);
     }
@@ -412,7 +410,7 @@ export default function Rewards() {
   };
 
   const counterState = attentionChallenge
-    ? { active: false, label: "Checkpoint de atenção", detail: "Confirme que você ainda está assistindo para o contador continuar." }
+    ? { active: false, label: "Você ainda está assistindo?", detail: "Confirme que você ainda está assistindo para o contador continuar." }
     : !pageActive
       ? { active: false, label: "Contador pausado", detail: "Volte para esta janela. Tempo fora da tela não conta." }
       : !videoPlaying
@@ -446,17 +444,7 @@ export default function Rewards() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <ShieldCheck className="h-4 w-4 text-primary" /> validação no backend
-              </span>
-              <span className="flex items-center gap-1">
-                <Eye className="h-4 w-4 text-primary" /> checkpoint de atenção
-              </span>
-              <span className="flex items-center gap-1">
-                <LockKeyhole className="h-4 w-4 text-primary" /> estoque separado
-              </span>
-            </div>
+
           </div>
 
           {!currentCampaign ? (
@@ -518,7 +506,7 @@ export default function Rewards() {
                       </div>
                       <h3 className="mt-4 text-xl font-black text-white">Ainda está assistindo?</h3>
                       <p className="mt-2 text-sm leading-relaxed text-zinc-300">
-                        O contador foi pausado neste checkpoint. Confirme sua presença para continuar.
+                        Seu progresso está pausado. Toque abaixo para continuar assistindo.
                       </p>
                       <button
                         type="button"
@@ -587,7 +575,7 @@ export default function Rewards() {
                   <div className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4">
                     <Eye className="mt-0.5 h-5 w-5 text-primary" />
                     <div>
-                      <strong className="text-sm">Checkpoint de atenção</strong>
+                      <strong className="text-sm">Você ainda está assistindo?</strong>
                       <p className="mt-1 text-xs text-muted-foreground">
                         Em um ponto da missão o vídeo pausa e pede uma confirmação rápida.
                       </p>

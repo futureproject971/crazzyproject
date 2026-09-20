@@ -264,7 +264,7 @@ const Carrinho = () => {
                     <div>
                       <span className="text-xs font-bold text-success">{appliedCoupon.code}</span>
                       <p className="text-[10px] text-muted-foreground">
-                        -R$ {appliedCoupon.discount.toFixed(2)} validado no servidor
+                        -R$ {appliedCoupon.discount.toFixed(2)} de desconto
                       </p>
                     </div>
                     <button onClick={() => setAppliedCoupon(null)} className="text-muted-foreground hover:text-destructive">
