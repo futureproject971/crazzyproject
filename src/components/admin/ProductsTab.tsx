@@ -254,51 +254,133 @@ const ProductsTab = () => {
         const { error } = await supabase.from("products").update(updatePayload).eq("id", editing.id);
         if (error) throw error;
 
-        // Sync plans: update existing, insert new, delete removed
+        // Sync child records by ID. New/updated rows are persisted before removals,
+        // so a failed insert does not erase the previous configuration.
         const validPlans = formPlans.filter(p => p.name.trim());
         const existingPlanIds = validPlans.filter(p => p.id).map(p => p.id!);
-        
-        // Delete plans that were removed (only those not referenced by order_tickets)
-        const { data: currentPlans } = await supabase.from("product_plans").select("id").eq("product_id", editing.id);
-        const plansToDelete = (currentPlans || []).filter(cp => !existingPlanIds.includes(cp.id)).map(cp => cp.id);
-        if (plansToDelete.length > 0) {
-          // Try to delete, ignore FK errors (plans referenced by orders can't be deleted)
-          for (const pid of plansToDelete) {
-            await supabase.from("product_plans").delete().eq("id", pid);
+        const { data: currentPlans, error: currentPlansError } = await supabase
+          .from("product_plans")
+          .select("id")
+          .eq("product_id", editing.id);
+        if (currentPlansError) throw currentPlansError;
+
+        for (const [i, p] of validPlans.entries()) {
+          if (p.id) {
+            const { error: planUpdateError } = await supabase
+              .from("product_plans")
+              .update({ name: p.name.trim(), price: p.price, active: p.active, sort_order: i })
+              .eq("id", p.id)
+              .eq("product_id", editing.id);
+            if (planUpdateError) throw planUpdateError;
+          } else {
+            const { error: planInsertError } = await supabase.from("product_plans").insert({
+              product_id: editing.id,
+              name: p.name.trim(),
+              price: p.price,
+              active: p.active,
+              sort_order: i,
+            });
+            if (planInsertError) throw planInsertError;
           }
         }
 
-        // Update existing plans
-        for (const [i, p] of validPlans.entries()) {
-          if (p.id) {
-            await supabase.from("product_plans").update({
-              name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
-            }).eq("id", p.id);
-          } else {
-            // Insert new plans
-            await supabase.from("product_plans").insert({
-              product_id: editing.id, name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
-            });
+        const plansToDelete = (currentPlans || [])
+          .filter(cp => !existingPlanIds.includes(cp.id))
+          .map(cp => cp.id);
+
+        for (const pid of plansToDelete) {
+          const { error: planDeleteError } = await supabase
+            .from("product_plans")
+            .delete()
+            .eq("id", pid)
+            .eq("product_id", editing.id);
+
+          // Historical orders may still reference a plan. In that case retain it as
+          // inactive rather than silently leaving an active plan the admin removed.
+          if (planDeleteError) {
+            const { error: deactivateError } = await supabase
+              .from("product_plans")
+              .update({ active: false })
+              .eq("id", pid)
+              .eq("product_id", editing.id);
+            if (deactivateError) throw deactivateError;
           }
         }
-        // Save media
-        await supabase.from("product_media").delete().eq("product_id", editing.id);
-        const mediaToInsert = formMedia.filter(m => m.url.trim()).map((m, i) => ({
-          product_id: editing.id, media_type: m.media_type, url: m.url.trim(), sort_order: i,
-        }));
-        if (mediaToInsert.length > 0) {
-          const { error: mediaErr } = await supabase.from("product_media").insert(mediaToInsert);
-          if (mediaErr) throw mediaErr;
+
+        const validMedia = formMedia.filter(m => m.url.trim());
+        const retainedMediaIds = validMedia.filter(m => m.id).map(m => m.id!);
+        const { data: currentMedia, error: currentMediaError } = await supabase
+          .from("product_media")
+          .select("id")
+          .eq("product_id", editing.id);
+        if (currentMediaError) throw currentMediaError;
+
+        for (const [i, media] of validMedia.entries()) {
+          if (media.id) {
+            const { error: mediaUpdateError } = await supabase
+              .from("product_media")
+              .update({ media_type: media.media_type, url: media.url.trim(), sort_order: i })
+              .eq("id", media.id)
+              .eq("product_id", editing.id);
+            if (mediaUpdateError) throw mediaUpdateError;
+          } else {
+            const { error: mediaInsertError } = await supabase.from("product_media").insert({
+              product_id: editing.id,
+              media_type: media.media_type,
+              url: media.url.trim(),
+              sort_order: i,
+            });
+            if (mediaInsertError) throw mediaInsertError;
+          }
         }
-        // Save features
-        await supabase.from("product_features").delete().eq("product_id", editing.id);
-        const featuresToInsert = formFeatures.filter(f => f.label.trim() && f.value.trim()).map((f, i) => ({
-          product_id: editing.id, label: f.label.trim(), value: f.value.trim(), sort_order: i,
-        }));
-        if (featuresToInsert.length > 0) {
-          const { error: featErr } = await supabase.from("product_features").insert(featuresToInsert);
-          if (featErr) throw featErr;
+
+        const mediaToDelete = (currentMedia || []).filter(m => !retainedMediaIds.includes(m.id));
+        for (const media of mediaToDelete) {
+          const { error: mediaDeleteError } = await supabase
+            .from("product_media")
+            .delete()
+            .eq("id", media.id)
+            .eq("product_id", editing.id);
+          if (mediaDeleteError) throw mediaDeleteError;
         }
+
+        const validFeatures = formFeatures.filter(f => f.label.trim() && f.value.trim());
+        const retainedFeatureIds = validFeatures.filter(f => f.id).map(f => f.id!);
+        const { data: currentFeatures, error: currentFeaturesError } = await supabase
+          .from("product_features")
+          .select("id")
+          .eq("product_id", editing.id);
+        if (currentFeaturesError) throw currentFeaturesError;
+
+        for (const [i, feature] of validFeatures.entries()) {
+          if (feature.id) {
+            const { error: featureUpdateError } = await supabase
+              .from("product_features")
+              .update({ label: feature.label.trim(), value: feature.value.trim(), sort_order: i })
+              .eq("id", feature.id)
+              .eq("product_id", editing.id);
+            if (featureUpdateError) throw featureUpdateError;
+          } else {
+            const { error: featureInsertError } = await supabase.from("product_features").insert({
+              product_id: editing.id,
+              label: feature.label.trim(),
+              value: feature.value.trim(),
+              sort_order: i,
+            });
+            if (featureInsertError) throw featureInsertError;
+          }
+        }
+
+        const featuresToDelete = (currentFeatures || []).filter(f => !retainedFeatureIds.includes(f.id));
+        for (const feature of featuresToDelete) {
+          const { error: featureDeleteError } = await supabase
+            .from("product_features")
+            .delete()
+            .eq("id", feature.id)
+            .eq("product_id", editing.id);
+          if (featureDeleteError) throw featureDeleteError;
+        }
+
         toast({ title: "Produto atualizado!" });
       } else {
         const insertPayload: any = {
@@ -314,29 +396,42 @@ const ProductsTab = () => {
         const { data, error } = await supabase.from("products").insert(insertPayload).select().single();
         if (error) throw error;
 
-        const plansToInsert = formPlans.filter(p => p.name.trim()).map((p, i) => ({
-          product_id: data.id, name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
-        }));
-        if (plansToInsert.length > 0) {
-          const { error: planErr } = await supabase.from("product_plans").insert(plansToInsert);
-          if (planErr) throw planErr;
+        // Child records are written after the product because the browser cannot open a
+        // database transaction. If any child write fails, delete the new product so
+        // ON DELETE CASCADE removes anything already inserted and no partial product is
+        // left visible in the catalog.
+        try {
+          const plansToInsert = formPlans.filter(p => p.name.trim()).map((p, i) => ({
+            product_id: data.id, name: p.name.trim(), price: p.price, active: p.active, sort_order: i,
+          }));
+          if (plansToInsert.length > 0) {
+            const { error: planErr } = await supabase.from("product_plans").insert(plansToInsert);
+            if (planErr) throw planErr;
+          }
+
+          const mediaToInsert = formMedia.filter(m => m.url.trim()).map((m, i) => ({
+            product_id: data.id, media_type: m.media_type, url: m.url.trim(), sort_order: i,
+          }));
+          if (mediaToInsert.length > 0) {
+            const { error: mediaErr } = await supabase.from("product_media").insert(mediaToInsert);
+            if (mediaErr) throw mediaErr;
+          }
+
+          const featuresToInsert = formFeatures.filter(f => f.label.trim() && f.value.trim()).map((f, i) => ({
+            product_id: data.id, label: f.label.trim(), value: f.value.trim(), sort_order: i,
+          }));
+          if (featuresToInsert.length > 0) {
+            const { error: featErr } = await supabase.from("product_features").insert(featuresToInsert);
+            if (featErr) throw featErr;
+          }
+        } catch (childError) {
+          const { error: cleanupError } = await supabase.from("products").delete().eq("id", data.id);
+          if (cleanupError) {
+            console.error("[CRAZZY] Falha ao limpar produto parcial", cleanupError);
+          }
+          throw childError;
         }
-        // Save media
-        const mediaToInsert = formMedia.filter(m => m.url.trim()).map((m, i) => ({
-          product_id: data.id, media_type: m.media_type, url: m.url.trim(), sort_order: i,
-        }));
-        if (mediaToInsert.length > 0) {
-          const { error: mediaErr } = await supabase.from("product_media").insert(mediaToInsert);
-          if (mediaErr) throw mediaErr;
-        }
-        // Save features
-        const featuresToInsert = formFeatures.filter(f => f.label.trim() && f.value.trim()).map((f, i) => ({
-          product_id: data.id, label: f.label.trim(), value: f.value.trim(), sort_order: i,
-        }));
-        if (featuresToInsert.length > 0) {
-          const { error: featErr } = await supabase.from("product_features").insert(featuresToInsert);
-          if (featErr) throw featErr;
-        }
+
         toast({ title: "Produto criado!" });
       }
       resetForm();

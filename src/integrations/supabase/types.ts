@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.1"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -630,301 +630,37 @@ export type Database = {
         }
         Relationships: []
       }
-      reward_campaign_products: {
+      promo_daily_reveals: {
         Row: {
-          active: boolean
-          auto_delay_seconds: number
-          campaign_id: string
           created_at: string
-          delivery_mode: string
           id: string
-          product_id: string
-          product_plan_id: string | null
-          sort_order: number
-          trial_duration_minutes: number
-          updated_at: string
-        }
-        Insert: {
-          active?: boolean
-          auto_delay_seconds?: number
-          campaign_id: string
-          created_at?: string
-          delivery_mode?: string
-          id?: string
-          product_id: string
-          product_plan_id?: string | null
-          sort_order?: number
-          trial_duration_minutes?: number
-          updated_at?: string
-        }
-        Update: {
-          active?: boolean
-          auto_delay_seconds?: number
-          campaign_id?: string
-          created_at?: string
-          delivery_mode?: string
-          id?: string
-          product_id?: string
-          product_plan_id?: string | null
-          sort_order?: number
-          trial_duration_minutes?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reward_campaign_products_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "reward_campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_campaign_products_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_campaign_products_product_plan_id_fkey"
-            columns: ["product_plan_id"]
-            isOneToOne: false
-            referencedRelation: "product_plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      reward_campaigns: {
-        Row: {
-          active: boolean
-          cooldown_hours: number
-          created_at: string
-          description: string
-          id: string
-          required_watch_seconds: number
-          requirements: Json
-          sort_order: number
-          title: string
-          updated_at: string
-          video_provider: string
-          video_url: string
-        }
-        Insert: {
-          active?: boolean
-          cooldown_hours?: number
-          created_at?: string
-          description?: string
-          id?: string
-          required_watch_seconds?: number
-          requirements?: Json
-          sort_order?: number
-          title: string
-          updated_at?: string
-          video_provider?: string
-          video_url: string
-        }
-        Update: {
-          active?: boolean
-          cooldown_hours?: number
-          created_at?: string
-          description?: string
-          id?: string
-          required_watch_seconds?: number
-          requirements?: Json
-          sort_order?: number
-          title?: string
-          updated_at?: string
-          video_provider?: string
-          video_url?: string
-        }
-        Relationships: []
-      }
-      reward_deliveries: {
-        Row: {
-          content: string
-          created_at: string
-          delivered_at: string
-          delivered_by: string | null
-          delivery_mode: string
-          expires_at: string | null
-          id: string
-          session_id: string
-          trial_stock_item_id: string | null
+          product_id: string | null
+          result_key: string
+          reveal_date: string
           user_id: string
         }
         Insert: {
-          content: string
           created_at?: string
-          delivered_at?: string
-          delivered_by?: string | null
-          delivery_mode?: string
-          expires_at?: string | null
           id?: string
-          session_id: string
-          trial_stock_item_id?: string | null
+          product_id?: string | null
+          result_key: string
+          reveal_date?: string
           user_id: string
         }
         Update: {
-          content?: string
           created_at?: string
-          delivered_at?: string
-          delivered_by?: string | null
-          delivery_mode?: string
-          expires_at?: string | null
           id?: string
-          session_id?: string
-          trial_stock_item_id?: string | null
+          product_id?: string | null
+          result_key?: string
+          reveal_date?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "reward_deliveries_session_id_fkey"
-            columns: ["session_id"]
-            isOneToOne: true
-            referencedRelation: "reward_sessions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_deliveries_trial_stock_item_id_fkey"
-            columns: ["trial_stock_item_id"]
-            isOneToOne: false
-            referencedRelation: "trial_stock_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      reward_sessions: {
-        Row: {
-          campaign_id: string
-          campaign_product_id: string
-          completed_at: string | null
-          cooldown_until: string | null
-          created_at: string
-          delivered_at: string | null
-          eligible_delivery_at: string | null
-          heartbeat_count: number
-          id: string
-          last_heartbeat_at: string | null
-          last_video_position: number | null
-          product_id: string
-          product_plan_id: string | null
-          requested_at: string | null
-          status: string
-          updated_at: string
-          user_id: string
-          visibility_failures: number
-          watched_seconds: number
-        }
-        Insert: {
-          campaign_id: string
-          campaign_product_id: string
-          completed_at?: string | null
-          cooldown_until?: string | null
-          created_at?: string
-          delivered_at?: string | null
-          eligible_delivery_at?: string | null
-          heartbeat_count?: number
-          id?: string
-          last_heartbeat_at?: string | null
-          last_video_position?: number | null
-          product_id: string
-          product_plan_id?: string | null
-          requested_at?: string | null
-          status?: string
-          updated_at?: string
-          user_id: string
-          visibility_failures?: number
-          watched_seconds?: number
-        }
-        Update: {
-          campaign_id?: string
-          campaign_product_id?: string
-          completed_at?: string | null
-          cooldown_until?: string | null
-          created_at?: string
-          delivered_at?: string | null
-          eligible_delivery_at?: string | null
-          heartbeat_count?: number
-          id?: string
-          last_heartbeat_at?: string | null
-          last_video_position?: number | null
-          product_id?: string
-          product_plan_id?: string | null
-          requested_at?: string | null
-          status?: string
-          updated_at?: string
-          user_id?: string
-          visibility_failures?: number
-          watched_seconds?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "reward_sessions_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "reward_campaigns"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_sessions_campaign_product_id_fkey"
-            columns: ["campaign_product_id"]
-            isOneToOne: false
-            referencedRelation: "reward_campaign_products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_sessions_product_id_fkey"
+            foreignKeyName: "promo_daily_reveals_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "reward_sessions_product_plan_id_fkey"
-            columns: ["product_plan_id"]
-            isOneToOne: false
-            referencedRelation: "product_plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      trial_stock_items: {
-        Row: {
-          content: string
-          created_at: string
-          duration_minutes: number
-          id: string
-          product_plan_id: string
-          used: boolean
-          used_at: string | null
-          used_by: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          duration_minutes?: number
-          id?: string
-          product_plan_id: string
-          used?: boolean
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          duration_minutes?: number
-          id?: string
-          product_plan_id?: string
-          used?: boolean
-          used_at?: string | null
-          used_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "trial_stock_items_product_plan_id_fkey"
-            columns: ["product_plan_id"]
-            isOneToOne: false
-            referencedRelation: "product_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -1044,108 +780,263 @@ export type Database = {
         }
         Relationships: []
       }
-      scratch_card_config: {
+      reward_campaign_products: {
         Row: {
           active: boolean
-          id: string
-          price: number
-          updated_at: string
-        }
-        Insert: {
-          active?: boolean
-          id?: string
-          price?: number
-          updated_at?: string
-        }
-        Update: {
-          active?: boolean
-          id?: string
-          price?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      scratch_card_plays: {
-        Row: {
-          amount_paid: number
+          auto_delay_seconds: number
+          campaign_id: string
           created_at: string
-          grid_data: Json
+          delivery_mode: string
           id: string
-          prize_id: string | null
-          user_id: string
-          won: boolean
+          product_id: string
+          product_plan_id: string | null
+          sort_order: number
+          trial_duration_minutes: number
         }
         Insert: {
-          amount_paid?: number
+          active?: boolean
+          auto_delay_seconds?: number
+          campaign_id: string
           created_at?: string
-          grid_data?: Json
+          delivery_mode?: string
           id?: string
-          prize_id?: string | null
-          user_id: string
-          won?: boolean
+          product_id: string
+          product_plan_id?: string | null
+          sort_order?: number
+          trial_duration_minutes?: number
         }
         Update: {
-          amount_paid?: number
+          active?: boolean
+          auto_delay_seconds?: number
+          campaign_id?: string
           created_at?: string
-          grid_data?: Json
+          delivery_mode?: string
           id?: string
-          prize_id?: string | null
-          user_id?: string
-          won?: boolean
+          product_id?: string
+          product_plan_id?: string | null
+          sort_order?: number
+          trial_duration_minutes?: number
         }
         Relationships: [
           {
-            foreignKeyName: "scratch_card_plays_prize_id_fkey"
-            columns: ["prize_id"]
+            foreignKeyName: "reward_campaign_products_campaign_id_fkey"
+            columns: ["campaign_id"]
             isOneToOne: false
-            referencedRelation: "scratch_card_prizes"
+            referencedRelation: "reward_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_campaign_products_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_campaign_products_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
             referencedColumns: ["id"]
           },
         ]
       }
-      scratch_card_prizes: {
+      reward_campaigns: {
         Row: {
           active: boolean
+          cooldown_hours: number
           created_at: string
-          description: string | null
+          description: string
           id: string
-          image_url: string | null
-          name: string
-          prize_value: number
-          product_id: string | null
+          required_watch_seconds: number
+          requirements: Json
           sort_order: number
-          win_percentage: number
+          title: string
+          updated_at: string
+          video_provider: string
+          video_url: string
         }
         Insert: {
           active?: boolean
+          cooldown_hours?: number
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
-          image_url?: string | null
-          name: string
-          prize_value?: number
-          product_id?: string | null
+          required_watch_seconds?: number
+          requirements?: Json
           sort_order?: number
-          win_percentage?: number
+          title: string
+          updated_at?: string
+          video_provider?: string
+          video_url: string
         }
         Update: {
           active?: boolean
+          cooldown_hours?: number
           created_at?: string
-          description?: string | null
+          description?: string
           id?: string
-          image_url?: string | null
-          name?: string
-          prize_value?: number
-          product_id?: string | null
+          required_watch_seconds?: number
+          requirements?: Json
           sort_order?: number
-          win_percentage?: number
+          title?: string
+          updated_at?: string
+          video_provider?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
+      reward_deliveries: {
+        Row: {
+          content: string | null
+          created_at: string
+          delivered_at: string
+          delivered_by: string | null
+          delivery_mode: string
+          expires_at: string | null
+          id: string
+          session_id: string
+          trial_stock_item_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_mode: string
+          expires_at?: string | null
+          id?: string
+          session_id: string
+          trial_stock_item_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          delivered_at?: string
+          delivered_by?: string | null
+          delivery_mode?: string
+          expires_at?: string | null
+          id?: string
+          session_id?: string
+          trial_stock_item_id?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "scratch_card_prizes_product_id_fkey"
+            foreignKeyName: "reward_deliveries_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: true
+            referencedRelation: "reward_sessions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_deliveries_trial_stock_item_id_fkey"
+            columns: ["trial_stock_item_id"]
+            isOneToOne: false
+            referencedRelation: "trial_stock_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reward_sessions: {
+        Row: {
+          campaign_id: string
+          campaign_product_id: string
+          completed_at: string | null
+          cooldown_until: string | null
+          created_at: string
+          delivered_at: string | null
+          eligible_delivery_at: string | null
+          heartbeat_count: number
+          id: string
+          last_heartbeat_at: string | null
+          last_video_position: number | null
+          product_id: string
+          product_plan_id: string | null
+          requested_at: string | null
+          requirements_completed: Json
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+          visibility_failures: number
+          watched_seconds: number
+        }
+        Insert: {
+          campaign_id: string
+          campaign_product_id: string
+          completed_at?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eligible_delivery_at?: string | null
+          heartbeat_count?: number
+          id?: string
+          last_heartbeat_at?: string | null
+          last_video_position?: number | null
+          product_id: string
+          product_plan_id?: string | null
+          requested_at?: string | null
+          requirements_completed?: Json
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          visibility_failures?: number
+          watched_seconds?: number
+        }
+        Update: {
+          campaign_id?: string
+          campaign_product_id?: string
+          completed_at?: string | null
+          cooldown_until?: string | null
+          created_at?: string
+          delivered_at?: string | null
+          eligible_delivery_at?: string | null
+          heartbeat_count?: number
+          id?: string
+          last_heartbeat_at?: string | null
+          last_video_position?: number | null
+          product_id?: string
+          product_plan_id?: string | null
+          requested_at?: string | null
+          requirements_completed?: Json
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          visibility_failures?: number
+          watched_seconds?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_sessions_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "reward_campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_campaign_product_id_fkey"
+            columns: ["campaign_product_id"]
+            isOneToOne: false
+            referencedRelation: "reward_campaign_products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_product_id_fkey"
             columns: ["product_id"]
             isOneToOne: false
             referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reward_sessions_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
             referencedColumns: ["id"]
           },
         ]
@@ -1184,6 +1075,74 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      support_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          sender_id: string
+          sender_role: string
+          ticket_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          sender_id: string
+          sender_role: string
+          ticket_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          sender_id?: string
+          sender_role?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: string
+          closed_at: string | null
+          created_at: string
+          id: string
+          status: string
+          subject: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          subject: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          subject?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       system_credentials: {
         Row: {
@@ -1250,6 +1209,47 @@ export type Database = {
           },
         ]
       }
+      trial_stock_items: {
+        Row: {
+          content: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          product_plan_id: string
+          used: boolean
+          used_at: string | null
+          used_by: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          product_plan_id: string
+          used?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          product_plan_id?: string
+          used?: boolean
+          used_at?: string | null
+          used_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trial_stock_items_product_plan_id_fkey"
+            columns: ["product_plan_id"]
+            isOneToOne: false
+            referencedRelation: "product_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_login_ips: {
         Row: {
           id: string
@@ -1294,12 +1294,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
+      claim_paid_delivery: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
+          p_item_index: number
+          p_payment_id: string
+          p_product_id: string
+          p_product_plan_id: string
+          p_unit_index: number
+          p_user_id: string
         }
-        Returns: boolean
+        Returns: {
+          created: boolean
+          stock_item_id: string
+          ticket_id: string
+        }[]
       }
       increment_reseller_purchases: {
         Args: { _reseller_id: string }
@@ -1323,12 +1331,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1352,11 +1360,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1377,11 +1385,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1402,11 +1410,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1419,11 +1427,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }

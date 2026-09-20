@@ -71,15 +71,37 @@ CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH 
 CREATE POLICY "Admins can update any profile" ON public.profiles FOR UPDATE USING (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
--- Auto-create profile on signup
+-- Auto-create profile on signup/social OAuth.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $
 BEGIN
-  INSERT INTO public.profiles (user_id, username)
-  VALUES (NEW.id, NEW.raw_user_meta_data ->> 'username');
+  INSERT INTO public.profiles (user_id, username, avatar_url)
+  VALUES (
+    NEW.id,
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'preferred_username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'full_name', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'name', ''),
+      split_part(COALESCE(NEW.email, ''), '@', 1),
+      'usuario'
+    ),
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'avatar_url', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'picture', '')
+    )
+  )
+  ON CONFLICT (user_id) DO UPDATE
+  SET username = COALESCE(public.profiles.username, EXCLUDED.username),
+      avatar_url = COALESCE(public.profiles.avatar_url, EXCLUDED.avatar_url);
+
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+$;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -397,133 +419,9 @@ CREATE UNIQUE INDEX order_tickets_payment_unit_unique
 CREATE INDEX stock_items_available_plan_idx
   ON public.stock_items (product_plan_id, used, created_at);
 
-CREATE OR REPLACE FUNCTION public.claim_paid_delivery(
-  p_payment_id UUID,
-  p_user_id UUID,
-  p_product_id UUID,
-  p_product_plan_id UUID,
-  p_item_index INTEGER,
-  p_unit_index INTEGER
-)
-RETURNS TABLE(ticket_id UUID, stock_item_id UUID, created BOOLEAN)
-LANGUAGE plpgsql
-SECURITY INVOKER
-SET search_path = public
-AS $$
-DECLARE
-  v_ticket_id UUID;
-  v_stock_id UUID;
-BEGIN
-  IF p_item_index < 0 OR p_unit_index < 0 THEN
-    RAISE EXCEPTION 'Invalid delivery unit index';
-  END IF;
+-- Atomic paid-delivery function is defined in 002_security_hardening.sql.
 
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.payments p
-    WHERE p.id = p_payment_id
-      AND p.user_id = p_user_id
-      AND p.status IN ('FULFILLING', 'COMPLETED')
-  ) THEN
-    RAISE EXCEPTION 'Payment is not eligible for delivery';
-  END IF;
 
-  SELECT ot.id, ot.stock_item_id
-  INTO v_ticket_id, v_stock_id
-  FROM public.order_tickets ot
-  WHERE ot.payment_id = p_payment_id
-    AND ot.payment_item_index = p_item_index
-    AND ot.payment_unit_index = p_unit_index
-  LIMIT 1;
-
-  IF FOUND THEN
-    RETURN QUERY SELECT v_ticket_id, v_stock_id, false;
-    RETURN;
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.product_plans pp
-    JOIN public.products pr ON pr.id = pp.product_id
-    WHERE pp.id = p_product_plan_id
-      AND pp.product_id = p_product_id
-      AND pp.active = true
-      AND pr.active = true
-  ) THEN
-    RAISE EXCEPTION 'Product or plan is not active';
-  END IF;
-
-  BEGIN
-    SELECT si.id
-    INTO v_stock_id
-    FROM public.stock_items si
-    WHERE si.product_plan_id = p_product_plan_id
-      AND si.used = false
-    ORDER BY si.created_at, si.id
-    FOR UPDATE SKIP LOCKED
-    LIMIT 1;
-
-    IF v_stock_id IS NOT NULL THEN
-      UPDATE public.stock_items
-      SET used = true,
-          used_at = now()
-      WHERE id = v_stock_id
-        AND used = false;
-    END IF;
-
-    INSERT INTO public.order_tickets (
-      user_id,
-      product_id,
-      product_plan_id,
-      stock_item_id,
-      status,
-      status_label,
-      metadata,
-      payment_id,
-      payment_item_index,
-      payment_unit_index
-    )
-    VALUES (
-      p_user_id,
-      p_product_id,
-      p_product_plan_id,
-      v_stock_id,
-      CASE WHEN v_stock_id IS NULL THEN 'open' ELSE 'delivered' END,
-      CASE WHEN v_stock_id IS NULL THEN 'Aguardando Entrega' ELSE 'Entregue' END,
-      jsonb_build_object(
-        'payment_id', p_payment_id,
-        'payment_item_index', p_item_index,
-        'payment_unit_index', p_unit_index
-      ),
-      p_payment_id,
-      p_item_index,
-      p_unit_index
-    )
-    RETURNING id INTO v_ticket_id;
-  EXCEPTION WHEN unique_violation THEN
-    SELECT ot.id, ot.stock_item_id
-    INTO v_ticket_id, v_stock_id
-    FROM public.order_tickets ot
-    WHERE ot.payment_id = p_payment_id
-      AND ot.payment_item_index = p_item_index
-      AND ot.payment_unit_index = p_unit_index
-    LIMIT 1;
-
-    IF v_ticket_id IS NULL THEN
-      RAISE;
-    END IF;
-
-    RETURN QUERY SELECT v_ticket_id, v_stock_id, false;
-    RETURN;
-  END;
-
-  RETURN QUERY SELECT v_ticket_id, v_stock_id, true;
-END;
-$$;
-
-REVOKE ALL ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) TO service_role;
 
 -- ============================================
 -- PAYMENT SETTINGS
@@ -532,7 +430,7 @@ CREATE TABLE public.payment_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   method TEXT NOT NULL UNIQUE,
   label TEXT NOT NULL,
-  enabled BOOLEAN NOT NULL DEFAULT true,
+  enabled BOOLEAN NOT NULL DEFAULT false,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.payment_settings ENABLE ROW LEVEL SECURITY;
@@ -540,9 +438,9 @@ CREATE POLICY "Anyone can view payment settings" ON public.payment_settings FOR 
 CREATE POLICY "Admins can manage payment settings" ON public.payment_settings FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 INSERT INTO public.payment_settings (method, label, enabled) VALUES
-  ('pix', 'PIX', true),
+  ('pix', 'PIX', false),
   ('card', 'Cartão de Crédito', false),
-  ('crypto', 'Litecoin (LTC)', true);
+  ('crypto', 'Litecoin (LTC)', false);
 
 -- ============================================
 -- COUPONS
@@ -702,6 +600,120 @@ CREATE TABLE public.system_credentials (
 );
 ALTER TABLE public.system_credentials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage credentials" ON public.system_credentials FOR ALL USING (public.has_role(auth.uid(), 'admin'));
+
+-- ============================================
+-- SUPPORT HUB (Discord-style support, independent from paid orders)
+-- ============================================
+CREATE TABLE public.support_tickets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  subject TEXT NOT NULL CHECK (char_length(subject) BETWEEN 3 AND 120),
+  category TEXT NOT NULL DEFAULT 'general'
+    CHECK (category IN ('general','pre_sale','payment','product','technical','order')),
+  status TEXT NOT NULL DEFAULT 'open'
+    CHECK (status IN ('open','waiting_staff','waiting_user','resolved','closed')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ
+);
+ALTER TABLE public.support_tickets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support tickets visible to owner or admin" ON public.support_tickets
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Users create own support tickets" ON public.support_tickets
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins update support tickets" ON public.support_tickets
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support tickets" ON public.support_tickets
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+CREATE TRIGGER update_support_tickets_updated_at
+  BEFORE UPDATE ON public.support_tickets
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE TABLE public.support_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticket_id UUID NOT NULL REFERENCES public.support_tickets(id) ON DELETE CASCADE,
+  sender_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  sender_role TEXT NOT NULL CHECK (sender_role IN ('user','staff')),
+  message TEXT NOT NULL CHECK (char_length(message) BETWEEN 1 AND 4000),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE public.support_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support messages visible to owner or admin" ON public.support_messages
+  FOR SELECT TO authenticated
+  USING (
+    public.has_role(auth.uid(), 'admin')
+    OR EXISTS (
+      SELECT 1 FROM public.support_tickets st
+      WHERE st.id = support_messages.ticket_id
+        AND st.user_id = auth.uid()
+    )
+  );
+CREATE POLICY "Support message insert user or admin" ON public.support_messages
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    (
+      public.has_role(auth.uid(), 'admin')
+      AND sender_id = auth.uid()
+      AND sender_role = 'staff'
+    )
+    OR
+    (
+      sender_id = auth.uid()
+      AND sender_role = 'user'
+      AND EXISTS (
+        SELECT 1 FROM public.support_tickets st
+        WHERE st.id = support_messages.ticket_id
+          AND st.user_id = auth.uid()
+          AND st.status <> 'closed'
+      )
+    )
+  );
+CREATE POLICY "Admins update support messages" ON public.support_messages
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support messages" ON public.support_messages
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+
+CREATE INDEX support_tickets_user_created_idx
+  ON public.support_tickets (user_id, created_at DESC);
+CREATE INDEX support_tickets_status_updated_idx
+  ON public.support_tickets (status, updated_at DESC);
+CREATE INDEX support_messages_ticket_created_idx
+  ON public.support_messages (ticket_id, created_at);
+CREATE INDEX support_messages_sender_idx
+  ON public.support_messages (sender_id);
+
+-- ============================================
+-- PROMO DAILY REVEAL (free daily scratch card)
+-- ============================================
+CREATE TABLE public.promo_daily_reveals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  reveal_date DATE NOT NULL DEFAULT (timezone('UTC', now()))::date,
+  result_key TEXT NOT NULL CHECK (result_key IN ('rewards_trial','featured_product','try_tomorrow')),
+  product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, reveal_date)
+);
+ALTER TABLE public.promo_daily_reveals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own promo reveals" ON public.promo_daily_reveals
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+CREATE POLICY "Admins manage promo reveals" ON public.promo_daily_reveals
+  FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE INDEX promo_daily_reveals_user_created_idx
+  ON public.promo_daily_reveals (user_id, created_at DESC);
+CREATE INDEX promo_daily_reveals_product_idx
+  ON public.promo_daily_reveals (product_id);
 
 -- ============================================
 -- RPC: increment reseller purchases

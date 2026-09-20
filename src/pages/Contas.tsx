@@ -941,7 +941,7 @@ const fetchAccountsRaw = async (params: Record<string, string | string[]>) => {
     return res.json();
   } catch (err: any) {
     if (err.name === "TypeError" && err.message.includes("fetch")) {
-      throw new Error("NÃ£o foi possÃ­vel conectar ao servidor. Verifique sua conexÃ£o e se a Edge Function estÃ¡ deployada.");
+      throw new Error("Não foi possível carregar as contas. Tente novamente em instantes.");
     }
     throw err;
   }

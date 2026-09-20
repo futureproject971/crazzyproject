@@ -90,7 +90,35 @@ export function FeaturedCarousel({ items, loading = false, onOpen, emptyText }: 
   };
 
   return (
+<<<<<<< HEAD
     <div className="crazy-featured" aria-label="Destaques">
+=======
+    <div
+      className="crazy-featured"
+      role="region"
+      aria-roledescription="carrossel"
+      aria-label="Produtos novos em destaque"
+      onKeyDown={(event) => {
+        if (items.length < 2) return;
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          go(active - 1, true);
+        } else if (event.key === "ArrowRight") {
+          event.preventDefault();
+          go(active + 1, true);
+        } else if (event.key === "Home") {
+          event.preventDefault();
+          go(0, true);
+        } else if (event.key === "End") {
+          event.preventDefault();
+          go(items.length - 1, true);
+        }
+      }}
+    >
+      <span className="sr-only" aria-live="polite">
+        Produto {active + 1} de {items.length}: {items[active]?.title}
+      </span>
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
       <div className="crazy-featured__stage">
         {slides.map((slide, i) => {
           const n = slides.length;
@@ -114,6 +142,7 @@ export function FeaturedCarousel({ items, loading = false, onOpen, emptyText }: 
               style={style}
               onClick={() => onCardClick(i, slide)}
               aria-hidden={!visible}
+              aria-label={offset === 0 ? `Abrir ${item.title}` : `Selecionar ${item.title}`}
               tabIndex={offset === 0 ? 0 : -1}
             >
               <div
@@ -160,9 +189,16 @@ export function FeaturedCarousel({ items, loading = false, onOpen, emptyText }: 
             <button
               key={s.id}
               type="button"
+<<<<<<< HEAD
               className={i === active ? "is-active" : ""}
               onClick={() => go(i)}
               aria-label={`Ir para o destaque ${i + 1}`}
+=======
+              className={index === active ? "is-active" : ""}
+              onClick={() => go(index, true)}
+              aria-label={`Ir para o produto ${index + 1}: ${item.title}`}
+              aria-current={index === active ? "true" : undefined}
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
             />
           ))}
         </div>

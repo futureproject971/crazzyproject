@@ -7,11 +7,6 @@ interface PaymentMethod {
   label: string;
 }
 
-const FALLBACK_METHODS: PaymentMethod[] = [
-  { method: "pix", label: "PIX" },
-  { method: "crypto", label: "Litecoin (LTC)" },
-];
-
 function PaymentBadge({ method }: { method: PaymentMethod }) {
   const normalized = method.method.toLowerCase();
 
@@ -39,7 +34,7 @@ function PaymentBadge({ method }: { method: PaymentMethod }) {
 }
 
 export function HeroTrustBar() {
-  const [methods, setMethods] = useState<PaymentMethod[]>(FALLBACK_METHODS);
+  const [methods, setMethods] = useState<PaymentMethod[]>([]);
 
   useEffect(() => {
     let mounted = true;
@@ -49,8 +44,12 @@ export function HeroTrustBar() {
       .select("method,label,enabled")
       .eq("enabled", true)
       .then(({ data, error }) => {
-        if (!mounted || error || !data?.length) return;
-        setMethods(data.map(({ method, label }) => ({ method, label })));
+        if (!mounted) return;
+        if (error) {
+          setMethods([]);
+          return;
+        }
+        setMethods((data || []).map(({ method, label }) => ({ method, label })));
       });
 
     return () => {
@@ -66,13 +65,15 @@ export function HeroTrustBar() {
       </div>
 
       <div className="crazy-trustbar__payments" aria-label="Métodos de pagamento habilitados">
-        <span className="crazy-trustbar__label">ACEITAMOS</span>
-        {methods.map((method, index) => (
+        <span className="crazy-trustbar__label">{methods.length ? "ACEITAMOS" : "PAGAMENTOS"}</span>
+        {methods.length ? methods.map((method, index) => (
           <span key={method.method} className="contents">
             {index > 0 ? <span className="crazy-trustbar__divider" aria-hidden="true" /> : null}
             <PaymentBadge method={method} />
           </span>
-        ))}
+        )) : (
+          <span className="crazy-trustbar__coin">Temporariamente indisponíveis</span>
+        )}
       </div>
 
       <div className="crazy-trustbar__item crazy-trustbar__item--right">

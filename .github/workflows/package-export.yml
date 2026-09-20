@@ -1,0 +1,94 @@
+name: CRAZZY Export Package
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/package-export.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact HEAD
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Prepare handoff metadata
+        shell: bash
+        run: |
+          mkdir -p export/db
+          SHORT_SHA="${GITHUB_SHA::7}"
+          cat > export/SUPABASE_STATUS.txt <<EOF
+          CRAZZY PROJECT - SUPABASE HANDOFF
+          GitHub HEAD: ${GITHUB_SHA}
+          Short HEAD: ${SHORT_SHA}
+          Branch: ${GITHUB_REF_NAME}
+          Supabase project ref: nnmglkdpmffmaiuwbcct
+          Supabase URL: https://nnmglkdpmffmaiuwbcct.supabase.co
+
+          Applied live migrations known at packaging time:
+          - 20260919211533 crazzy_setup_completo
+          - 20260919211700 security_private_helpers
+          - 20260919212226 optimize_rls_auth_uid
+          - 20260919222235 index_public_foreign_keys
+          - 20260919222432 consolidate_rls_policies
+          - 20260919222817 lockdown_data_api_grants
+          - 20260919231331 payment_methods_fail_closed
+
+          Security:
+          - Security Advisor: 0 alerts at last verification
+          - payment methods default/live: fail-closed until gateway secrets are validated
+          - private secrets are NOT included in this package
+
+          Important entrypoints:
+          - supabase/bootstrap/CRAZZY_SETUP_COMPLETO.sql
+          - supabase/migrations/
+          - supabase/functions/
+          - supabase/config.toml
+          EOF
+
+      - name: Build database ZIP
+        shell: bash
+        run: |
+          cp -R supabase export/db/supabase
+          cp export/SUPABASE_STATUS.txt export/db/SUPABASE_STATUS.txt
+          (cd export/db && zip -r -q ../CRAZZY_SUPABASE_READY.zip .)
+
+      - name: Build project snapshot ZIP
+        shell: bash
+        run: |
+          zip -r -q export/CRAZZY_PROJECT_SNAPSHOT.zip . \
+            -x ".git/*" \
+               "node_modules/*" \
+               "dist/*" \
+               "artifacts/*" \
+               "export/*" \
+               ".env" \
+               ".env.local" \
+               ".env.*.local"
+          cp export/SUPABASE_STATUS.txt export/PROJECT_HEAD_AND_SUPABASE_STATUS.txt
+
+      - name: Checksums
+        shell: bash
+        run: |
+          cd export
+          sha256sum CRAZZY_SUPABASE_READY.zip CRAZZY_PROJECT_SNAPSHOT.zip > SHA256SUMS.txt
+          ls -lh CRAZZY_SUPABASE_READY.zip CRAZZY_PROJECT_SNAPSHOT.zip SHA256SUMS.txt
+
+      - name: Upload CRAZZY export
+        uses: actions/upload-artifact@v4
+        with:
+          name: CRAZZY_EXPORT_${{ github.sha }}
+          path: |
+            export/CRAZZY_SUPABASE_READY.zip
+            export/CRAZZY_PROJECT_SNAPSHOT.zip
+            export/PROJECT_HEAD_AND_SUPABASE_STATUS.txt
+            export/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 7

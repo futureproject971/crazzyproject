@@ -1,4 +1,4 @@
-project_id = "teyqtfdeugldgtzkyybg"
+project_id = "nnmglkdpmffmaiuwbcct"
 
 [functions.lzt-market]
 verify_jwt = false
@@ -22,4 +22,13 @@ verify_jwt = true
 
 # Public catalog + manually authenticated customer/admin actions.
 [functions.rewards]
+verify_jwt = false
+
+
+[functions.coupon-validate]
+verify_jwt = true
+
+
+# Public transport, but every reveal requires a validated Supabase user token internally.
+[functions.promo-reveal]
 verify_jwt = false

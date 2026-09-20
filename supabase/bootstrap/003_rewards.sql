@@ -142,28 +142,28 @@ create policy "Users can view own reward deliveries"
 -- Admin policies. Normal browser users receive no INSERT/UPDATE/DELETE policy for server-owned state.
 drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
 create policy "Admins manage reward campaigns" on public.reward_campaigns for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward products" on public.reward_campaign_products;
 create policy "Admins manage reward products" on public.reward_campaign_products for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage trial stock" on public.trial_stock_items;
 create policy "Admins manage trial stock" on public.trial_stock_items for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
 create policy "Admins manage reward sessions" on public.reward_sessions for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
 create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
 
 -- Explicit grants: user cannot forge progress or claim inventory through Data API.
 revoke insert, update, delete on public.reward_sessions from anon, authenticated;

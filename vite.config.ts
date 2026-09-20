@@ -1,10 +1,28 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
+import fs from "node:fs";
+import { validateSupabaseTarget } from "./scripts/supabase-target.mjs";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { CRAZZY_SUPABASE_PUBLIC } from "./src/config/supabasePublic";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({ mode, command }) => {
+  if (command === "build" && process.env.VERCEL === "1") {
+    const config = fs.readFileSync("supabase/config.toml", "utf8");
+    const env = loadEnv(mode, process.cwd(), "VITE_");
+    validateSupabaseTarget(
+      {
+        ...env,
+        VITE_SUPABASE_PROJECT_ID: env.VITE_SUPABASE_PROJECT_ID || CRAZZY_SUPABASE_PUBLIC.projectId,
+        VITE_SUPABASE_URL: env.VITE_SUPABASE_URL || CRAZZY_SUPABASE_PUBLIC.url,
+        VITE_SUPABASE_PUBLISHABLE_KEY:
+          env.VITE_SUPABASE_PUBLISHABLE_KEY || CRAZZY_SUPABASE_PUBLIC.publishableKey,
+      },
+      config.match(/^project_id\s*=\s*"([^"]+)"/m)?.[1],
+    );
+  }
+  return ({
   server: {
     host: "::",
     port: 8080,
@@ -25,10 +43,26 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    assetsInlineLimit: 10_000_000,
+    // Keep large WebP wallpapers/product artwork as cacheable files instead of
+    // inflating the JavaScript bundle with base64 data URLs.
+    assetsInlineLimit: 4096,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/.test(id)) return "vendor-react";
+          if (id.includes("@supabase")) return "vendor-supabase";
+          if (id.includes("framer-motion")) return "vendor-motion";
+          if (id.includes("@tanstack")) return "vendor-query";
+          if (id.includes("lucide-react")) return "vendor-icons";
+          return undefined;
+        },
+      },
+    },
     commonjsOptions: {
       include: [/node_modules/],
       transformMixedEsModules: true,
     },
   },
-}));
+});
+});

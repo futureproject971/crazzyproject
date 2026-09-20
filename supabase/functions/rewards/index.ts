@@ -29,6 +29,86 @@ async function isAdmin(admin: any, userId: string) {
   return !!data;
 }
 
+function clampNumber(value: unknown, fallback: number, min: number, max: number) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, parsed));
+}
+
+function randomToken(bytes = 18) {
+  const data = new Uint8Array(bytes);
+  crypto.getRandomValues(data);
+  return Array.from(data, (value) => value.toString(16).padStart(2, "0")).join("");
+}
+
+function campaignWatchConfig(campaign: any) {
+  const requirements = campaign?.requirements && typeof campaign.requirements === "object"
+    ? campaign.requirements
+    : {};
+  return {
+    attentionCheckpoint: requirements.attention_checkpoint !== false,
+    checkpointMinPercent: clampNumber(requirements.checkpoint_min_percent, 45, 20, 80),
+    checkpointMaxPercent: clampNumber(requirements.checkpoint_max_percent, 65, 25, 90),
+    maxPlaybackRate: clampNumber(requirements.max_playback_rate, 1.25, 1, 2),
+    heartbeatNonce: requirements.heartbeat_nonce !== false,
+  };
+}
+
+function buildWatchGuard(campaign: any) {
+  const required = Math.max(1, Number(campaign?.required_watch_seconds || 1));
+  const config = campaignWatchConfig(campaign);
+  const minPercent = Math.min(config.checkpointMinPercent, config.checkpointMaxPercent);
+  const maxPercent = Math.max(config.checkpointMinPercent, config.checkpointMaxPercent);
+  const chosenPercent = minPercent + Math.random() * Math.max(0, maxPercent - minPercent);
+  const checkpointEnabled = config.attentionCheckpoint && required >= 5;
+  const checkpointAt = checkpointEnabled
+    ? Math.min(Math.max(2, required * (chosenPercent / 100)), required - 1)
+    : null;
+
+  return {
+    version: 1,
+    checkpoint_enabled: checkpointEnabled,
+    checkpoint_at_seconds: checkpointAt,
+    checkpoint_active: false,
+    checkpoint_passed: !checkpointEnabled,
+    checkpoint_nonce: null,
+    checkpoint_passed_at: null,
+    next_heartbeat_nonce: randomToken(),
+    seek_violations: 0,
+    playback_violations: 0,
+    replay_violations: 0,
+  };
+}
+
+async function ensureWatchGuard(admin: any, session: any, campaign: any) {
+  const completed = session?.requirements_completed && typeof session.requirements_completed === "object"
+    ? { ...session.requirements_completed }
+    : {};
+  const existing = completed.watch_guard;
+  if (existing?.version === 1 && existing?.next_heartbeat_nonce) {
+    return { session, requirements: completed, guard: { ...existing } };
+  }
+
+  const guard = buildWatchGuard(campaign);
+  if (session?.status && session.status !== "watching") {
+    guard.checkpoint_active = false;
+    guard.checkpoint_passed = true;
+    guard.checkpoint_nonce = null;
+  }
+  const requirements = { ...completed, watch_guard: guard };
+  const { data: updated, error } = await admin
+    .from("reward_sessions")
+    .update({ requirements_completed: requirements, updated_at: new Date().toISOString() })
+    .eq("id", session.id)
+    .select("*")
+    .single();
+
+  if (error || !updated) {
+    return { session: { ...session, requirements_completed: requirements }, requirements, guard };
+  }
+  return { session: updated, requirements, guard };
+}
+
 async function getCampaignProduct(admin: any, id: string) {
   const { data: cp, error } = await admin
     .from("reward_campaign_products")
@@ -209,11 +289,17 @@ serve(async (req) => {
     if (!cp) return json({ error: "Recompensa indisponível" }, 404);
 
     const { data: active } = await admin.from("reward_sessions").select("*").eq("user_id", caller.id).eq("campaign_id", cp.campaign_id).in("status", ["watching", "completed", "requested", "delivering"]).order("created_at", { ascending: false }).limit(1).maybeSingle();
-    if (active) return json({ session: active, resumed: true });
+    if (active) {
+      const guarded = await ensureWatchGuard(admin, active, cp.campaign);
+      return json({ session: guarded.session, resumed: true });
+    }
 
     const { data: recent } = await admin.from("reward_sessions").select("cooldown_until").eq("user_id", caller.id).eq("campaign_id", cp.campaign_id).not("cooldown_until", "is", null).order("created_at", { ascending: false }).limit(1).maybeSingle();
     if (recent?.cooldown_until && new Date(recent.cooldown_until).getTime() > Date.now()) return json({ error: "Você já usou esta recompensa recentemente", cooldown_until: recent.cooldown_until }, 429);
 
+    const requirements_completed = {
+      watch_guard: buildWatchGuard(cp.campaign),
+    };
     const { data: session, error } = await admin.from("reward_sessions").insert({
       user_id: caller.id,
       campaign_id: cp.campaign_id,
@@ -221,6 +307,7 @@ serve(async (req) => {
       product_id: cp.product_id,
       product_plan_id: cp.product_plan_id,
       status: "watching",
+      requirements_completed,
     }).select("*").single();
     if (error) return json({ error: error.message }, 500);
     return json({ session }, 201);
@@ -232,22 +319,98 @@ serve(async (req) => {
     const visible = body?.visible === true;
     const playing = body?.playing === true;
     const position = Number(body?.position);
+    const playbackRate = clampNumber(body?.playback_rate, 1, 0.25, 4);
+    const heartbeatNonce = String(body?.heartbeat_nonce || "");
     if (!sessionId || !Number.isFinite(position) || position < 0) return json({ error: "Heartbeat inválido" }, 400);
 
-    const { data: session } = await admin.from("reward_sessions").select("*").eq("id", sessionId).eq("user_id", caller.id).maybeSingle();
-    if (!session) return json({ error: "Sessão não encontrada" }, 404);
-    if (session.status !== "watching") return json({ session });
-    const cp = await getCampaignProduct(admin, session.campaign_product_id);
+    const { data: rawSession } = await admin.from("reward_sessions").select("*").eq("id", sessionId).eq("user_id", caller.id).maybeSingle();
+    if (!rawSession) return json({ error: "Sessão não encontrada" }, 404);
+    if (rawSession.status !== "watching") return json({ session: rawSession });
+
+    const cp = await getCampaignProduct(admin, rawSession.campaign_product_id);
     if (!cp) return json({ error: "Campanha indisponível" }, 409);
 
+    const guarded = await ensureWatchGuard(admin, rawSession, cp.campaign);
+    const session = guarded.session;
+    const requirements = { ...guarded.requirements };
+    const guard = { ...guarded.guard };
+    const config = campaignWatchConfig(cp.campaign);
     const now = new Date();
+    const requiredSeconds = Math.max(1, Number(cp.campaign.required_watch_seconds || 1));
     const lastHeartbeatMs = session.last_heartbeat_at ? new Date(session.last_heartbeat_at).getTime() : 0;
     const elapsed = lastHeartbeatMs ? Math.max(0, (now.getTime() - lastHeartbeatMs) / 1000) : 0;
+    const startedAtMs = session.started_at ? new Date(session.started_at).getTime() : new Date(session.created_at).getTime();
+    const wallElapsed = Math.max(0, (now.getTime() - startedAtMs) / 1000);
     const previousPosition = Number(session.last_video_position ?? position);
     const forward = Math.max(0, position - previousPosition);
-    const increment = visible && playing && elapsed > 0 && elapsed <= 20 ? Math.max(0, Math.min(elapsed, 12, forward + 1.25)) : 0;
-    const watched = Math.min(Number(cp.campaign.required_watch_seconds), Number(session.watched_seconds || 0) + increment);
-    const completed = watched >= Number(cp.campaign.required_watch_seconds);
+
+    if (config.heartbeatNonce && guard.next_heartbeat_nonce && heartbeatNonce !== guard.next_heartbeat_nonce) {
+      guard.replay_violations = Number(guard.replay_violations || 0) + 1;
+      guard.next_heartbeat_nonce = randomToken();
+      requirements.watch_guard = guard;
+      const { data: resynced } = await admin.from("reward_sessions").update({
+        requirements_completed: requirements,
+        last_heartbeat_at: now.toISOString(),
+        heartbeat_count: Number(session.heartbeat_count || 0) + 1,
+        updated_at: now.toISOString(),
+      }).eq("id", session.id).eq("user_id", caller.id).select("*").single();
+      return json({
+        session: resynced || { ...session, requirements_completed: requirements },
+        accepted: false,
+        reason: "heartbeat_resync",
+        required_watch_seconds: requiredSeconds,
+      });
+    }
+
+    const heartbeatWindowValid = elapsed > 0 && elapsed <= 20;
+    const playbackViolation = playing && playbackRate > config.maxPlaybackRate + 0.01;
+    const maxExpectedForward = elapsed > 0
+      ? Math.max(8, elapsed * (config.maxPlaybackRate + 0.35) + 2)
+      : 8;
+    const seekViolation = session.last_video_position !== null
+      && session.last_video_position !== undefined
+      && forward > maxExpectedForward;
+
+    if (playbackViolation) guard.playback_violations = Number(guard.playback_violations || 0) + 1;
+    if (seekViolation) guard.seek_violations = Number(guard.seek_violations || 0) + 1;
+
+    let checkpointActive = guard.checkpoint_enabled === true
+      && guard.checkpoint_passed !== true
+      && guard.checkpoint_active === true;
+
+    let increment = visible
+      && playing
+      && heartbeatWindowValid
+      && !playbackViolation
+      && !seekViolation
+      && !checkpointActive
+        ? Math.max(0, Math.min(elapsed, 12, forward + 1.25))
+        : 0;
+
+    let watched = Math.min(requiredSeconds, Number(session.watched_seconds || 0) + increment);
+    const checkpointAt = Number(guard.checkpoint_at_seconds || 0);
+
+    if (
+      guard.checkpoint_enabled === true
+      && guard.checkpoint_passed !== true
+      && !checkpointActive
+      && checkpointAt > 0
+      && watched >= checkpointAt
+    ) {
+      checkpointActive = true;
+      guard.checkpoint_active = true;
+      guard.checkpoint_nonce = randomToken(16);
+      watched = Math.min(watched, checkpointAt);
+      increment = 0;
+    }
+
+    guard.next_heartbeat_nonce = randomToken();
+    requirements.watch_guard = guard;
+
+    const checkpointPassed = guard.checkpoint_enabled !== true || guard.checkpoint_passed === true;
+    const completed = watched >= requiredSeconds
+      && wallElapsed >= requiredSeconds
+      && checkpointPassed;
 
     const { data: updated, error } = await admin.from("reward_sessions").update({
       watched_seconds: watched,
@@ -255,12 +418,74 @@ serve(async (req) => {
       last_heartbeat_at: now.toISOString(),
       heartbeat_count: Number(session.heartbeat_count || 0) + 1,
       visibility_failures: Number(session.visibility_failures || 0) + ((!visible || !playing) ? 1 : 0),
+      requirements_completed: requirements,
       status: completed ? "completed" : "watching",
       completed_at: completed ? (session.completed_at || now.toISOString()) : null,
       updated_at: now.toISOString(),
     }).eq("id", session.id).eq("user_id", caller.id).select("*").single();
+
     if (error) return json({ error: error.message }, 500);
-    return json({ session: updated, required_watch_seconds: cp.campaign.required_watch_seconds });
+    return json({
+      session: updated,
+      required_watch_seconds: requiredSeconds,
+      accepted: increment > 0,
+      watch_state: {
+        visible,
+        playing,
+        playback_rate: playbackRate,
+        max_playback_rate: config.maxPlaybackRate,
+        seek_violation: seekViolation,
+        playback_violation: playbackViolation,
+        wall_elapsed_seconds: wallElapsed,
+      },
+      challenge: guard.checkpoint_active && guard.checkpoint_passed !== true
+        ? {
+            nonce: guard.checkpoint_nonce,
+            checkpoint_at_seconds: guard.checkpoint_at_seconds,
+          }
+        : null,
+    });
+  }
+
+  if (action === "attention" && req.method === "POST") {
+    const body = await req.json().catch(() => ({}));
+    const sessionId = String(body?.session_id || "");
+    const nonce = String(body?.challenge_nonce || "");
+    if (!sessionId || !nonce) return json({ error: "Checkpoint inválido" }, 400);
+
+    const { data: rawSession } = await admin.from("reward_sessions").select("*").eq("id", sessionId).eq("user_id", caller.id).maybeSingle();
+    if (!rawSession) return json({ error: "Sessão não encontrada" }, 404);
+    if (rawSession.status !== "watching") return json({ session: rawSession });
+
+    const cp = await getCampaignProduct(admin, rawSession.campaign_product_id);
+    if (!cp) return json({ error: "Campanha indisponível" }, 409);
+
+    const guarded = await ensureWatchGuard(admin, rawSession, cp.campaign);
+    const requirements = { ...guarded.requirements };
+    const guard = { ...guarded.guard };
+
+    if (guard.checkpoint_enabled !== true || guard.checkpoint_passed === true) {
+      return json({ session: guarded.session, challenge: null });
+    }
+    if (guard.checkpoint_active !== true || !guard.checkpoint_nonce || nonce !== guard.checkpoint_nonce) {
+      return json({ error: "Checkpoint expirado ou inválido" }, 409);
+    }
+
+    guard.checkpoint_active = false;
+    guard.checkpoint_passed = true;
+    guard.checkpoint_passed_at = new Date().toISOString();
+    guard.checkpoint_nonce = null;
+    guard.next_heartbeat_nonce = randomToken();
+    requirements.watch_guard = guard;
+    requirements.attention_checkpoint = true;
+
+    const { data: updated, error } = await admin.from("reward_sessions").update({
+      requirements_completed: requirements,
+      updated_at: new Date().toISOString(),
+    }).eq("id", rawSession.id).eq("user_id", caller.id).select("*").single();
+
+    if (error) return json({ error: error.message }, 500);
+    return json({ session: updated, challenge: null, ok: true });
   }
 
   if (action === "request" && req.method === "POST") {
@@ -273,6 +498,24 @@ serve(async (req) => {
 
     const cp = await getCampaignProduct(admin, session.campaign_product_id);
     if (!cp) return json({ error: "Recompensa indisponível" }, 409);
+
+    const guarded = await ensureWatchGuard(admin, session, cp.campaign);
+    const guard = guarded.guard;
+    const requiredSeconds = Math.max(1, Number(cp.campaign.required_watch_seconds || 1));
+    const startedAtMs = guarded.session.started_at
+      ? new Date(guarded.session.started_at).getTime()
+      : new Date(guarded.session.created_at).getTime();
+    const wallElapsed = Math.max(0, (Date.now() - startedAtMs) / 1000);
+    if (Number(guarded.session.watched_seconds || 0) < requiredSeconds) {
+      return json({ error: "Tempo de vídeo ainda não concluído" }, 409);
+    }
+    if (wallElapsed < requiredSeconds) {
+      return json({ error: "Tempo real mínimo da missão ainda não concluído" }, 409);
+    }
+    if (guard.checkpoint_enabled === true && guard.checkpoint_passed !== true) {
+      return json({ error: "Confirme o checkpoint de atenção antes de solicitar o teste" }, 409);
+    }
+
     const now = new Date();
     const eligible = new Date(now.getTime() + Number(cp.auto_delay_seconds || 0) * 1000);
     const { data: updated, error } = await admin.from("reward_sessions").update({

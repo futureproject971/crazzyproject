@@ -1,7 +1,19 @@
+<<<<<<< HEAD
 -- CRAZZY PROJECT - setup completo do banco (bootstrap 001..004 concatenado)
 -- Cole tudo isso no SQL Editor do Supabase (projeto teyqtfdeugldgtzkyybg) e execute UMA vez.
 
 -- ==================== 001_core_schema.sql ====================
+=======
+-- CRAZZY PROJECT - SETUP COMPLETO PARA SUPABASE NOVO
+-- Gerado a partir dos 6 bootstraps canônicos.
+-- Execute inteiro somente em um projeto Supabase NOVO/Vazio.
+-- Ordem: Core -> Hardening -> Rewards -> Grants -> Performance -> RLS consolidation.
+
+-- ============================================================
+-- SOURCE: supabase/bootstrap/001_core_schema.sql
+-- ============================================================
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- CRAZZY PROJECT - FRESH DATABASE BOOTSTRAP
 -- Built from the consolidated legacy schema, intentionally excluding historical data
 -- migrations and old gateway-specific columns. Run only against a NEW empty project.
@@ -75,6 +87,7 @@ CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH 
 CREATE POLICY "Admins can update any profile" ON public.profiles FOR UPDATE USING (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+<<<<<<< HEAD
 -- Auto-create profile on signup
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -84,6 +97,39 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+=======
+-- Auto-create profile on signup/social OAuth.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $
+BEGIN
+  INSERT INTO public.profiles (user_id, username, avatar_url)
+  VALUES (
+    NEW.id,
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'preferred_username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'full_name', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'name', ''),
+      split_part(COALESCE(NEW.email, ''), '@', 1),
+      'usuario'
+    ),
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'avatar_url', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'picture', '')
+    )
+  )
+  ON CONFLICT (user_id) DO UPDATE
+  SET username = COALESCE(public.profiles.username, EXCLUDED.username),
+      avatar_url = COALESCE(public.profiles.avatar_url, EXCLUDED.avatar_url);
+
+  RETURN NEW;
+END;
+$;
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -158,7 +204,11 @@ CREATE TABLE public.products (
   active BOOLEAN NOT NULL DEFAULT true,
   sort_order INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'undetected',
+<<<<<<< HEAD
   status_label TEXT NOT NULL DEFAULT 'IndetectÃ¡vel',
+=======
+  status_label TEXT NOT NULL DEFAULT 'Indetectável',
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   status_updated_at TIMESTAMPTZ,
   tutorial_text TEXT,
   tutorial_file_url TEXT,
@@ -247,6 +297,7 @@ ALTER TABLE public.stock_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage stock" ON public.stock_items FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
+<<<<<<< HEAD
 -- REWARDS / TRIALS
 -- ============================================
 create table if not exists public.reward_campaigns (
@@ -399,6 +450,8 @@ using (public.has_role(auth.uid(), 'admin'))
 with check (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
+=======
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- ORDER TICKETS
 -- ============================================
 CREATE TABLE public.order_tickets (
@@ -424,7 +477,11 @@ CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON public.order_tickets FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
+<<<<<<< HEAD
 -- Cliente sÃ³ lÃª conteÃºdo de estoque que foi efetivamente entregue em um pedido prÃ³prio.
+=======
+-- Cliente só lê conteúdo de estoque que foi efetivamente entregue em um pedido próprio.
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 CREATE POLICY "Users can view delivered own stock"
 ON public.stock_items
 FOR SELECT
@@ -438,7 +495,11 @@ USING (
   )
 );
 
+<<<<<<< HEAD
 -- AvaliaÃ§Ãµes sÃ³ podem ser criadas/alteradas por quem possui pedido real do produto.
+=======
+-- Avaliações só podem ser criadas/alteradas por quem possui pedido real do produto.
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 CREATE POLICY "Users can insert purchased product reviews"
 ON public.product_reviews
 FOR INSERT
@@ -553,6 +614,7 @@ CREATE UNIQUE INDEX order_tickets_payment_unit_unique
 CREATE INDEX stock_items_available_plan_idx
   ON public.stock_items (product_plan_id, used, created_at);
 
+<<<<<<< HEAD
 CREATE OR REPLACE FUNCTION public.claim_paid_delivery(
   p_payment_id UUID,
   p_user_id UUID,
@@ -680,6 +742,11 @@ $$;
 REVOKE ALL ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM PUBLIC;
 REVOKE EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) TO service_role;
+=======
+-- Atomic paid-delivery function is defined in 002_security_hardening.sql.
+
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================
 -- PAYMENT SETTINGS
@@ -688,7 +755,11 @@ CREATE TABLE public.payment_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   method TEXT NOT NULL UNIQUE,
   label TEXT NOT NULL,
+<<<<<<< HEAD
   enabled BOOLEAN NOT NULL DEFAULT true,
+=======
+  enabled BOOLEAN NOT NULL DEFAULT false,
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.payment_settings ENABLE ROW LEVEL SECURITY;
@@ -696,9 +767,15 @@ CREATE POLICY "Anyone can view payment settings" ON public.payment_settings FOR 
 CREATE POLICY "Admins can manage payment settings" ON public.payment_settings FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 INSERT INTO public.payment_settings (method, label, enabled) VALUES
+<<<<<<< HEAD
   ('pix', 'PIX', true),
   ('card', 'CartÃ£o de CrÃ©dito', false),
   ('crypto', 'Litecoin (LTC)', true);
+=======
+  ('pix', 'PIX', false),
+  ('card', 'Cartão de Crédito', false),
+  ('crypto', 'Litecoin (LTC)', false);
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================
 -- COUPONS
@@ -860,6 +937,123 @@ ALTER TABLE public.system_credentials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage credentials" ON public.system_credentials FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
+<<<<<<< HEAD
+=======
+-- SUPPORT HUB (Discord-style support, independent from paid orders)
+-- ============================================
+CREATE TABLE public.support_tickets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  subject TEXT NOT NULL CHECK (char_length(subject) BETWEEN 3 AND 120),
+  category TEXT NOT NULL DEFAULT 'general'
+    CHECK (category IN ('general','pre_sale','payment','product','technical','order')),
+  status TEXT NOT NULL DEFAULT 'open'
+    CHECK (status IN ('open','waiting_staff','waiting_user','resolved','closed')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ
+);
+ALTER TABLE public.support_tickets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support tickets visible to owner or admin" ON public.support_tickets
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Users create own support tickets" ON public.support_tickets
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins update support tickets" ON public.support_tickets
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support tickets" ON public.support_tickets
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+CREATE TRIGGER update_support_tickets_updated_at
+  BEFORE UPDATE ON public.support_tickets
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE TABLE public.support_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticket_id UUID NOT NULL REFERENCES public.support_tickets(id) ON DELETE CASCADE,
+  sender_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  sender_role TEXT NOT NULL CHECK (sender_role IN ('user','staff')),
+  message TEXT NOT NULL CHECK (char_length(message) BETWEEN 1 AND 4000),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE public.support_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support messages visible to owner or admin" ON public.support_messages
+  FOR SELECT TO authenticated
+  USING (
+    public.has_role(auth.uid(), 'admin')
+    OR EXISTS (
+      SELECT 1 FROM public.support_tickets st
+      WHERE st.id = support_messages.ticket_id
+        AND st.user_id = auth.uid()
+    )
+  );
+CREATE POLICY "Support message insert user or admin" ON public.support_messages
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    (
+      public.has_role(auth.uid(), 'admin')
+      AND sender_id = auth.uid()
+      AND sender_role = 'staff'
+    )
+    OR
+    (
+      sender_id = auth.uid()
+      AND sender_role = 'user'
+      AND EXISTS (
+        SELECT 1 FROM public.support_tickets st
+        WHERE st.id = support_messages.ticket_id
+          AND st.user_id = auth.uid()
+          AND st.status <> 'closed'
+      )
+    )
+  );
+CREATE POLICY "Admins update support messages" ON public.support_messages
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support messages" ON public.support_messages
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+
+CREATE INDEX support_tickets_user_created_idx
+  ON public.support_tickets (user_id, created_at DESC);
+CREATE INDEX support_tickets_status_updated_idx
+  ON public.support_tickets (status, updated_at DESC);
+CREATE INDEX support_messages_ticket_created_idx
+  ON public.support_messages (ticket_id, created_at);
+CREATE INDEX support_messages_sender_idx
+  ON public.support_messages (sender_id);
+
+-- ============================================
+-- PROMO DAILY REVEAL (free daily scratch card)
+-- ============================================
+CREATE TABLE public.promo_daily_reveals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  reveal_date DATE NOT NULL DEFAULT (timezone('UTC', now()))::date,
+  result_key TEXT NOT NULL CHECK (result_key IN ('rewards_trial','featured_product','try_tomorrow')),
+  product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, reveal_date)
+);
+ALTER TABLE public.promo_daily_reveals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own promo reveals" ON public.promo_daily_reveals
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+CREATE POLICY "Admins manage promo reveals" ON public.promo_daily_reveals
+  FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE INDEX promo_daily_reveals_user_created_idx
+  ON public.promo_daily_reveals (user_id, created_at DESC);
+CREATE INDEX promo_daily_reveals_product_idx
+  ON public.promo_daily_reveals (product_id);
+
+-- ============================================
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- RPC: increment reseller purchases
 -- ============================================
 CREATE OR REPLACE FUNCTION public.increment_reseller_purchases(_reseller_id UUID)
@@ -908,7 +1102,14 @@ CREATE POLICY "Admins can delete game images" ON storage.objects FOR DELETE
   USING (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
 
 
+<<<<<<< HEAD
 -- ==================== 002_security_hardening.sql ====================
+=======
+-- ============================================================
+-- SOURCE: supabase/bootstrap/002_security_hardening.sql
+-- ============================================================
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- CRAZZY PROJECT - SECURITY HARDENING
 -- Bootstrap step for a fresh CRAZZY database.
 
@@ -916,25 +1117,78 @@ begin;
 
 
 -- ============================================================
+<<<<<<< HEAD
 -- ADMIN ROLE HELPER: callers may only ask about their own role. This keeps the
 -- SECURITY DEFINER helper useful for RLS without turning it into a role-enumeration API.
 -- ============================================================
 create or replace function public.has_role(_user_id uuid, _role public.app_role)
+=======
+-- ADMIN ROLE HELPER: move the SECURITY DEFINER helper out of the exposed public
+-- schema. Policies keep working by dependency, but the function is no longer a public
+-- RPC endpoint. Admin policies are scoped to authenticated callers only.
+-- ============================================================
+create schema if not exists private;
+revoke all on schema private from public;
+grant usage on schema private to authenticated, service_role;
+
+alter function public.has_role(uuid, public.app_role) set schema private;
+
+create or replace function private.has_role(_user_id uuid, _role public.app_role)
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 returns boolean
 language sql
 stable
 security definer
 set search_path = public
+<<<<<<< HEAD
 as $$
+=======
+as $
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   select _user_id = (select auth.uid())
     and exists (
       select 1 from public.user_roles
       where user_id = _user_id and role = _role
     );
+<<<<<<< HEAD
 $$;
 
 revoke all on function public.has_role(uuid, public.app_role) from public;
 grant execute on function public.has_role(uuid, public.app_role) to anon, authenticated;
+=======
+$;
+
+revoke all on function private.has_role(uuid, public.app_role) from public, anon;
+grant execute on function private.has_role(uuid, public.app_role) to authenticated, service_role;
+
+do $
+declare
+  pol record;
+begin
+  for pol in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and (
+        coalesce(qual, '') ilike '%has_role%'
+        or coalesce(with_check, '') ilike '%has_role%'
+      )
+  loop
+    execute format(
+      'alter policy %I on %I.%I to authenticated',
+      pol.policyname,
+      pol.schemaname,
+      pol.tablename
+    );
+  end loop;
+end
+$;
+
+-- Trigger/event-trigger helpers are internal infrastructure and must not be callable
+-- through the Data API.
+revoke all on function public.handle_new_user() from public, anon, authenticated, service_role;
+revoke all on function public.rls_auto_enable() from public, anon, authenticated, service_role;
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================================
 -- PAYMENTS: browser may read its own rows, but must NEVER create/modify payment facts.
@@ -1047,8 +1301,14 @@ begin
   end if;
 end $$;
 
+<<<<<<< HEAD
 create unique index if not exists coupon_usage_coupon_user_unique
   on public.coupon_usage(coupon_id, user_id);
+=======
+-- public.coupon_usage already has UNIQUE (coupon_id, user_id) in the core schema,
+-- so do not create a duplicate unique index here.
+drop index if exists public.coupon_usage_coupon_user_unique;
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================================
 -- PROFILES: browser cannot alter ban fields or another identity. Public/profile UI only
@@ -1253,10 +1513,90 @@ revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, intege
 revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) from anon, authenticated;
 grant execute on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) to service_role;
 
+<<<<<<< HEAD
 commit;
 
 
 -- ==================== 003_rewards.sql ====================
+=======
+
+-- ============================================================
+-- RLS PERFORMANCE: avoid re-evaluating auth.uid() for every row.
+-- Preserve each policy expression and only wrap direct auth.uid() calls in a scalar
+-- subquery so Postgres can use an initPlan.
+-- ============================================================
+do $
+declare
+  pol record;
+  stmt text;
+  new_qual text;
+  new_check text;
+begin
+  for pol in
+    select schemaname, tablename, policyname, qual, with_check
+    from pg_policies
+    where schemaname = 'public'
+      and (
+        (coalesce(qual, '') like '%auth.uid()%' and coalesce(qual, '') not ilike '%select auth.uid()%')
+        or
+        (coalesce(with_check, '') like '%auth.uid()%' and coalesce(with_check, '') not ilike '%select auth.uid()%')
+      )
+  loop
+    new_qual := case when pol.qual is null then null else replace(pol.qual, 'auth.uid()', '(select auth.uid())') end;
+    new_check := case when pol.with_check is null then null else replace(pol.with_check, 'auth.uid()', '(select auth.uid())') end;
+
+    stmt := format('alter policy %I on %I.%I', pol.policyname, pol.schemaname, pol.tablename);
+    if new_qual is not null then
+      stmt := stmt || format(' using (%s)', new_qual);
+    end if;
+    if new_check is not null then
+      stmt := stmt || format(' with check (%s)', new_check);
+    end if;
+    execute stmt;
+  end loop;
+end
+$;
+
+-- ============================================================
+-- SUPPORT HUB ACTIVITY STATE
+-- Keeps queue status fresh without letting browser users update ticket ownership/state.
+-- ============================================================
+create or replace function private.touch_support_ticket()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, private
+as $
+begin
+  update public.support_tickets
+  set
+    updated_at = now(),
+    status = case
+      when new.sender_role = 'user' and status <> 'closed' then 'waiting_staff'
+      when new.sender_role = 'staff' and status not in ('closed', 'resolved') then 'waiting_user'
+      else status
+    end
+  where id = new.ticket_id;
+
+  return new;
+end;
+$;
+
+revoke all on function private.touch_support_ticket() from public, anon, authenticated, service_role;
+
+drop trigger if exists touch_support_ticket_on_message on public.support_messages;
+create trigger touch_support_ticket_on_message
+after insert on public.support_messages
+for each row execute function private.touch_support_ticket();
+
+commit;
+
+
+-- ============================================================
+-- SOURCE: supabase/bootstrap/003_rewards.sql
+-- ============================================================
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- CRAZZY PROJECT - REWARDS / TRIAL SYSTEM
 -- Bootstrap step for a fresh CRAZZY database.
 
@@ -1401,6 +1741,7 @@ create policy "Users can view own reward deliveries"
 -- Admin policies. Normal browser users receive no INSERT/UPDATE/DELETE policy for server-owned state.
 drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
 create policy "Admins manage reward campaigns" on public.reward_campaigns for all to authenticated
+<<<<<<< HEAD
   using (public.has_role((select auth.uid()), 'admin'))
   with check (public.has_role((select auth.uid()), 'admin'));
 
@@ -1423,6 +1764,30 @@ drop policy if exists "Admins manage reward deliveries" on public.reward_deliver
 create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
   using (public.has_role((select auth.uid()), 'admin'))
   with check (public.has_role((select auth.uid()), 'admin'));
+=======
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward products" on public.reward_campaign_products;
+create policy "Admins manage reward products" on public.reward_campaign_products for all to authenticated
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage trial stock" on public.trial_stock_items;
+create policy "Admins manage trial stock" on public.trial_stock_items for all to authenticated
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
+create policy "Admins manage reward sessions" on public.reward_sessions for all to authenticated
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
+create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
+  using (private.has_role((select auth.uid()), 'admin'))
+  with check (private.has_role((select auth.uid()), 'admin'));
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- Explicit grants: user cannot forge progress or claim inventory through Data API.
 revoke insert, update, delete on public.reward_sessions from anon, authenticated;
@@ -1434,15 +1799,32 @@ grant select on public.reward_sessions, public.reward_deliveries to authenticate
 commit;
 
 
+<<<<<<< HEAD
 -- ==================== 004_access_grants.sql ====================
 -- CRAZZY PROJECT - explicit Data API grants for fresh Supabase projects.
 -- RLS remains the authorization layer. These grants only expose the operations that
 -- each browser role may attempt; the policies decide which rows are actually allowed.
+=======
+-- ============================================================
+-- SOURCE: supabase/bootstrap/004_access_grants.sql
+-- ============================================================
+
+-- CRAZZY PROJECT - explicit Data API grants for fresh Supabase projects.
+-- RLS remains the row-authorization layer, but grants are now an allowlist:
+-- browser roles lose all automatic table privileges first, then receive only what the app needs.
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 begin;
 
 grant usage on schema public to anon, authenticated, service_role;
 
+<<<<<<< HEAD
+=======
+-- Remove Supabase/Postgres automatic table exposure for browser roles.
+revoke all privileges on all tables in schema public from anon, authenticated;
+revoke all privileges on all sequences in schema public from anon, authenticated;
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- Public storefront catalog.
 grant select on table
   public.games,
@@ -1454,6 +1836,12 @@ grant select on table
   public.payment_settings
   to anon;
 
+<<<<<<< HEAD
+=======
+-- Public profile surface is intentionally column-limited.
+grant select (user_id, username, avatar_url) on public.profiles to anon, authenticated;
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- Authenticated storefront/customer reads.
 grant select on table
   public.games,
@@ -1484,6 +1872,10 @@ grant select on table
 grant insert, update, delete on public.product_reviews to authenticated;
 grant insert on public.user_login_ips to authenticated;
 grant insert on public.ticket_messages to authenticated;
+<<<<<<< HEAD
+=======
+grant update (username, avatar_url) on public.profiles to authenticated;
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- Admin panel mutations. Normal customers still fail RLS because every write policy on
 -- these tables is admin-only. Payment facts and coupon_usage are deliberately excluded.
@@ -1508,11 +1900,27 @@ grant insert, update, delete on table
   public.user_roles
   to authenticated;
 
+<<<<<<< HEAD
 -- Only the Discord invite row is visible publicly, enforced by the RLS policy created in
 -- the hardening step. Secrets never live in this table.
 grant select on public.system_credentials to anon;
 
 -- Rewards: customers can read catalog + own status; admin policies permit management.
+=======
+-- Only the Discord invite row is visible publicly, enforced by RLS.
+grant select on public.system_credentials to anon;
+
+-- Support Hub: visible only to authenticated users; RLS separates owners from admins.
+grant select, insert, update, delete on table
+  public.support_tickets,
+  public.support_messages
+  to authenticated;
+
+-- Promo scratch card: users can only read their own reveal; inserts happen via Edge Function/service role.
+grant select on table public.promo_daily_reveals to authenticated;
+
+-- Rewards: public catalog + signed-in own state; admin writes are RLS-gated.
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 grant select on public.reward_campaigns, public.reward_campaign_products to anon;
 grant select, insert, update, delete on table
   public.reward_campaigns,
@@ -1529,3 +1937,307 @@ grant all privileges on all sequences in schema public to service_role;
 commit;
 
 
+<<<<<<< HEAD
+=======
+-- ============================================================
+-- SOURCE: supabase/bootstrap/005_performance_indexes.sql
+-- ============================================================
+
+-- CRAZZY PROJECT - PERFORMANCE INDEXES
+-- Covers every public-schema foreign key currently reported by Supabase as unindexed.
+
+begin;
+
+create index if not exists idx_coupon_products_coupon_id on public.coupon_products (coupon_id);
+create index if not exists idx_coupon_products_product_id on public.coupon_products (product_id);
+create index if not exists idx_coupon_usage_user_id on public.coupon_usage (user_id);
+create index if not exists idx_coupon_users_coupon_id on public.coupon_users (coupon_id);
+create index if not exists idx_coupon_users_user_id on public.coupon_users (user_id);
+create index if not exists idx_lzt_sales_buyer_user_id on public.lzt_sales (buyer_user_id);
+create index if not exists idx_order_tickets_product_id on public.order_tickets (product_id);
+create index if not exists idx_order_tickets_product_plan_id on public.order_tickets (product_plan_id);
+create index if not exists idx_order_tickets_stock_item_id on public.order_tickets (stock_item_id);
+create index if not exists idx_order_tickets_user_id on public.order_tickets (user_id);
+create index if not exists idx_payments_user_id on public.payments (user_id);
+create index if not exists idx_product_features_product_id on public.product_features (product_id);
+create index if not exists idx_product_media_product_id on public.product_media (product_id);
+create index if not exists idx_product_plans_product_id on public.product_plans (product_id);
+create index if not exists idx_product_reviews_product_id on public.product_reviews (product_id);
+create index if not exists idx_products_game_id on public.products (game_id);
+create index if not exists idx_reseller_products_product_id on public.reseller_products (product_id);
+create index if not exists idx_reseller_products_reseller_id on public.reseller_products (reseller_id);
+create index if not exists idx_reseller_purchases_product_plan_id on public.reseller_purchases (product_plan_id);
+create index if not exists idx_reseller_purchases_reseller_id on public.reseller_purchases (reseller_id);
+create index if not exists idx_reseller_purchases_stock_item_id on public.reseller_purchases (stock_item_id);
+create index if not exists idx_reward_campaign_products_product_id on public.reward_campaign_products (product_id);
+create index if not exists idx_reward_campaign_products_product_plan_id on public.reward_campaign_products (product_plan_id);
+create index if not exists idx_reward_deliveries_delivered_by on public.reward_deliveries (delivered_by);
+create index if not exists idx_reward_deliveries_trial_stock_item_id on public.reward_deliveries (trial_stock_item_id);
+create index if not exists idx_reward_deliveries_user_id on public.reward_deliveries (user_id);
+create index if not exists idx_reward_sessions_campaign_id on public.reward_sessions (campaign_id);
+create index if not exists idx_reward_sessions_campaign_product_id on public.reward_sessions (campaign_product_id);
+create index if not exists idx_reward_sessions_product_id on public.reward_sessions (product_id);
+create index if not exists idx_reward_sessions_product_plan_id on public.reward_sessions (product_plan_id);
+create index if not exists support_tickets_user_created_idx on public.support_tickets (user_id, created_at desc);
+create index if not exists support_tickets_status_updated_idx on public.support_tickets (status, updated_at desc);
+create index if not exists support_messages_ticket_created_idx on public.support_messages (ticket_id, created_at);
+create index if not exists support_messages_sender_idx on public.support_messages (sender_id);
+create index if not exists idx_ticket_messages_sender_id on public.ticket_messages (sender_id);
+create index if not exists idx_ticket_messages_ticket_id on public.ticket_messages (ticket_id);
+create index if not exists idx_trial_stock_items_used_by on public.trial_stock_items (used_by);
+create index if not exists idx_user_login_ips_user_id on public.user_login_ips (user_id);
+
+commit;
+
+create index if not exists promo_daily_reveals_user_created_idx
+  on public.promo_daily_reveals (user_id, created_at desc);
+create index if not exists promo_daily_reveals_product_idx
+  on public.promo_daily_reveals (product_id);
+
+
+-- ============================================================
+-- SOURCE: supabase/bootstrap/006_rls_policy_consolidation.sql
+-- ============================================================
+
+-- CRAZZY PROJECT - CONSOLIDATE RLS POLICIES
+-- Keeps one permissive policy per role/action wherever possible and removes a weaker stock read path.
+
+begin;
+
+do $$
+declare
+  t text;
+  p text;
+begin
+  for t,p in
+    select * from (values
+      ('coupon_products','Admins can manage coupon products'),
+      ('coupon_users','Admins can manage coupon users'),
+      ('coupons','Admins can manage coupons'),
+      ('games','Admins can manage games'),
+      ('lzt_config','Admins can manage lzt config'),
+      ('payment_settings','Admins can manage payment settings'),
+      ('product_features','Admins can manage features'),
+      ('product_media','Admins can manage media'),
+      ('product_plans','Admins can manage plans'),
+      ('products','Admins can manage products')
+    ) as v(table_name, policy_name)
+  loop
+    execute format('drop policy if exists %I on public.%I', p, t);
+    execute format('create policy %I on public.%I for insert to authenticated with check (private.has_role((select auth.uid()), ''admin''))', p || ' insert', t);
+    execute format('create policy %I on public.%I for update to authenticated using (private.has_role((select auth.uid()), ''admin'')) with check (private.has_role((select auth.uid()), ''admin''))', p || ' update', t);
+    execute format('create policy %I on public.%I for delete to authenticated using (private.has_role((select auth.uid()), ''admin''))', p || ' delete', t);
+  end loop;
+end
+$$;
+
+drop policy if exists "Admins can manage coupon usage" on public.coupon_usage;
+drop policy if exists "Users can view own coupon usage" on public.coupon_usage;
+create policy "Coupon usage visible to owner or admin" on public.coupon_usage for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can insert coupon usage" on public.coupon_usage for insert to authenticated
+  with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update coupon usage" on public.coupon_usage for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete coupon usage" on public.coupon_usage for delete to authenticated
+  using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage all tickets" on public.order_tickets;
+drop policy if exists "Users can view own tickets" on public.order_tickets;
+create policy "Tickets visible to owner or admin" on public.order_tickets for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can insert tickets" on public.order_tickets for insert to authenticated
+  with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update tickets" on public.order_tickets for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete tickets" on public.order_tickets for delete to authenticated
+  using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage all payments" on public.payments;
+drop policy if exists "Users can view own payments" on public.payments;
+create policy "Payments visible to owner or admin" on public.payments for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can insert payments" on public.payments for insert to authenticated
+  with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update payments" on public.payments for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete payments" on public.payments for delete to authenticated
+  using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage reviews" on public.product_reviews;
+drop policy if exists "Users can insert purchased product reviews" on public.product_reviews;
+drop policy if exists "Users can update purchased product reviews" on public.product_reviews;
+drop policy if exists "Users can delete own reviews" on public.product_reviews;
+create policy "Purchased review insert or admin" on public.product_reviews for insert to authenticated
+  with check (
+    private.has_role((select auth.uid()), 'admin')
+    or (
+      (select auth.uid()) = user_id and rating between 1 and 5
+      and exists (
+        select 1 from public.order_tickets ot
+        where ot.user_id = (select auth.uid())
+          and ot.product_id = product_reviews.product_id
+          and ot.status in ('delivered','resolved','closed','finished','archived')
+      )
+    )
+  );
+create policy "Purchased review update or admin" on public.product_reviews for update to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'))
+  with check (
+    private.has_role((select auth.uid()), 'admin')
+    or (
+      (select auth.uid()) = user_id and rating between 1 and 5
+      and exists (
+        select 1 from public.order_tickets ot
+        where ot.user_id = (select auth.uid())
+          and ot.product_id = product_reviews.product_id
+          and ot.status in ('delivered','resolved','closed','finished','archived')
+      )
+    )
+  );
+create policy "Review delete owner or admin" on public.product_reviews for delete to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can update any profile" on public.profiles;
+drop policy if exists "Users can update own basic profile" on public.profiles;
+create policy "Profile update owner or admin" on public.profiles for update to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'))
+  with check ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage resellers" on public.resellers;
+drop policy if exists "Users can view own reseller" on public.resellers;
+create policy "Reseller visible to owner or admin" on public.resellers for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can insert resellers" on public.resellers for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update resellers" on public.resellers for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete resellers" on public.resellers for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage reseller products" on public.reseller_products;
+drop policy if exists "Users can view own reseller products" on public.reseller_products;
+create policy "Reseller products visible to owner or admin" on public.reseller_products for select to authenticated
+  using (
+    private.has_role((select auth.uid()), 'admin')
+    or exists (select 1 from public.resellers r where r.id = reseller_products.reseller_id and r.user_id = (select auth.uid()))
+  );
+create policy "Admins can insert reseller products" on public.reseller_products for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update reseller products" on public.reseller_products for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete reseller products" on public.reseller_products for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage reseller purchases" on public.reseller_purchases;
+drop policy if exists "Users can view own reseller purchases" on public.reseller_purchases;
+create policy "Reseller purchases visible to owner or admin" on public.reseller_purchases for select to authenticated
+  using (
+    private.has_role((select auth.uid()), 'admin')
+    or exists (select 1 from public.resellers r where r.id = reseller_purchases.reseller_id and r.user_id = (select auth.uid()))
+  );
+create policy "Admins can insert reseller purchases" on public.reseller_purchases for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can update reseller purchases" on public.reseller_purchases for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins can delete reseller purchases" on public.reseller_purchases for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
+drop policy if exists "Public can view active reward campaigns" on public.reward_campaigns;
+create policy "Anon can view active reward campaigns" on public.reward_campaigns for select to anon using (active = true);
+create policy "Authenticated can view active rewards or admin all" on public.reward_campaigns for select to authenticated
+  using (active = true or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins insert reward campaigns" on public.reward_campaigns for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update reward campaigns" on public.reward_campaigns for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete reward campaigns" on public.reward_campaigns for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward products" on public.reward_campaign_products;
+drop policy if exists "Public can view active reward products" on public.reward_campaign_products;
+create policy "Anon can view active reward products" on public.reward_campaign_products for select to anon
+  using (active = true and exists (select 1 from public.reward_campaigns c where c.id = campaign_id and c.active = true));
+create policy "Authenticated can view active reward products or admin all" on public.reward_campaign_products for select to authenticated
+  using (private.has_role((select auth.uid()), 'admin') or (active = true and exists (select 1 from public.reward_campaigns c where c.id = campaign_id and c.active = true)));
+create policy "Admins insert reward products" on public.reward_campaign_products for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update reward products" on public.reward_campaign_products for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete reward products" on public.reward_campaign_products for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
+drop policy if exists "Users can view own reward sessions" on public.reward_sessions;
+create policy "Reward sessions visible to owner or admin" on public.reward_sessions for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins insert reward sessions" on public.reward_sessions for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update reward sessions" on public.reward_sessions for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete reward sessions" on public.reward_sessions for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
+drop policy if exists "Users can view own reward deliveries" on public.reward_deliveries;
+create policy "Reward deliveries visible to owner or admin" on public.reward_deliveries for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins insert reward deliveries" on public.reward_deliveries for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update reward deliveries" on public.reward_deliveries for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete reward deliveries" on public.reward_deliveries for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage stock" on public.stock_items;
+drop policy if exists "Users can view delivered own stock" on public.stock_items;
+drop policy if exists "Users can view own delivered stock" on public.stock_items;
+create policy "Stock visible after delivery or to admin" on public.stock_items for select to authenticated
+  using (
+    private.has_role((select auth.uid()), 'admin')
+    or exists (
+      select 1 from public.order_tickets ot
+      where ot.stock_item_id = stock_items.id
+        and ot.user_id = (select auth.uid())
+        and ot.status in ('delivered','resolved','closed','finished','archived')
+    )
+  );
+create policy "Admins insert stock" on public.stock_items for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update stock" on public.stock_items for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete stock" on public.stock_items for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage credentials" on public.system_credentials;
+drop policy if exists "Public can view Discord invite" on public.system_credentials;
+create policy "Anon can view Discord invite" on public.system_credentials for select to anon using (env_key = 'DISCORD_INVITE_URL');
+create policy "Authenticated can view Discord invite or admin all" on public.system_credentials for select to authenticated
+  using (env_key = 'DISCORD_INVITE_URL' or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins insert credentials" on public.system_credentials for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update credentials" on public.system_credentials for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete credentials" on public.system_credentials for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage all messages" on public.ticket_messages;
+drop policy if exists "Users can send messages on own tickets" on public.ticket_messages;
+drop policy if exists "Users can view messages of own tickets" on public.ticket_messages;
+create policy "Ticket messages visible to owner or admin" on public.ticket_messages for select to authenticated
+  using (
+    private.has_role((select auth.uid()), 'admin')
+    or exists (select 1 from public.order_tickets ot where ot.id = ticket_messages.ticket_id and ot.user_id = (select auth.uid()))
+  );
+create policy "Ticket message insert user or admin" on public.ticket_messages for insert to authenticated
+  with check (
+    private.has_role((select auth.uid()), 'admin')
+    or (
+      sender_id = (select auth.uid()) and sender_role = 'user'
+      and exists (select 1 from public.order_tickets ot where ot.id = ticket_messages.ticket_id and ot.user_id = (select auth.uid()))
+    )
+  );
+create policy "Admins update ticket messages" on public.ticket_messages for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete ticket messages" on public.ticket_messages for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Admins can manage roles" on public.user_roles;
+drop policy if exists "Users can view own roles" on public.user_roles;
+create policy "Roles visible to owner or admin" on public.user_roles for select to authenticated
+  using ((select auth.uid()) = user_id or private.has_role((select auth.uid()), 'admin'));
+create policy "Admins insert roles" on public.user_roles for insert to authenticated with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins update roles" on public.user_roles for update to authenticated
+  using (private.has_role((select auth.uid()), 'admin')) with check (private.has_role((select auth.uid()), 'admin'));
+create policy "Admins delete roles" on public.user_roles for delete to authenticated using (private.has_role((select auth.uid()), 'admin'));
+
+drop policy if exists "Users can insert own IPs" on public.user_login_ips;
+drop policy if exists "Users can view own IPs" on public.user_login_ips;
+create policy "Users can insert own IPs" on public.user_login_ips for insert to authenticated with check ((select auth.uid()) = user_id);
+create policy "Users can view own IPs" on public.user_login_ips for select to authenticated using ((select auth.uid()) = user_id);
+
+commit;
+
+>>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9

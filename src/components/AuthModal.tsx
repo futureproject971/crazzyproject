@@ -197,18 +197,27 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
                   {tab === "register" && (
                     <div>
                       <label className="text-sm text-muted-foreground mb-1.5 block">Nome de usuário</label>
-                      <Input value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Seu nome de usuário" className="bg-secondary border-border h-12" />
+                      <Input
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value.slice(0, 40))}
+                        placeholder="Seu nome de usuário"
+                        className="bg-secondary border-border h-12"
+                        minLength={3}
+                        maxLength={40}
+                        required
+                        autoComplete="username"
+                      />
                     </div>
                   )}
 
                   <div>
-                    <label className="text-sm text-muted-foreground mb-1.5 block">{tab === "login" ? "Email ou usuário" : "Email"}</label>
+                    <label className="text-sm text-muted-foreground mb-1.5 block">Email</label>
                     <Input
-                      type={tab === "login" ? "text" : "email"}
-                      autoComplete={tab === "login" ? "username" : "email"}
+                      type="email"
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder={tab === "login" ? "seu@email.com ou usuário" : "seu@email.com"}
+                      placeholder="seu@email.com"
                       className="bg-secondary border-border h-12"
                       required
                     />
@@ -216,7 +225,16 @@ const AuthModal = ({ open, onOpenChange, defaultTab = "login" }: AuthModalProps)
 
                   <div>
                     <label className="text-sm text-muted-foreground mb-1.5 block">Senha</label>
-                    <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="bg-secondary border-border h-12" />
+                    <Input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      className="bg-secondary border-border h-12"
+                      minLength={8}
+                      required
+                      autoComplete={tab === "login" ? "current-password" : "new-password"}
+                    />
                   </div>
 
                   {tab === "login" && (

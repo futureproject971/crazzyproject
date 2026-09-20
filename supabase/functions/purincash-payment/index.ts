@@ -246,6 +246,20 @@ function withPaymentMethod(cart: any[], method: "pix" | "card" | "crypto") {
   return cart.map((item, index) => index === 0 ? { ...item, paymentMethod: method } : item);
 }
 
+async function paymentMethodEnabled(supabaseAdmin: any, method: "pix" | "card" | "crypto") {
+  const { data, error } = await supabaseAdmin
+    .from("payment_settings")
+    .select("enabled")
+    .eq("method", method)
+    .maybeSingle();
+
+  if (error) {
+    console.warn("[purincash] payment method settings unavailable", { method, error: error.message });
+    return false;
+  }
+  return data?.enabled === true;
+}
+
 async function checkoutRateLimited(supabaseAdmin: any, userId: string) {
   const since = new Date(Date.now() - 5 * 60 * 1000).toISOString();
   const { count, error } = await supabaseAdmin
@@ -380,6 +394,9 @@ Deno.serve(async (req) => {
   const callbackUrl = `${SUPABASE_URL}/functions/v1/purincash-payment?action=webhook`;
 
   if (action === "create" && req.method === "POST") {
+    if (!await paymentMethodEnabled(supabaseAdmin, "pix")) {
+      return json({ error: "Pagamento PIX está temporariamente indisponível" }, 503);
+    }
     const body = await req.json();
     const internalPaymentId = crypto.randomUUID();
     if (await checkoutRateLimited(supabaseAdmin, userId)) {
@@ -448,6 +465,9 @@ Deno.serve(async (req) => {
   }
 
   if (action === "create-card" && req.method === "POST") {
+    if (!await paymentMethodEnabled(supabaseAdmin, "card")) {
+      return json({ error: "Pagamento por cartão está temporariamente indisponível" }, 503);
+    }
     if (Deno.env.get("ENABLE_CARD_CHECKOUT") !== "true") {
       return json({ error: "Pagamento por cartão está temporariamente desativado" }, 403);
     }
@@ -522,6 +542,9 @@ Deno.serve(async (req) => {
   }
 
   if (action === "create-crypto" && req.method === "POST") {
+    if (!await paymentMethodEnabled(supabaseAdmin, "crypto")) {
+      return json({ error: "Pagamento em Litecoin está temporariamente indisponível" }, 503);
+    }
     if (PURINCASH_API_KEY.startsWith("ps_test_")) return json({ error: "Litecoin não está disponível no sandbox da PurinCash" }, 400);
     const body = await req.json();
     const internalPaymentId = crypto.randomUUID();

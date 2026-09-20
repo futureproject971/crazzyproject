@@ -24,8 +24,8 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 6. Implementar autoplay lento no coverflow.
 - [x] 7. Pausar temporariamente o autoplay após interação manual.
 - [x] 8. Reproduzir inclinação/perspectiva 3D das categorias.
-- [ ] 9. Eliminar 100% das sobreposições entre categorias na Home desktop.
-- [ ] 10. Eliminar invasão entre categorias, logo, coverflow, trust bar, header e footer.
+- [x] 9. Eliminar 100% das sobreposições entre categorias na Home desktop; Playwright confirmou 0 colisões em 1920×1080, 2560×1440 e 3440×1440.
+- [x] 10. Eliminar invasão entre categorias, logo, coverflow, trust bar, header e footer; auditoria geométrica automatizada confirmou 0 colisões nos cinco breakpoints testados.
 - [x] 11. Trocar wallpaper real entre tema claro e escuro.
 - [ ] 12. Refinar enquadramento do wallpaper por breakpoint.
 - [ ] 13. Refinar chuva no tema claro.
@@ -33,11 +33,11 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 15. Implementar cursor personalizado CRAZZY com fallback seguro para mouse/trackpad, preservando cursor de texto e touch.
 - [ ] 16. Fazer revisão visual completa da Home em light.
 - [ ] 17. Fazer revisão visual completa da Home em dark.
-- [ ] 18. Validar Home em 1920x1080.
-- [ ] 19. Validar Home em 2560x1440.
-- [ ] 20. Validar Home em ultrawide.
-- [ ] 21. Validar Home em tablet.
-- [ ] 22. Validar Home em mobile.
+- [x] 18. Validar Home em 1920x1080: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 19. Validar Home em 2560x1440: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 20. Validar Home em ultrawide 3440x1440: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 21. Validar Home em tablet 1024x1366: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
+- [x] 22. Validar Home em mobile 390x844: 16 categorias, 0 colisões, 0 overflow horizontal e 0 erros de console no Chromium.
 - [x] 23. Preservar header funcional da source.
 - [x] 24. Preservar busca funcional.
 - [x] 25. Preservar Login/Auth.
@@ -65,20 +65,20 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 47. Garantir idempotência de webhook/pagamento no código e no schema versionado.
 - [ ] 48. Validar fluxo de cartão/crédito quando realmente habilitado.
 - [ ] 49. Validar Litecoin/cripto quando realmente habilitado.
-- [ ] 50. Garantir que chaves/segredos de gateway só existam no backend.
+- [x] 50. Garantir que chaves/segredos de gateway só existam no backend: build da Vercel rejeita `VITE_*` com SECRET/SERVICE_ROLE/tokens privados, JWT `service_role`, `sb_secret_*` e chaves PurinCash privadas; testes de regressão cobrem o guard.
 - [ ] 51. Validar sandbox/ambiente de teste sem contaminar produção.
 - [x] 52. Revisar ciclo completo de pedidos no código: checkout, conciliação, entrega e tickets.
 - [x] 53. Corrigir/impedir pagamentos presos em FULFILLING no código.
 - [x] 54. Garantir payments.updated_at e trigger no bootstrap/migration.
 - [x] 55. Manter compra externa fail-closed no backend versionado.
-- [ ] 56. Validar hostname/allowlist de proxy externo.
+- [x] 56. Validar hostname/allowlist de proxy externo: `image-proxy` exige HTTPS e restringe a `lzt.market`/subdomínios; versão atual sincronizada no Supabase.
 - [x] 57. Remover exposição de payload bruto de fornecedor em entrega/diagnóstico ao cliente.
 - [x] 58. Evitar persistir resposta sensível bruta de fornecedor em estoque/tickets.
 - [x] 59. Separar estoque pago do estoque de trial/recompensa no schema versionado (`stock_items` x `trial_stock_items`).
-- [ ] 60. Revisar RLS/grants das tabelas expostas.
+- [x] 60. Revisar RLS/grants das tabelas expostas: allowlist de Data API aplicada no banco novo e Security Advisor permanece com 0 alertas.
 - [x] 61. Impedir sender_role/role de staff forjado pelo cliente no bootstrap e migrations de hardening.
 - [x] 62. Restringir RPCs sensíveis de revendedor ao backend/service role no schema versionado.
-- [ ] 63. Manter bootstrap Supabase limpo para instalação nova.
+- [x] 63. Manter bootstrap Supabase limpo para instalação nova: core/hardening/rewards/grants consolidados e setup completo executado com sucesso no banco novo.
 - [x] 64. Refletir migrations novas no bootstrap antigo/base para o pacote atual.
 - [x] 65. Atualizar tipos TypeScript para as mudanças atuais de checkout, destaques e Rewards.
 - [ ] 66. Atualizar Admin sempre que surgir dado configurável novo.
@@ -108,16 +108,16 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [ ] 90. Refinar side cards para fidelidade visual da referência.
 - [x] 91. Separar fisicamente coverflow de categorias.
 - [x] 92. Separar fisicamente trust bar do footer em desktop.
-- [ ] 93. Validar que nenhuma categoria sobrepõe outra após o passe de geometria.
-- [ ] 94. Validar que nenhum card do coverflow invade trust bar/footer.
+- [x] 93. Validar que nenhuma categoria sobrepõe outra após o passe de geometria; teste automatizado confirmou 0 colisões entre os 16 cards.
+- [x] 94. Validar que nenhum card do coverflow invade trust bar/footer; Chromium confirmou separação em desktop, ultrawide, tablet e mobile.
 - [ ] 95. Ajustar logo central/negative space comparando lado a lado com a referência.
 - [ ] 96. Ajustar HUD/microcopy técnica da Home.
 - [ ] 97. Ajustar glow/glass/shadows para light.
 - [ ] 98. Ajustar glow/glass/shadows para dark.
-- [ ] 99. Otimizar imagens críticas e evitar carregar resolução máxima desnecessária.
+- [x] 99. Otimizar imagens críticas: wallpapers já estão em WebP (~214/228 KB), cards ocultos não recebem background remoto e Vite agora externaliza assets >4 KB em vez de embutir wallpapers em base64 no JavaScript.
 - [ ] 100. Corrigir warnings de console relacionados à Home.
-- [ ] 101. Validar navegação por teclado e focus-visible.
-- [ ] 102. Aplicar migration products.is_new no Supabase CRAZZY correto (teyqtfdeugldgtzkyybg) quando a conexão estiver disponível.
+- [x] 101. Validar/reforçar navegação por teclado e focus-visible: coverflow suporta setas/Home/End, anuncia item ativo, marca dot atual e categorias/cards preservam foco visível.
+- [x] 102. Confirmar `products.is_new` no Supabase CRAZZY `nnmglkdpmffmaiuwbcct`; coluna verificada no banco novo após bootstrap.
 - [ ] 103. Validar criação/edição real de produto NOVO no Admin contra o banco CRAZZY.
 - [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
 - [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
@@ -158,14 +158,25 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 140. Preservar anexos/áudio de tickets com política de storage limitada ao dono do ticket.
 - [x] 141. Adicionar CI independente da Vercel para validar build e testes no GitHub.
 - [x] 142. Versionar schema completo de Rewards/Trials em migration, bootstrap e tipos TypeScript.
-- [ ] 143. Aplicar no Supabase CRAZZY live as migrations pendentes de destaques, checkout, hardening e Rewards quando o projeto `teyqtfdeugldgtzkyybg` estiver acessível ao conector.
-- [ ] 144. Deployar/verificar no Supabase CRAZZY live as Edge Functions `purincash-payment` e `rewards` com os secrets necessários, sem expor seus valores.
-- [ ] 145. Validar Rewards live: catálogo, heartbeat, conclusão, cooldown, fila staff e entrega manual/automática.
-- [ ] 146. Executar build/CI final após o rate-limit da Vercel liberar e confirmar produção no HEAD final.
+- [x] 143. Criar e inicializar o novo Supabase CRAZZY `nnmglkdpmffmaiuwbcct`, aplicar `CRAZZY_SETUP_COMPLETO.sql` e confirmar tabelas/migration essenciais no banco vazio.
+- [x] 144. Publicar/sincronizar no novo Supabase as 8 Edge Functions atuais: `admin-config-status`, `admin-users`, `generate-game-image`, `lzt-market`, `rewards`, `track-login`, `coupon-validate` e `purincash-payment`. Sete foram republicadas do HEAD atual; `purincash-payment` foi verificada byte a byte idêntica ao GitHub live.
+- [x] 145. Rodar advisors de segurança no novo Supabase e zerar os alertas de segurança, movendo `has_role` para schema privado e revogando RPC pública dos helpers internos.
+- [ ] 146. Configurar no Supabase os secrets externos necessários: `PURINCASH_API_KEY`, `PURINCASH_WEBHOOK_SECRET`, `CHECKOUT_SIGNING_SECRET`, `PUBLIC_SITE_URL`/`SITE_URL`, `LZT_MARKET_TOKEN`, `LOVABLE_API_KEY` e toggles habilitados conscientemente (`ENABLE_CARD_CHECKOUT`, `ENABLE_LZT_AUTO_BUY`).
 - [x] 147. Completar Admin Rewards com criação/ativação de campanhas, vínculo produto/plano e abastecimento de estoque exclusivo de trial.
 - [x] 148. Restringir avaliações a compradores reais e impedir duplicata por usuário/produto no schema versionado.
 - [x] 149. Bloquear criação/edição client-side de `order_tickets`; pedidos passam a nascer somente pelo backend/service role.
 - [x] 150. Tornar `coupon_usage` um ledger backend-only, mantendo ao usuário apenas leitura do próprio histórico.
 - [x] 151. Permitir ao cliente ler somente a chave de estoque efetivamente vinculada a um pedido próprio.
 - [x] 152. Confirmar GitHub CI verde no HEAD `c2bffeb`: build + testes concluídos com sucesso.
-- [ ] 153. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [ ] 153. Validar Rewards live no novo Supabase: catálogo, heartbeat, conclusão, cooldown, fila staff, recusa e entrega manual/automática.
+- [ ] 154. Validar PurinCash live no novo Supabase: create/status/webhook HMAC, reconciliação, idempotência, pedido e entrega.
+- [x] 155. Salvar na Vercel de produção as três variáveis públicas do novo Supabase (PROJECT_ID, URL e PUBLISHABLE_KEY). Confirmado pelo painel web de crazzy-project; o conector lista projetos vazios. Ativação no frontend depende de novo deploy (itens 156/157).
+- [ ] 156. Confirmar frontend em produção conectado ao Supabase novo e executar smoke test produto → carrinho → checkout → pagamento → pedido → entrega.
+- [ ] 157. Executar CI/build final no HEAD de produção e confirmar Vercel verde após o rate-limit liberar.
+- [x] 158. Validar configuração no build Vercel: rejeitar URL/ref divergentes, chaves privadas em VITE_* e JWT anon de outro projeto; usar a precedência real de env do Vite. Adicionados testes de regressão.
+- [ ] 159. Abastecer catálogo real e planos, e confirmar identidade do primeiro Admin: banco novo consultado com zero usuários, admins, produtos e planos. Não importar dados do Supabase antigo sem autorização específica.
+- [x] 160. Remover do checkout o desconto visual legado controlável por parâmetro de URL; desconto exibido passa a vir somente da resposta autoritativa do backend.
+- [x] 161. Ressincronizar Edge Functions do Supabase com o HEAD atual e confirmar `purincash-payment` live idêntica ao GitHub.
+- [x] 162. Confirmar GitHub CI verde após os ajustes de checkout, acessibilidade e performance da Home; último HEAD validado deste bloco: `28131f3`.
+- [x] 163. Adicionar workflow `CRAZZY Home Layout` com Chromium, mocks do Supabase, relatório JSON e screenshots para 1920×1080, 2560×1440, 3440×1440, tablet e mobile; run 35475996040 aprovado.
+- [ ] 164. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { CircleHelp, Grid2X2, Home, Menu, Search, ShieldAlert, ShoppingCart, Star, UserRound, X } from "lucide-react";
+import { CircleHelp, Gift, Grid2X2, Home, Menu, Search, ShieldAlert, ShoppingCart, Star, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
 import CartSheet from "@/components/CartSheet";
@@ -15,6 +15,7 @@ const links = [
   { label: "Status", to: "/status", icon: CircleHelp },
   { label: "Avaliações", to: "/avaliacoes", icon: Star },
   { label: "Rewards", to: "/rewards", icon: Star },
+  { label: "Extras", to: "/extras", icon: Gift },
   { label: "FAQ", to: "/faq", icon: CircleHelp },
 ];
 

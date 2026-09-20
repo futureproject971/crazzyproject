@@ -5,25 +5,60 @@ begin;
 
 
 -- ============================================================
--- ADMIN ROLE HELPER: callers may only ask about their own role. This keeps the
--- SECURITY DEFINER helper useful for RLS without turning it into a role-enumeration API.
+-- ADMIN ROLE HELPER: move the SECURITY DEFINER helper out of the exposed public
+-- schema. Policies keep working by dependency, but the function is no longer a public
+-- RPC endpoint. Admin policies are scoped to authenticated callers only.
 -- ============================================================
-create or replace function public.has_role(_user_id uuid, _role public.app_role)
+create schema if not exists private;
+revoke all on schema private from public;
+grant usage on schema private to authenticated, service_role;
+
+alter function public.has_role(uuid, public.app_role) set schema private;
+
+create or replace function private.has_role(_user_id uuid, _role public.app_role)
 returns boolean
 language sql
 stable
 security definer
 set search_path = public
-as $$
+as $
   select _user_id = (select auth.uid())
     and exists (
       select 1 from public.user_roles
       where user_id = _user_id and role = _role
     );
-$$;
+$;
 
-revoke all on function public.has_role(uuid, public.app_role) from public;
-grant execute on function public.has_role(uuid, public.app_role) to anon, authenticated;
+revoke all on function private.has_role(uuid, public.app_role) from public, anon;
+grant execute on function private.has_role(uuid, public.app_role) to authenticated, service_role;
+
+do $
+declare
+  pol record;
+begin
+  for pol in
+    select schemaname, tablename, policyname
+    from pg_policies
+    where schemaname = 'public'
+      and (
+        coalesce(qual, '') ilike '%has_role%'
+        or coalesce(with_check, '') ilike '%has_role%'
+      )
+  loop
+    execute format(
+      'alter policy %I on %I.%I to authenticated',
+      pol.policyname,
+      pol.schemaname,
+      pol.tablename
+    );
+  end loop;
+end
+$;
+
+-- Trigger/event-trigger helpers are internal infrastructure and must not be callable
+-- through the Data API.
+revoke all on function public.handle_new_user() from public, anon, authenticated, service_role;
+revoke all on function public.rls_auto_enable() from public, anon, authenticated, service_role;
 
 -- ============================================================
 -- PAYMENTS: browser may read its own rows, but must NEVER create/modify payment facts.
@@ -136,8 +171,9 @@ begin
   end if;
 end $$;
 
-create unique index if not exists coupon_usage_coupon_user_unique
-  on public.coupon_usage(coupon_id, user_id);
+-- public.coupon_usage already has UNIQUE (coupon_id, user_id) in the core schema,
+-- so do not create a duplicate unique index here.
+drop index if exists public.coupon_usage_coupon_user_unique;
 
 -- ============================================================
 -- PROFILES: browser cannot alter ban fields or another identity. Public/profile UI only
@@ -341,5 +377,75 @@ $$;
 revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) from public;
 revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) from anon, authenticated;
 grant execute on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) to service_role;
+
+
+-- ============================================================
+-- RLS PERFORMANCE: avoid re-evaluating auth.uid() for every row.
+-- Preserve each policy expression and only wrap direct auth.uid() calls in a scalar
+-- subquery so Postgres can use an initPlan.
+-- ============================================================
+do $
+declare
+  pol record;
+  stmt text;
+  new_qual text;
+  new_check text;
+begin
+  for pol in
+    select schemaname, tablename, policyname, qual, with_check
+    from pg_policies
+    where schemaname = 'public'
+      and (
+        (coalesce(qual, '') like '%auth.uid()%' and coalesce(qual, '') not ilike '%select auth.uid()%')
+        or
+        (coalesce(with_check, '') like '%auth.uid()%' and coalesce(with_check, '') not ilike '%select auth.uid()%')
+      )
+  loop
+    new_qual := case when pol.qual is null then null else replace(pol.qual, 'auth.uid()', '(select auth.uid())') end;
+    new_check := case when pol.with_check is null then null else replace(pol.with_check, 'auth.uid()', '(select auth.uid())') end;
+
+    stmt := format('alter policy %I on %I.%I', pol.policyname, pol.schemaname, pol.tablename);
+    if new_qual is not null then
+      stmt := stmt || format(' using (%s)', new_qual);
+    end if;
+    if new_check is not null then
+      stmt := stmt || format(' with check (%s)', new_check);
+    end if;
+    execute stmt;
+  end loop;
+end
+$;
+
+-- ============================================================
+-- SUPPORT HUB ACTIVITY STATE
+-- Keeps queue status fresh without letting browser users update ticket ownership/state.
+-- ============================================================
+create or replace function private.touch_support_ticket()
+returns trigger
+language plpgsql
+security definer
+set search_path = public, private
+as $
+begin
+  update public.support_tickets
+  set
+    updated_at = now(),
+    status = case
+      when new.sender_role = 'user' and status <> 'closed' then 'waiting_staff'
+      when new.sender_role = 'staff' and status not in ('closed', 'resolved') then 'waiting_user'
+      else status
+    end
+  where id = new.ticket_id;
+
+  return new;
+end;
+$;
+
+revoke all on function private.touch_support_ticket() from public, anon, authenticated, service_role;
+
+drop trigger if exists touch_support_ticket_on_message on public.support_messages;
+create trigger touch_support_ticket_on_message
+after insert on public.support_messages
+for each row execute function private.touch_support_ticket();
 
 commit;
