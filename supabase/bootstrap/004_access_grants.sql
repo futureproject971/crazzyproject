@@ -88,6 +88,9 @@ grant select, insert, update, delete on table
   public.support_messages
   to authenticated;
 
+-- Promo scratch card: users can only read their own reveal; inserts happen via Edge Function/service role.
+grant select on table public.promo_daily_reveals to authenticated;
+
 -- Rewards: public catalog + signed-in own state; admin writes are RLS-gated.
 grant select on public.reward_campaigns, public.reward_campaign_products to anon;
 grant select, insert, update, delete on table
