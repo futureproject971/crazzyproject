@@ -120,7 +120,7 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 102. Confirmar `products.is_new` no Supabase CRAZZY `nnmglkdpmffmaiuwbcct`; coluna verificada no banco novo após bootstrap.
 - [ ] 103. Validar criação/edição real de produto NOVO no Admin contra o banco CRAZZY.
 - [ ] 104. Validar produção: produto NOVO aparece no carrossel e produto comum não aparece.
-- [ ] 105. Validar deploy Vercel verde após o último ajuste da Home.
+- [x] 105. Validar deploy Vercel verde após o último ajuste da Home. HEAD `fd4758b` validado com CRAZZY CI (build + testes) e status Vercel `success` após restaurar o coverflow sem conflitos e os assets visuais ainda usados pela Home.
 - [ ] 106. Só após HOME GATE: implementar trial grátis de 1 hora com regras reais.
 - [x] 107. Implementar área de recompensas/missões no frontend e Edge Function.
 - [x] 108. Permitir escolha de produto/recompensa conforme campanha e produto ativo.
