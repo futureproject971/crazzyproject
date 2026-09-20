@@ -27,3 +27,8 @@ verify_jwt = false
 
 [functions.coupon-validate]
 verify_jwt = true
+
+
+# Public transport, but every reveal requires a validated Supabase user token internally.
+[functions.promo-reveal]
+verify_jwt = false
