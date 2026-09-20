@@ -97,7 +97,12 @@ export default function SupportHub() {
   }, [user]);
 
   useEffect(() => {
-    if (resumeAfterAuth && user) {
+    if (!user) return;
+    const pendingOAuthReturn =
+      window.sessionStorage.getItem("crazzy:open-support-after-auth") === "1";
+
+    if (resumeAfterAuth || pendingOAuthReturn) {
+      window.sessionStorage.removeItem("crazzy:open-support-after-auth");
       setAuthOpen(false);
       setOpen(true);
       setCreating(true);
@@ -180,6 +185,7 @@ export default function SupportHub() {
 
   const openSupport = () => {
     if (!user) {
+      window.sessionStorage.setItem("crazzy:open-support-after-auth", "1");
       setResumeAfterAuth(true);
       setAuthOpen(true);
       return;
@@ -277,7 +283,10 @@ export default function SupportHub() {
     <>
       <AuthModal open={authOpen} onOpenChange={(value) => {
         setAuthOpen(value);
-        if (!value && !user) setResumeAfterAuth(false);
+        if (!value && !user) {
+          window.sessionStorage.removeItem("crazzy:open-support-after-auth");
+          setResumeAfterAuth(false);
+        }
       }} defaultTab="login" />
 
       <button
