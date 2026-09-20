@@ -46,7 +46,7 @@ export default function Index() {
   const featured = products.filter(p => p.is_new);
   return <div className="store-home">
     <FuturisticBackground />
-    <CrazyHeader categories={data?.games} />
+    <CrazyHeader categories={data?.games} storeLayout />
     <main className="store-main">
       <section className="store-intro">
         <div><span className="store-eyebrow">BEM-VINDO À CRAZZY PROJECT</span><h1>Seu próximo nível<br />começa aqui.</h1><p>Explore nossos produtos, encontre seu plano e conte com a gente antes e depois da compra.</p><div className="store-intro-actions"><a href="#categorias" className="store-primary"><ShoppingBag size={18} /> Ver produtos</a><Link to="/faq">Como comprar? <ArrowRight size={17} /></Link></div></div>

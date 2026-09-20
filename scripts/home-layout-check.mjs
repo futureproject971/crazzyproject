@@ -139,13 +139,34 @@ for (const viewport of viewports.flatMap(v => ["light", "dark"].map(theme => ({.
   await page.waitForSelector(".store-product", { timeout: 15000 });
   await page.evaluate(() => document.fonts.ready);
   const layout = await page.evaluate(() => {
-    const box = selector => { const r = document.querySelector(selector).getBoundingClientRect(); return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}; };
-    return { header: box('.crazy-site-header'), intro: box('.store-intro'), support: box('.crazzy-support-trigger'), overflow: document.documentElement.scrollWidth > innerWidth + 2, cards: document.querySelectorAll('.store-product').length };
+    const box = selector => {
+      const el = document.querySelector(selector);
+      if (!el) return null;
+      const style = getComputedStyle(el);
+      const r = el.getBoundingClientRect();
+      if (style.display === "none" || style.visibility === "hidden" || !r.width || !r.height) return null;
+      return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};
+    };
+    return {
+      header: box('.crazy-site-header'),
+      sidebar: box('.store-desktop-sidebar'),
+      topbar: box('.store-desktop-topbar'),
+      intro: box('.store-intro'),
+      support: box('.crazzy-support-trigger'),
+      overflow: document.documentElement.scrollWidth > innerWidth + 2,
+      cards: document.querySelectorAll('.store-product').length,
+      sidebarCategories: document.querySelectorAll('.store-desktop-sidebar__categories a').length,
+    };
   });
   const failures = [];
-  if (overlap(layout.header, layout.support)) failures.push('support overlaps navigation');
+  const navigation = layout.sidebar || layout.header;
+  if (overlap(navigation, layout.support)) failures.push('support overlaps navigation');
+  if (overlap(layout.topbar, layout.support)) failures.push('support overlaps top bar');
   if (layout.overflow) failures.push('horizontal page overflow');
-  if (overlap(layout.header, layout.intro)) failures.push('header overlaps intro');
+  if (overlap(navigation, layout.intro)) failures.push('navigation overlaps intro');
+  if (overlap(layout.topbar, layout.intro)) failures.push('top bar overlaps intro');
+  if (viewport.width >= 1281 && (!layout.sidebar || !layout.topbar)) failures.push('desktop store shell missing');
+  if (viewport.width >= 1281 && layout.sidebarCategories !== categories.length) failures.push('desktop sidebar categories missing');
   if (consoleErrors.length) failures.push(...consoleErrors);
   if (!layout.cards) failures.push('catalog missing');
   await page.screenshot({path:path.join(outputDir, `${viewport.name}.png`),fullPage:true});

@@ -23,7 +23,7 @@ const mobileExtraLinks = [
   { label: "Meus Pedidos", to: "/meus-pedidos", icon: Grid2X2 },
 ];
 
-export function CrazyHeader({ categories = [] }: { categories?: { id: string; name: string; slug: string }[] }) {
+export function CrazyHeader({ categories = [], storeLayout = false }: { categories?: { id: string; name: string; slug: string }[]; storeLayout?: boolean }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAdmin } = useAuth();
@@ -77,7 +77,78 @@ export function CrazyHeader({ categories = [] }: { categories?: { id: string; na
       <AuthModal open={authOpen} onOpenChange={setAuthOpen} defaultTab="login" />
       <CartSheet open={cartOpen} onOpenChange={setCartOpen} />
 
-      <header className="crazy-site-header">
+      {storeLayout ? (
+        <>
+          <aside className="store-desktop-sidebar" aria-label="Navegação da loja">
+            <Link to="/" className="store-desktop-sidebar__brand" aria-label="CRAZZY PROJECT - Início">
+              <span>CRAZZY</span>
+              <strong>PROJECT</strong>
+            </Link>
+
+            <nav className="store-desktop-sidebar__nav" aria-label="Navegação principal">
+              <button type="button" onClick={() => goTo("/")} className={isActive("/") ? "is-active" : ""}>
+                <Home aria-hidden="true" />
+                <span>Início</span>
+              </button>
+              <button type="button" onClick={openCategories}>
+                <Grid2X2 aria-hidden="true" />
+                <span>Categorias</span>
+              </button>
+              {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon }) => (
+                <button key={label} type="button" onClick={() => goTo(to)} className={isActive(to) ? "is-active" : ""}>
+                  <Icon aria-hidden="true" />
+                  <span>{label}</span>
+                </button>
+              ))}
+            </nav>
+
+            {categories.length > 0 ? (
+              <nav className="store-desktop-sidebar__categories" aria-label="Categorias da loja">
+                <span>CATEGORIAS</span>
+                {categories.map((category) => (
+                  <Link key={category.id} to={`/produtos?game=${encodeURIComponent(category.slug)}`}>
+                    <Grid2X2 aria-hidden="true" />
+                    {category.name}
+                  </Link>
+                ))}
+              </nav>
+            ) : null}
+          </aside>
+
+          <header className="store-desktop-topbar">
+            <form className="store-desktop-topbar__search" onSubmit={submitSearch} role="search">
+              <Search aria-hidden="true" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="Buscar jogos, produtos..."
+                aria-label="Buscar produtos"
+              />
+            </form>
+
+            <div className="store-desktop-topbar__actions">
+              <ThemeToggle />
+              {isAdmin ? (
+                <button type="button" className="store-desktop-topbar__button" onClick={() => goTo("/admin")} title="Painel Admin">
+                  <ShieldAlert aria-hidden="true" />
+                  <span>Admin</span>
+                </button>
+              ) : null}
+              <button type="button" className="store-desktop-topbar__button" onClick={openAccount}>
+                <UserRound aria-hidden="true" />
+                <span>{user ? "Conta" : "Login"}</span>
+              </button>
+              <button type="button" className="store-desktop-topbar__cart" onClick={() => setCartOpen(true)}>
+                <ShoppingCart aria-hidden="true" />
+                <span>Carrinho</span>
+                <b>{totalItems}</b>
+              </button>
+            </div>
+          </header>
+        </>
+      ) : null}
+
+      <header className={`crazy-site-header ${storeLayout ? "crazy-site-header--store-mobile" : ""}`}>
         <div className="crazy-site-header__inner">
           <Link to="/" className="crazy-site-header__brand" aria-label="CRAZZY PROJECT - Início">
             <span>CRAZZY</span>
