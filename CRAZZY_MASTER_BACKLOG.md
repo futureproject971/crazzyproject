@@ -181,7 +181,13 @@ Este é o backlog numerado canônico do projeto. Ele consolida o backlog antigo,
 - [x] 163. Adicionar workflow `CRAZZY Home Layout` com Chromium, mocks do Supabase, relatório JSON e screenshots para 1920×1080, 2560×1440, 3440×1440, tablet e mobile; run 35475996040 aprovado.
 - [x] 164. Validar e publicar nova Home de catálogo conforme source Sharpify enviada em 20/09: menu lateral, categorias e fileiras; wallpaper, chuva, temas e funcionalidades preservados. Esta solicitação substitui o HOME GATE visual anterior de coverflow.
 - [x] 165. Reparar bootstrap consolidado com conflitos de merge e delimitadores SQL inválidos; não executar bootstrap no banco live.
-- [ ] 166. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
+- [x] 166. Manter a lateral da nova Home e mover busca, tema, login/conta, Admin e carrinho para uma barra superior desktop, preservando o menu responsivo em tablet/mobile.
+- [x] 167. Versionar a roleta diária de cupons com os sete prêmios oficiais (5%, 10%, 15%, 20%, R$ 5, R$ 10 e R$ 20), um giro por conta/dia e resultado autoritativo no servidor.
+- [x] 168. Integrar a roleta ao carrinho/checkout usando cupom normal restrito ao vencedor, validação server-side e consumo somente após pagamento confirmado.
+- [x] 169. Remover validação client-side de cupons do CartSheet e preparar a remoção da enumeração pública de cupons personalizados.
+- [ ] 170. Aplicar/sincronizar a migration e Edge Function daily-wheel no Supabase live depois do CI/deploy verde e confirmar advisors.
+- [ ] 171. Smoke test autenticado da roleta → cupom → carrinho → checkout assim que existir uma conta de teste e catálogo/plano ativo.
+- [ ] 172. REGISTRO DE AUDITORIA / HANDOFF PARA OUTRA IA — SOMENTE DEPOIS DE TODOS OS ITENS ANTERIORES. Recriar do zero com HEAD/branch, arquivos, migrations, bootstrap, Supabase, Vercel, decisões, integrações, riscos, testes e ordem de leitura.
 
 
 Registro de execução 20/09/2026: Home publicada na main em 4cb4860, Vercel produção concluída (6dyQ4G11qEBYR9fasoj6nmBgPSyC), CI build-test aprovado e layout de prévia aprovado nos dez cenários. Navegador confirmou Home, temas, categorias e abertura do carrinho. Catálogo live continua vazio; compra, pagamento e entrega não validados. Bootstrap reparado apenas nos arquivos, sem execução no banco existente.
