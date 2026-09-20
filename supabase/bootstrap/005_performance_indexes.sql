@@ -33,6 +33,10 @@ create index if not exists idx_reward_sessions_campaign_id on public.reward_sess
 create index if not exists idx_reward_sessions_campaign_product_id on public.reward_sessions (campaign_product_id);
 create index if not exists idx_reward_sessions_product_id on public.reward_sessions (product_id);
 create index if not exists idx_reward_sessions_product_plan_id on public.reward_sessions (product_plan_id);
+create index if not exists support_tickets_user_created_idx on public.support_tickets (user_id, created_at desc);
+create index if not exists support_tickets_status_updated_idx on public.support_tickets (status, updated_at desc);
+create index if not exists support_messages_ticket_created_idx on public.support_messages (ticket_id, created_at);
+create index if not exists support_messages_sender_idx on public.support_messages (sender_id);
 create index if not exists idx_ticket_messages_sender_id on public.ticket_messages (sender_id);
 create index if not exists idx_ticket_messages_ticket_id on public.ticket_messages (ticket_id);
 create index if not exists idx_trial_stock_items_used_by on public.trial_stock_items (used_by);
