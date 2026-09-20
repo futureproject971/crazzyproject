@@ -184,6 +184,7 @@ for (const viewport of viewports) {
       featured: rect(".crazy-home-featured"),
       trustbar: rect(".crazy-trustbar"),
       footer: rect(".crazy-hero-footer"),
+      support: rect(".crazzy-support-trigger"),
       explore: rect(".crazy-hero__explore"),
       categories: rects(".crazy-category-card"),
       activeCard: rect(".crazy-home-featured .crazy-featured__card.is-active"),
@@ -235,6 +236,10 @@ for (const viewport of viewports) {
     ["featured", layout.featured, "footer", layout.footer],
     ["trustbar", layout.trustbar, "footer", layout.footer],
     ["header", layout.header, "logo", layout.logo],
+    ["support", layout.support, "footer", layout.footer],
+    ["support", layout.support, "trustbar", layout.trustbar],
+    ["support", layout.support, "featured", layout.featured],
+    ["support", layout.support, "header", layout.header],
   ]) {
     const hit = overlap(a, b, 3);
     if (hit) collisions.push({ type: `${aName}-${bName}`, a: aName, b: bName, overlap: hit });
