@@ -82,6 +82,12 @@ grant insert, update, delete on table
 -- Only the Discord invite row is visible publicly, enforced by RLS.
 grant select on public.system_credentials to anon;
 
+-- Support Hub: visible only to authenticated users; RLS separates owners from admins.
+grant select, insert, update, delete on table
+  public.support_tickets,
+  public.support_messages
+  to authenticated;
+
 -- Rewards: public catalog + signed-in own state; admin writes are RLS-gated.
 grant select on public.reward_campaigns, public.reward_campaign_products to anon;
 grant select, insert, update, delete on table
