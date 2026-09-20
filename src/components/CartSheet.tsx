@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
@@ -11,8 +11,9 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 interface AppliedCoupon {
   id: string;
   code: string;
-  discount_type: "percentage" | "fixed";
-  discount_value: number;
+  subtotal: number;
+  discount: number;
+  final: number;
 }
 
 interface CartSheetProps {
@@ -28,101 +29,89 @@ const CartSheet = ({ open, onOpenChange }: CartSheetProps) => {
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
 
+  const cartSignature = items
+    .map((item) => item.productId + ":" + item.planId + ":" + item.quantity)
+    .join("|");
+
+  useEffect(() => {
+    setAppliedCoupon(null);
+  }, [cartSignature]);
+
   const applyCoupon = async () => {
     const code = couponCode.trim().toUpperCase();
     if (!code) return;
-    if (!user) { toast({ title: "Faça login para usar cupons", variant: "destructive" }); return; }
+    if (!user) {
+      toast({ title: "Faça login para usar cupons", variant: "destructive" });
+      return;
+    }
+
     setCouponLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Sessão expirada. Entre novamente.");
 
-    const { data: coupon, error } = await supabase
-      .from("coupons")
-      .select("*")
-      .eq("code", code)
-      .eq("active", true)
-      .single();
+      const cartSnapshot = items.map((item) => ({
+        productId: item.productId,
+        planId: item.planId,
+        quantity: item.quantity,
+        type: item.type,
+        lztItemId: item.lztItemId,
+        lztPrice: item.lztPrice,
+        lztCurrency: item.lztCurrency,
+        lztGame: item.lztGame,
+        productName: item.productName,
+        productImage: item.productImage,
+        planName: item.planName,
+        price: item.price,
+        skinsCount: item.skinsCount,
+      }));
 
-    if (error || !coupon) {
-      toast({ title: "Cupom inválido", description: "Este cupom não existe ou está inativo.", variant: "destructive" });
-      setCouponLoading(false);
-      return;
-    }
+      const response = await fetch(
+        import.meta.env.VITE_SUPABASE_URL + "/functions/v1/coupon-validate",
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + session.access_token,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code, cart_snapshot: cartSnapshot }),
+        },
+      );
 
-    if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
-      toast({ title: "Cupom expirado", variant: "destructive" });
-      setCouponLoading(false);
-      return;
-    }
-
-    if (coupon.max_uses !== null && coupon.current_uses >= coupon.max_uses) {
-      toast({ title: "Cupom esgotado", variant: "destructive" });
-      setCouponLoading(false);
-      return;
-    }
-
-    if (coupon.min_order_value && totalPrice < Number(coupon.min_order_value)) {
-      toast({ title: "Valor mínimo não atingido", description: `Pedido mínimo: R$ ${Number(coupon.min_order_value).toFixed(2)}`, variant: "destructive" });
-      setCouponLoading(false);
-      return;
-    }
-
-    const { data: allowedUsers } = await supabase
-      .from("coupon_users")
-      .select("user_id")
-      .eq("coupon_id", coupon.id);
-
-    if (allowedUsers && allowedUsers.length > 0) {
-      const isAllowed = allowedUsers.some((u: any) => u.user_id === user.id);
-      if (!isAllowed) {
-        toast({ title: "Cupom não disponível para você", variant: "destructive" });
-        setCouponLoading(false);
-        return;
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result?.success) {
+        throw new Error(result?.error || "Cupom inválido ou indisponível");
       }
-    }
 
-    const { data: allowedProducts } = await supabase
-      .from("coupon_products")
-      .select("product_id")
-      .eq("coupon_id", coupon.id);
-
-    if (allowedProducts && allowedProducts.length > 0) {
-      const allowedIds = allowedProducts.map((p: any) => p.product_id);
-      const hasValidItem = items.some(i => allowedIds.includes(i.productId));
-      if (!hasValidItem) {
-        toast({ title: "Cupom não aplicável", description: "Nenhum produto do carrinho é elegível.", variant: "destructive" });
-        setCouponLoading(false);
-        return;
-      }
-    }
-
-    const { data: usage } = await supabase
-      .from("coupon_usage")
-      .select("id")
-      .eq("coupon_id", coupon.id)
-      .eq("user_id", user.id);
-
-    if (usage && usage.length > 0) {
-      toast({ title: "Cupom já utilizado", variant: "destructive" });
+      const subtotal = Number(result.authoritativeSubtotalCents || 0) / 100;
+      const discount = Number(result.authoritativeDiscountCents || 0) / 100;
+      const final = Number(result.authoritativeTotalCents || 0) / 100;
+      setAppliedCoupon({
+        id: result.coupon.id,
+        code: result.coupon.code,
+        subtotal,
+        discount,
+        final,
+      });
+      toast({
+        title: "Cupom aplicado!",
+        description: result.coupon.code + " · desconto de R$ " + discount.toFixed(2),
+      });
+    } catch (error: any) {
+      setAppliedCoupon(null);
+      toast({
+        title: "Cupom não aplicado",
+        description: error?.message || "Não foi possível validar o cupom.",
+        variant: "destructive",
+      });
+    } finally {
       setCouponLoading(false);
-      return;
     }
-
-    setAppliedCoupon({
-      id: coupon.id,
-      code: coupon.code,
-      discount_type: coupon.discount_type as "percentage" | "fixed",
-      discount_value: Number(coupon.discount_value),
-    });
-    toast({ title: "Cupom aplicado!", description: `${coupon.code} - ${coupon.discount_type === "percentage" ? `${coupon.discount_value}% de desconto` : `R$ ${Number(coupon.discount_value).toFixed(2)} de desconto`}` });
-    setCouponLoading(false);
   };
 
-  const discountAmount = appliedCoupon
-    ? appliedCoupon.discount_type === "percentage"
-      ? totalPrice * (appliedCoupon.discount_value / 100)
-      : Math.min(appliedCoupon.discount_value, totalPrice)
-    : 0;
-
-  const finalPrice = Math.max(0, totalPrice - discountAmount);
+  const discountAmount = appliedCoupon?.discount ?? 0;
+  const finalPrice = appliedCoupon?.final ?? totalPrice;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -319,9 +308,7 @@ const CartSheet = ({ open, onOpenChange }: CartSheetProps) => {
                         <div>
                           <span className="text-[10px] font-bold text-success">{appliedCoupon.code}</span>
                           <span className="ml-2 text-[10px] text-muted-foreground">
-                            {appliedCoupon.discount_type === "percentage"
-                              ? `-${appliedCoupon.discount_value}%`
-                              : `-R$ ${appliedCoupon.discount_value.toFixed(2)}`}
+                            -R$ {appliedCoupon.discount.toFixed(2)}
                           </span>
                         </div>
                         <button onClick={() => setAppliedCoupon(null)} className="text-muted-foreground hover:text-destructive">
@@ -373,7 +360,6 @@ const CartSheet = ({ open, onOpenChange }: CartSheetProps) => {
                       const params = new URLSearchParams();
                       if (appliedCoupon) {
                         params.set("coupon_id", appliedCoupon.id);
-                        params.set("discount", discountAmount.toString());
                       }
                       navigate(`/checkout${params.toString() ? `?${params.toString()}` : ""}`);
                     }}
