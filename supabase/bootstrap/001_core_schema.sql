@@ -537,6 +537,9 @@ CREATE TABLE public.wheel_spins (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE (user_id, spin_date)
 );
+CREATE INDEX wheel_spins_payment_idx
+  ON public.wheel_spins (payment_id)
+  WHERE payment_id IS NOT NULL;
 ALTER TABLE public.wheel_spins ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Own wheel spins" ON public.wheel_spins
   FOR SELECT TO authenticated USING (auth.uid() = user_id);
