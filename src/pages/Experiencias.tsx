@@ -1,5 +1,5 @@
-import { PointerEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Gift, Loader2, RotateCw, Sparkles, Ticket, Trophy } from "lucide-react";
+import { PointerEvent, useEffect, useRef, useState } from "react";
+import { Copy, Gift, Loader2, RotateCw, ShoppingCart, Sparkles, Ticket, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -14,6 +14,28 @@ interface Product {
   name: string;
   image_url: string | null;
   description: string | null;
+}
+
+interface WheelPrize {
+  id: string;
+  label: string;
+  discount_type: "percentage" | "fixed";
+  discount_value: number;
+  sort_order: number;
+}
+
+interface WheelResult {
+  id: string;
+  prize_id: string;
+  label: string;
+  sort_order: number;
+  code: string;
+  coupon_id?: string;
+  discount_type?: "percentage" | "fixed";
+  discount_value?: number;
+  min_order_value: number;
+  spin_date: string;
+  next_spin_at: string;
 }
 
 interface Reveal {
@@ -41,15 +63,25 @@ const resultCopy = {
   },
 } as const;
 
+const fallbackWheelPrizes: WheelPrize[] = [
+  { id: "percent5", label: "5% OFF", discount_type: "percentage", discount_value: 5, sort_order: 0 },
+  { id: "percent10", label: "10% OFF", discount_type: "percentage", discount_value: 10, sort_order: 1 },
+  { id: "fixed5", label: "R$ 5", discount_type: "fixed", discount_value: 5, sort_order: 2 },
+  { id: "percent15", label: "15% OFF", discount_type: "percentage", discount_value: 15, sort_order: 3 },
+  { id: "percent20", label: "20% OFF", discount_type: "percentage", discount_value: 20, sort_order: 4 },
+  { id: "fixed10", label: "R$ 10", discount_type: "fixed", discount_value: 10, sort_order: 5 },
+  { id: "fixed20", label: "R$ 20", discount_type: "fixed", discount_value: 20, sort_order: 6 },
+];
+
 export default function Experiencias() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [authOpen, setAuthOpen] = useState(false);
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [wheelPrizes, setWheelPrizes] = useState<WheelPrize[]>(fallbackWheelPrizes);
+  const [wheelLoading, setWheelLoading] = useState(true);
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [wheelResult, setWheelResult] = useState<WheelResult | null>(null);
   const [reveal, setReveal] = useState<Reveal | null>(null);
   const [revealProduct, setRevealProduct] = useState<Product | null>(null);
   const [loadingReveal, setLoadingReveal] = useState(false);
@@ -59,31 +91,79 @@ export default function Experiencias() {
   const scratchingRef = useRef(false);
 
   useEffect(() => {
+    let mounted = true;
     supabase
-      .from("products")
-      .select("id,name,image_url,description")
-      .eq("active", true)
+      .from("wheel_prizes")
+      .select("id,label,discount_type,discount_value,sort_order")
       .order("sort_order", { ascending: true })
-      .limit(12)
-      .then(({ data }) => {
-        setProducts((data || []) as Product[]);
-        setLoadingProducts(false);
+      .then(({ data, error }) => {
+        if (!mounted) return;
+        if (!error && data?.length) setWheelPrizes(data as WheelPrize[]);
+        setWheelLoading(false);
       });
+
+    return () => { mounted = false; };
   }, []);
 
-  const wheelProducts = useMemo(() => products.slice(0, 10), [products]);
+  const spinDailyWheel = async () => {
+    if (spinning) return;
+    if (!user) {
+      setAuthOpen(true);
+      return;
+    }
+    if (!wheelPrizes.length) {
+      toast({ title: "Roleta indisponível", description: "Os prêmios ainda não foram carregados.", variant: "destructive" });
+      return;
+    }
 
-  const spin = () => {
-    if (spinning || wheelProducts.length === 0) return;
     setSpinning(true);
-    const index = Math.floor(Math.random() * wheelProducts.length);
-    const step = 360 / wheelProducts.length;
-    const target = rotation + 1440 + (360 - index * step);
-    setRotation(target);
-    window.setTimeout(() => {
-      setSelectedProduct(wheelProducts[index]);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Sua sessão expirou. Entre novamente.");
+
+      const response = await fetch(
+        CRAZZY_SUPABASE_PUBLIC.url + "/functions/v1/daily-wheel",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: CRAZZY_SUPABASE_PUBLIC.publishableKey,
+            Authorization: "Bearer " + session.access_token,
+          },
+        },
+      );
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok || !body?.code || !body?.prize_id) {
+        throw new Error(body?.error || "Não foi possível girar a roleta.");
+      }
+
+      const result = body as WheelResult;
+      const foundIndex = wheelPrizes.findIndex((prize) => prize.id === result.prize_id);
+      const index = foundIndex >= 0 ? foundIndex : Math.max(0, Number(result.sort_order || 0));
+      const step = 360 / wheelPrizes.length;
+      const target = Math.ceil(rotation / 360) * 360 + 1440 - index * step;
+      setRotation(target);
+
+      window.setTimeout(() => {
+        setWheelResult(result);
+        setSpinning(false);
+      }, 1700);
+    } catch (error: any) {
       setSpinning(false);
-    }, 1700);
+      toast({ title: "Roleta indisponível", description: error?.message || "Tente novamente.", variant: "destructive" });
+    }
+  };
+
+  const copyCoupon = async () => {
+    if (!wheelResult?.code) return;
+    await navigator.clipboard.writeText(wheelResult.code);
+    toast({ title: "Cupom copiado", description: wheelResult.code });
+  };
+
+  const useWheelCoupon = () => {
+    if (!wheelResult?.code) return;
+    window.localStorage.setItem("crazzy:pending-coupon", wheelResult.code);
+    navigate("/carrinho?coupon=" + encodeURIComponent(wheelResult.code));
   };
 
   const loadReveal = async () => {
@@ -205,50 +285,43 @@ export default function Experiencias() {
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-blue-300">
               <Sparkles className="h-4 w-4" /> CRAZZY LAB
             </div>
-            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Roleta 3D + raspadinha diária</h1>
+            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Roleta de prêmios + raspadinha diária</h1>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-blue-100/65">
-              Uma área extra da loja para descobrir produtos e liberar benefícios. Não precisa comprar nada para usar.
+              Benefícios extras da CRAZZY PROJECT. A roleta é validada no servidor e cada conta tem um giro por dia.
             </p>
           </div>
 
           <div className="mt-10 grid gap-6 xl:grid-cols-2">
-            <section className="rounded-3xl border border-white/10 bg-black/25 p-5 backdrop-blur-xl">
+            <section className="rounded-3xl border border-blue-300/15 bg-black/25 p-5 backdrop-blur-xl">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-300">ROTAÇÃO 3D</p>
-                  <h2 className="mt-1 text-xl font-black text-white">Roleta de produtos</h2>
+                  <p className="text-[10px] font-black uppercase tracking-[.2em] text-blue-300">1 GIRO POR CONTA / DIA</p>
+                  <h2 className="mt-1 text-xl font-black text-white">Roleta CRAZZY</h2>
                 </div>
-                <RotateCw className={`h-5 w-5 text-blue-400 ${spinning ? "animate-spin" : ""}`} />
+                <RotateCw className={"h-5 w-5 text-blue-400 " + (spinning ? "animate-spin" : "")} />
               </div>
 
-              <div className="relative mt-6 h-[360px] overflow-hidden rounded-2xl border border-white/5 bg-[radial-gradient(circle_at_center,rgba(0,89,255,.18),transparent_65%)] [perspective:1100px]">
-                {loadingProducts ? (
+              <div className="relative mt-6 h-[360px] overflow-hidden rounded-2xl border border-blue-300/10 bg-[radial-gradient(circle_at_center,rgba(0,0,255,.24),transparent_65%)] [perspective:1100px]">
+                <div className="pointer-events-none absolute left-1/2 top-3 z-20 h-0 w-0 -translate-x-1/2 border-x-[11px] border-t-[18px] border-x-transparent border-t-white drop-shadow-[0_0_10px_rgba(50,125,255,.9)]" />
+                {wheelLoading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-blue-400" /></div>
-                ) : wheelProducts.length === 0 ? (
-                  <div className="flex h-full items-center justify-center px-8 text-center text-sm text-zinc-500">Cadastre produtos ativos para alimentar a roleta.</div>
                 ) : (
                   <div
                     className="absolute left-1/2 top-1/2 h-0 w-0 transition-transform duration-[1700ms] ease-[cubic-bezier(.16,.9,.2,1)] [transform-style:preserve-3d]"
-                    style={{ transform: `rotateY(${rotation}deg)` }}
+                    style={{ transform: "rotateY(" + rotation + "deg)" }}
                   >
-                    {wheelProducts.map((product, index) => {
-                      const angle = (360 / wheelProducts.length) * index;
+                    {wheelPrizes.map((prize, index) => {
+                      const angle = (360 / wheelPrizes.length) * index;
                       return (
-                        <button
-                          key={product.id}
-                          type="button"
-                          onClick={() => navigate(`/produto/${product.id}`)}
-                          className="absolute left-[-74px] top-[-105px] h-[210px] w-[148px] overflow-hidden rounded-2xl border border-blue-400/30 bg-[#09152e] text-left shadow-[0_22px_50px_rgba(0,0,0,.45)]"
-                          style={{ transform: `rotateY(${angle}deg) translateZ(250px)` }}
+                        <div
+                          key={prize.id}
+                          className="absolute left-[-72px] top-[-94px] flex h-[188px] w-[144px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-blue-300/35 bg-[linear-gradient(155deg,#0d3b99,#0000ff_48%,#03164e)] px-3 text-center shadow-[0_22px_50px_rgba(0,0,0,.45)]"
+                          style={{ transform: "rotateY(" + angle + "deg) translateZ(245px)" }}
                         >
-                          <div className="h-[138px] bg-[#071022]">
-                            {product.image_url ? <img src={product.image_url} alt="" className="h-full w-full object-cover" /> : <Gift className="m-auto h-full w-10 text-blue-400" />}
-                          </div>
-                          <div className="p-3">
-                            <p className="truncate text-[11px] font-black uppercase tracking-wide text-white">{product.name}</p>
-                            <p className="mt-1 text-[9px] text-blue-200/55">Abrir produto</p>
-                          </div>
-                        </button>
+                          <Gift className="h-8 w-8 text-white" />
+                          <strong className="mt-4 text-xl font-black text-white">{prize.label}</strong>
+                          <span className="mt-2 text-[9px] font-bold uppercase tracking-[.18em] text-blue-100/70">CUPOM CRAZZY</span>
+                        </div>
                       );
                     })}
                   </div>
@@ -257,24 +330,31 @@ export default function Experiencias() {
 
               <button
                 type="button"
-                disabled={spinning || wheelProducts.length === 0}
-                onClick={spin}
-                className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-blue-600 text-sm font-black text-white transition hover:bg-blue-500 disabled:opacity-40"
+                disabled={spinning || wheelLoading || Boolean(wheelResult)}
+                onClick={spinDailyWheel}
+                className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0000ff] text-sm font-black text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <RotateCw className="h-4 w-4" /> {spinning ? "Girando..." : "Girar roleta"}
+                <RotateCw className="h-4 w-4" />
+                {spinning ? "Validando e girando..." : wheelResult ? "Giro de hoje concluído" : user ? "Girar roleta" : "Entrar para girar"}
               </button>
 
-              {selectedProduct ? (
-                <motion.button
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  type="button"
-                  onClick={() => navigate(`/produto/${selectedProduct.id}`)}
-                  className="mt-3 w-full rounded-xl border border-blue-400/20 bg-blue-500/10 p-3 text-left"
-                >
-                  <span className="text-[10px] font-bold uppercase tracking-wide text-blue-300">Selecionado</span>
-                  <strong className="mt-1 block truncate text-sm text-white">{selectedProduct.name}</strong>
-                </motion.button>
+              {wheelResult ? (
+                <div className="mt-4 rounded-2xl border border-blue-300/25 bg-blue-500/10 p-4 text-center">
+                  <span className="text-[10px] font-black uppercase tracking-[.2em] text-blue-300">SEU PRÊMIO DE HOJE</span>
+                  <strong className="mt-2 block text-2xl font-black text-white">{wheelResult.label}</strong>
+                  <div className="mx-auto mt-3 flex max-w-sm items-center justify-between gap-2 rounded-xl border border-white/10 bg-black/25 px-3 py-2">
+                    <code className="truncate text-sm font-black tracking-wider text-white">{wheelResult.code}</code>
+                    <button type="button" onClick={copyCoupon} className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-white/10 text-white hover:bg-white/15" aria-label="Copiar cupom">
+                      <Copy className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="mt-3 text-xs leading-relaxed text-blue-100/65">
+                    Cupom de um uso, vinculado à sua conta. O desconto é validado novamente pelo servidor no checkout.
+                  </p>
+                  <button type="button" onClick={useWheelCoupon} className="mt-4 inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-black text-[#0000cc] hover:bg-blue-50">
+                    <ShoppingCart className="h-4 w-4" /> Usar no carrinho
+                  </button>
+                </div>
               ) : null}
             </section>
 
