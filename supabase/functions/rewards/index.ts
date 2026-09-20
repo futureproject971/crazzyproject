@@ -60,16 +60,17 @@ function buildWatchGuard(campaign: any) {
   const minPercent = Math.min(config.checkpointMinPercent, config.checkpointMaxPercent);
   const maxPercent = Math.max(config.checkpointMinPercent, config.checkpointMaxPercent);
   const chosenPercent = minPercent + Math.random() * Math.max(0, maxPercent - minPercent);
-  const checkpointAt = config.attentionCheckpoint
-    ? Math.min(Math.max(2, required * (chosenPercent / 100)), Math.max(2, required - 1))
+  const checkpointEnabled = config.attentionCheckpoint && required >= 5;
+  const checkpointAt = checkpointEnabled
+    ? Math.min(Math.max(2, required * (chosenPercent / 100)), required - 1)
     : null;
 
   return {
     version: 1,
-    checkpoint_enabled: config.attentionCheckpoint,
+    checkpoint_enabled: checkpointEnabled,
     checkpoint_at_seconds: checkpointAt,
     checkpoint_active: false,
-    checkpoint_passed: !config.attentionCheckpoint,
+    checkpoint_passed: !checkpointEnabled,
     checkpoint_nonce: null,
     checkpoint_passed_at: null,
     next_heartbeat_nonce: randomToken(),
@@ -89,6 +90,11 @@ async function ensureWatchGuard(admin: any, session: any, campaign: any) {
   }
 
   const guard = buildWatchGuard(campaign);
+  if (session?.status && session.status !== "watching") {
+    guard.checkpoint_active = false;
+    guard.checkpoint_passed = true;
+    guard.checkpoint_nonce = null;
+  }
   const requirements = { ...completed, watch_guard: guard };
   const { data: updated, error } = await admin
     .from("reward_sessions")
