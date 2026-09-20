@@ -292,13 +292,13 @@ export default function SupportHub() {
       <button
         type="button"
         onClick={openSupport}
-        className="fixed bottom-5 right-5 z-[80] flex h-14 items-center gap-2 rounded-full border border-blue-400/30 bg-[#5865F2] px-4 text-sm font-bold text-white shadow-[0_12px_40px_rgba(50,70,180,.45)] transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-400/30"
+        className="crazzy-support-trigger fixed bottom-5 right-5 z-[80] flex h-14 items-center gap-2 rounded-full border border-blue-300/40 bg-[#0000ff] px-4 text-sm font-bold text-white shadow-[0_12px_40px_rgba(0,64,255,.38)] transition hover:-translate-y-0.5 hover:brightness-110 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-blue-400/30 lg:bottom-24"
         aria-label="Abrir central de suporte"
       >
         <MessageCircle className="h-5 w-5" />
         <span className="hidden sm:inline">Suporte</span>
         {user && openCount > 0 ? (
-          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-black text-[#5865F2]">
+          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-[10px] font-black text-[#0000ff]">
             {openCount > 9 ? "9+" : openCount}
           </span>
         ) : null}
