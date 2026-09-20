@@ -43,3 +43,8 @@ create index if not exists idx_trial_stock_items_used_by on public.trial_stock_i
 create index if not exists idx_user_login_ips_user_id on public.user_login_ips (user_id);
 
 commit;
+
+create index if not exists promo_daily_reveals_user_created_idx
+  on public.promo_daily_reveals (user_id, created_at desc);
+create index if not exists promo_daily_reveals_product_idx
+  on public.promo_daily_reveals (product_id);
