@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Circle,
   Hash,
@@ -64,7 +64,7 @@ export default function SupportHub() {
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<SupportMessage[]>([]);
-  const [creating, setCreating] = useState(true);
+  const [creating, setCreating] = useState(false);
   const [loadingTickets, setLoadingTickets] = useState(false);
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [subject, setSubject] = useState("");
@@ -270,11 +270,8 @@ export default function SupportHub() {
   };
 
   const selectedStatus = selectedTicket ? statusMeta[selectedTicket.status] : null;
-  const mobileShowSidebar = !selectedTicket || creating;
-  const openCount = useMemo(
-    () => tickets.filter((ticket) => !["resolved", "closed"].includes(ticket.status)).length,
-    [tickets],
-  );
+  const mobileShowSidebar = !creating && !selectedTicket;
+  const openCount = tickets.filter((ticket) => !["resolved", "closed"].includes(ticket.status)).length;
 
   return (
     <>
@@ -303,6 +300,8 @@ export default function SupportHub() {
           if (event.target === event.currentTarget) setOpen(false);
         }}>
           <section
+            role="dialog"
+            aria-modal="true"
             className="ml-auto flex h-full w-full overflow-hidden border border-white/10 bg-[#111318] text-zinc-100 shadow-2xl sm:h-[min(720px,calc(100vh-40px))] sm:max-w-[940px] sm:rounded-2xl"
             aria-label="Central de suporte CRAZZY PROJECT"
           >
@@ -382,7 +381,7 @@ export default function SupportHub() {
               <div className="flex h-14 items-center gap-3 border-b border-black/20 px-4 shadow-sm">
                 <button
                   type="button"
-                  onClick={() => { setSelectedTicket(null); setCreating(true); }}
+                  onClick={() => { setSelectedTicket(null); setCreating(false); }}
                   className="rounded-md p-1.5 text-zinc-400 hover:bg-white/5 hover:text-white sm:hidden"
                   aria-label="Voltar aos tickets"
                 >
