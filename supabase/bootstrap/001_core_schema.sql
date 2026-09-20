@@ -71,15 +71,37 @@ CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH 
 CREATE POLICY "Admins can update any profile" ON public.profiles FOR UPDATE USING (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
--- Auto-create profile on signup
+-- Auto-create profile on signup/social OAuth.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $
 BEGIN
-  INSERT INTO public.profiles (user_id, username)
-  VALUES (NEW.id, NEW.raw_user_meta_data ->> 'username');
+  INSERT INTO public.profiles (user_id, username, avatar_url)
+  VALUES (
+    NEW.id,
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'preferred_username', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'full_name', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'name', ''),
+      split_part(COALESCE(NEW.email, ''), '@', 1),
+      'usuario'
+    ),
+    COALESCE(
+      NULLIF(NEW.raw_user_meta_data ->> 'avatar_url', ''),
+      NULLIF(NEW.raw_user_meta_data ->> 'picture', '')
+    )
+  )
+  ON CONFLICT (user_id) DO UPDATE
+  SET username = COALESCE(public.profiles.username, EXCLUDED.username),
+      avatar_url = COALESCE(public.profiles.avatar_url, EXCLUDED.avatar_url);
+
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+$;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
