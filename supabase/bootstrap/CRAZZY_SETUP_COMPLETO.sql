@@ -1,19 +1,8 @@
-<<<<<<< HEAD
--- CRAZZY PROJECT - setup completo do banco (bootstrap 001..004 concatenado)
--- Cole tudo isso no SQL Editor do Supabase (projeto teyqtfdeugldgtzkyybg) e execute UMA vez.
-
--- ==================== 001_core_schema.sql ====================
-=======
 -- CRAZZY PROJECT - SETUP COMPLETO PARA SUPABASE NOVO
--- Gerado a partir dos 6 bootstraps canônicos.
--- Execute inteiro somente em um projeto Supabase NOVO/Vazio.
--- Ordem: Core -> Hardening -> Rewards -> Grants -> Performance -> RLS consolidation.
+-- Alvo: nnmglkdpmffmaiuwbcct. Nunca executar sobre banco existente.
+-- Gerado dos bootstraps canônicos 001..006.
 
--- ============================================================
--- SOURCE: supabase/bootstrap/001_core_schema.sql
--- ============================================================
-
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
+-- SOURCE: 001_core_schema.sql
 -- CRAZZY PROJECT - FRESH DATABASE BOOTSTRAP
 -- Built from the consolidated legacy schema, intentionally excluding historical data
 -- migrations and old gateway-specific columns. Run only against a NEW empty project.
@@ -87,24 +76,13 @@ CREATE POLICY "Users can insert own profile" ON public.profiles FOR INSERT WITH 
 CREATE POLICY "Admins can update any profile" ON public.profiles FOR UPDATE USING (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON public.profiles FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
-<<<<<<< HEAD
--- Auto-create profile on signup
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
-BEGIN
-  INSERT INTO public.profiles (user_id, username)
-  VALUES (NEW.id, NEW.raw_user_meta_data ->> 'username');
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
-=======
 -- Auto-create profile on signup/social OAuth.
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 BEGIN
   INSERT INTO public.profiles (user_id, username, avatar_url)
   VALUES (
@@ -128,8 +106,7 @@ BEGIN
 
   RETURN NEW;
 END;
-$;
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
+$$;
 
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
@@ -204,11 +181,7 @@ CREATE TABLE public.products (
   active BOOLEAN NOT NULL DEFAULT true,
   sort_order INTEGER NOT NULL DEFAULT 0,
   status TEXT NOT NULL DEFAULT 'undetected',
-<<<<<<< HEAD
-  status_label TEXT NOT NULL DEFAULT 'IndetectÃ¡vel',
-=======
   status_label TEXT NOT NULL DEFAULT 'Indetectável',
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   status_updated_at TIMESTAMPTZ,
   tutorial_text TEXT,
   tutorial_file_url TEXT,
@@ -297,161 +270,6 @@ ALTER TABLE public.stock_items ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage stock" ON public.stock_items FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
-<<<<<<< HEAD
--- REWARDS / TRIALS
--- ============================================
-create table if not exists public.reward_campaigns (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  description text not null default '',
-  video_url text not null,
-  video_provider text not null default 'youtube',
-  required_watch_seconds integer not null default 60 check (required_watch_seconds > 0),
-  cooldown_hours integer not null default 24 check (cooldown_hours >= 0),
-  requirements jsonb not null default '{}'::jsonb,
-  active boolean not null default true,
-  sort_order integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.reward_campaign_products (
-  id uuid primary key default gen_random_uuid(),
-  campaign_id uuid not null references public.reward_campaigns(id) on delete cascade,
-  product_id uuid not null references public.products(id) on delete cascade,
-  product_plan_id uuid references public.product_plans(id) on delete set null,
-  trial_duration_minutes integer not null default 60 check (trial_duration_minutes > 0),
-  delivery_mode text not null default 'manual' check (delivery_mode in ('manual','automatic')),
-  auto_delay_seconds integer not null default 0 check (auto_delay_seconds >= 0),
-  active boolean not null default true,
-  sort_order integer not null default 0,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.trial_stock_items (
-  id uuid primary key default gen_random_uuid(),
-  product_plan_id uuid not null references public.product_plans(id) on delete cascade,
-  content text not null,
-  duration_minutes integer not null default 60 check (duration_minutes > 0),
-  used boolean not null default false,
-  used_by uuid references auth.users(id) on delete set null,
-  used_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.reward_sessions (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  campaign_id uuid not null references public.reward_campaigns(id) on delete cascade,
-  campaign_product_id uuid not null references public.reward_campaign_products(id) on delete cascade,
-  product_id uuid not null references public.products(id) on delete cascade,
-  product_plan_id uuid references public.product_plans(id) on delete set null,
-  status text not null default 'watching',
-  watched_seconds numeric not null default 0 check (watched_seconds >= 0),
-  last_video_position numeric,
-  last_heartbeat_at timestamptz,
-  heartbeat_count integer not null default 0,
-  visibility_failures integer not null default 0,
-  completed_at timestamptz,
-  requested_at timestamptz,
-  eligible_delivery_at timestamptz,
-  delivered_at timestamptz,
-  cooldown_until timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table if not exists public.reward_deliveries (
-  id uuid primary key default gen_random_uuid(),
-  session_id uuid not null unique references public.reward_sessions(id) on delete cascade,
-  user_id uuid not null references auth.users(id) on delete cascade,
-  trial_stock_item_id uuid references public.trial_stock_items(id) on delete set null,
-  content text not null,
-  delivery_mode text not null default 'manual' check (delivery_mode in ('manual','automatic')),
-  delivered_by uuid references auth.users(id) on delete set null,
-  delivered_at timestamptz not null default now(),
-  expires_at timestamptz,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists reward_campaigns_active_sort_idx
-  on public.reward_campaigns(active, sort_order);
-create index if not exists reward_campaign_products_campaign_active_sort_idx
-  on public.reward_campaign_products(campaign_id, active, sort_order);
-create index if not exists trial_stock_available_idx
-  on public.trial_stock_items(product_plan_id, used, created_at);
-create index if not exists reward_sessions_user_campaign_created_idx
-  on public.reward_sessions(user_id, campaign_id, created_at desc);
-create index if not exists reward_sessions_status_created_idx
-  on public.reward_sessions(status, created_at);
-create index if not exists reward_deliveries_user_idx
-  on public.reward_deliveries(user_id, delivered_at desc);
-
-drop trigger if exists update_reward_campaigns_updated_at on public.reward_campaigns;
-create trigger update_reward_campaigns_updated_at
-before update on public.reward_campaigns
-for each row execute function public.update_updated_at_column();
-
-drop trigger if exists update_reward_campaign_products_updated_at on public.reward_campaign_products;
-create trigger update_reward_campaign_products_updated_at
-before update on public.reward_campaign_products
-for each row execute function public.update_updated_at_column();
-
-drop trigger if exists update_reward_sessions_updated_at on public.reward_sessions;
-create trigger update_reward_sessions_updated_at
-before update on public.reward_sessions
-for each row execute function public.update_updated_at_column();
-
-alter table public.reward_campaigns enable row level security;
-alter table public.reward_campaign_products enable row level security;
-alter table public.trial_stock_items enable row level security;
-alter table public.reward_sessions enable row level security;
-alter table public.reward_deliveries enable row level security;
-
-drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
-create policy "Admins manage reward campaigns"
-on public.reward_campaigns for all to authenticated
-using (public.has_role(auth.uid(), 'admin'))
-with check (public.has_role(auth.uid(), 'admin'));
-
-drop policy if exists "Admins manage reward campaign products" on public.reward_campaign_products;
-create policy "Admins manage reward campaign products"
-on public.reward_campaign_products for all to authenticated
-using (public.has_role(auth.uid(), 'admin'))
-with check (public.has_role(auth.uid(), 'admin'));
-
-drop policy if exists "Admins manage trial stock" on public.trial_stock_items;
-create policy "Admins manage trial stock"
-on public.trial_stock_items for all to authenticated
-using (public.has_role(auth.uid(), 'admin'))
-with check (public.has_role(auth.uid(), 'admin'));
-
-drop policy if exists "Users view own reward sessions" on public.reward_sessions;
-create policy "Users view own reward sessions"
-on public.reward_sessions for select to authenticated
-using (auth.uid() = user_id);
-
-drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
-create policy "Admins manage reward sessions"
-on public.reward_sessions for all to authenticated
-using (public.has_role(auth.uid(), 'admin'))
-with check (public.has_role(auth.uid(), 'admin'));
-
-drop policy if exists "Users view own reward deliveries" on public.reward_deliveries;
-create policy "Users view own reward deliveries"
-on public.reward_deliveries for select to authenticated
-using (auth.uid() = user_id);
-
-drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
-create policy "Admins manage reward deliveries"
-on public.reward_deliveries for all to authenticated
-using (public.has_role(auth.uid(), 'admin'))
-with check (public.has_role(auth.uid(), 'admin'));
-
--- ============================================
-=======
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- ORDER TICKETS
 -- ============================================
 CREATE TABLE public.order_tickets (
@@ -477,11 +295,7 @@ CREATE POLICY "Admins can manage all tickets" ON public.order_tickets FOR ALL
   WITH CHECK (public.has_role(auth.uid(), 'admin'));
 CREATE TRIGGER update_tickets_updated_at BEFORE UPDATE ON public.order_tickets FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
 
-<<<<<<< HEAD
--- Cliente sÃ³ lÃª conteÃºdo de estoque que foi efetivamente entregue em um pedido prÃ³prio.
-=======
 -- Cliente só lê conteúdo de estoque que foi efetivamente entregue em um pedido próprio.
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 CREATE POLICY "Users can view delivered own stock"
 ON public.stock_items
 FOR SELECT
@@ -495,11 +309,7 @@ USING (
   )
 );
 
-<<<<<<< HEAD
--- AvaliaÃ§Ãµes sÃ³ podem ser criadas/alteradas por quem possui pedido real do produto.
-=======
 -- Avaliações só podem ser criadas/alteradas por quem possui pedido real do produto.
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 CREATE POLICY "Users can insert purchased product reviews"
 ON public.product_reviews
 FOR INSERT
@@ -614,139 +424,9 @@ CREATE UNIQUE INDEX order_tickets_payment_unit_unique
 CREATE INDEX stock_items_available_plan_idx
   ON public.stock_items (product_plan_id, used, created_at);
 
-<<<<<<< HEAD
-CREATE OR REPLACE FUNCTION public.claim_paid_delivery(
-  p_payment_id UUID,
-  p_user_id UUID,
-  p_product_id UUID,
-  p_product_plan_id UUID,
-  p_item_index INTEGER,
-  p_unit_index INTEGER
-)
-RETURNS TABLE(ticket_id UUID, stock_item_id UUID, created BOOLEAN)
-LANGUAGE plpgsql
-SECURITY INVOKER
-SET search_path = public
-AS $$
-DECLARE
-  v_ticket_id UUID;
-  v_stock_id UUID;
-BEGIN
-  IF p_item_index < 0 OR p_unit_index < 0 THEN
-    RAISE EXCEPTION 'Invalid delivery unit index';
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.payments p
-    WHERE p.id = p_payment_id
-      AND p.user_id = p_user_id
-      AND p.status IN ('FULFILLING', 'COMPLETED')
-  ) THEN
-    RAISE EXCEPTION 'Payment is not eligible for delivery';
-  END IF;
-
-  SELECT ot.id, ot.stock_item_id
-  INTO v_ticket_id, v_stock_id
-  FROM public.order_tickets ot
-  WHERE ot.payment_id = p_payment_id
-    AND ot.payment_item_index = p_item_index
-    AND ot.payment_unit_index = p_unit_index
-  LIMIT 1;
-
-  IF FOUND THEN
-    RETURN QUERY SELECT v_ticket_id, v_stock_id, false;
-    RETURN;
-  END IF;
-
-  IF NOT EXISTS (
-    SELECT 1
-    FROM public.product_plans pp
-    JOIN public.products pr ON pr.id = pp.product_id
-    WHERE pp.id = p_product_plan_id
-      AND pp.product_id = p_product_id
-      AND pp.active = true
-      AND pr.active = true
-  ) THEN
-    RAISE EXCEPTION 'Product or plan is not active';
-  END IF;
-
-  BEGIN
-    SELECT si.id
-    INTO v_stock_id
-    FROM public.stock_items si
-    WHERE si.product_plan_id = p_product_plan_id
-      AND si.used = false
-    ORDER BY si.created_at, si.id
-    FOR UPDATE SKIP LOCKED
-    LIMIT 1;
-
-    IF v_stock_id IS NOT NULL THEN
-      UPDATE public.stock_items
-      SET used = true,
-          used_at = now()
-      WHERE id = v_stock_id
-        AND used = false;
-    END IF;
-
-    INSERT INTO public.order_tickets (
-      user_id,
-      product_id,
-      product_plan_id,
-      stock_item_id,
-      status,
-      status_label,
-      metadata,
-      payment_id,
-      payment_item_index,
-      payment_unit_index
-    )
-    VALUES (
-      p_user_id,
-      p_product_id,
-      p_product_plan_id,
-      v_stock_id,
-      CASE WHEN v_stock_id IS NULL THEN 'open' ELSE 'delivered' END,
-      CASE WHEN v_stock_id IS NULL THEN 'Aguardando Entrega' ELSE 'Entregue' END,
-      jsonb_build_object(
-        'payment_id', p_payment_id,
-        'payment_item_index', p_item_index,
-        'payment_unit_index', p_unit_index
-      ),
-      p_payment_id,
-      p_item_index,
-      p_unit_index
-    )
-    RETURNING id INTO v_ticket_id;
-  EXCEPTION WHEN unique_violation THEN
-    SELECT ot.id, ot.stock_item_id
-    INTO v_ticket_id, v_stock_id
-    FROM public.order_tickets ot
-    WHERE ot.payment_id = p_payment_id
-      AND ot.payment_item_index = p_item_index
-      AND ot.payment_unit_index = p_unit_index
-    LIMIT 1;
-
-    IF v_ticket_id IS NULL THEN
-      RAISE;
-    END IF;
-
-    RETURN QUERY SELECT v_ticket_id, v_stock_id, false;
-    RETURN;
-  END;
-
-  RETURN QUERY SELECT v_ticket_id, v_stock_id, true;
-END;
-$$;
-
-REVOKE ALL ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) FROM anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.claim_paid_delivery(UUID, UUID, UUID, UUID, INTEGER, INTEGER) TO service_role;
-=======
 -- Atomic paid-delivery function is defined in 002_security_hardening.sql.
 
 
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================
 -- PAYMENT SETTINGS
@@ -755,11 +435,7 @@ CREATE TABLE public.payment_settings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   method TEXT NOT NULL UNIQUE,
   label TEXT NOT NULL,
-<<<<<<< HEAD
-  enabled BOOLEAN NOT NULL DEFAULT true,
-=======
   enabled BOOLEAN NOT NULL DEFAULT false,
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 ALTER TABLE public.payment_settings ENABLE ROW LEVEL SECURITY;
@@ -767,15 +443,9 @@ CREATE POLICY "Anyone can view payment settings" ON public.payment_settings FOR 
 CREATE POLICY "Admins can manage payment settings" ON public.payment_settings FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 INSERT INTO public.payment_settings (method, label, enabled) VALUES
-<<<<<<< HEAD
-  ('pix', 'PIX', true),
-  ('card', 'CartÃ£o de CrÃ©dito', false),
-  ('crypto', 'Litecoin (LTC)', true);
-=======
   ('pix', 'PIX', false),
   ('card', 'Cartão de Crédito', false),
   ('crypto', 'Litecoin (LTC)', false);
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================
 -- COUPONS
@@ -937,8 +607,6 @@ ALTER TABLE public.system_credentials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage credentials" ON public.system_credentials FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
-<<<<<<< HEAD
-=======
 -- SUPPORT HUB (Discord-style support, independent from paid orders)
 -- ============================================
 CREATE TABLE public.support_tickets (
@@ -1053,7 +721,6 @@ CREATE INDEX promo_daily_reveals_product_idx
   ON public.promo_daily_reveals (product_id);
 
 -- ============================================
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- RPC: increment reseller purchases
 -- ============================================
 CREATE OR REPLACE FUNCTION public.increment_reseller_purchases(_reseller_id UUID)
@@ -1102,14 +769,7 @@ CREATE POLICY "Admins can delete game images" ON storage.objects FOR DELETE
   USING (bucket_id = 'game-images' AND public.has_role(auth.uid(), 'admin'));
 
 
-<<<<<<< HEAD
--- ==================== 002_security_hardening.sql ====================
-=======
--- ============================================================
--- SOURCE: supabase/bootstrap/002_security_hardening.sql
--- ============================================================
-
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
+-- SOURCE: 002_security_hardening.sql
 -- CRAZZY PROJECT - SECURITY HARDENING
 -- Bootstrap step for a fresh CRAZZY database.
 
@@ -1117,12 +777,6 @@ begin;
 
 
 -- ============================================================
-<<<<<<< HEAD
--- ADMIN ROLE HELPER: callers may only ask about their own role. This keeps the
--- SECURITY DEFINER helper useful for RLS without turning it into a role-enumeration API.
--- ============================================================
-create or replace function public.has_role(_user_id uuid, _role public.app_role)
-=======
 -- ADMIN ROLE HELPER: move the SECURITY DEFINER helper out of the exposed public
 -- schema. Policies keep working by dependency, but the function is no longer a public
 -- RPC endpoint. Admin policies are scoped to authenticated callers only.
@@ -1134,34 +788,23 @@ grant usage on schema private to authenticated, service_role;
 alter function public.has_role(uuid, public.app_role) set schema private;
 
 create or replace function private.has_role(_user_id uuid, _role public.app_role)
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 returns boolean
 language sql
 stable
 security definer
 set search_path = public
-<<<<<<< HEAD
 as $$
-=======
-as $
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
   select _user_id = (select auth.uid())
     and exists (
       select 1 from public.user_roles
       where user_id = _user_id and role = _role
     );
-<<<<<<< HEAD
 $$;
-
-revoke all on function public.has_role(uuid, public.app_role) from public;
-grant execute on function public.has_role(uuid, public.app_role) to anon, authenticated;
-=======
-$;
 
 revoke all on function private.has_role(uuid, public.app_role) from public, anon;
 grant execute on function private.has_role(uuid, public.app_role) to authenticated, service_role;
 
-do $
+do $$
 declare
   pol record;
 begin
@@ -1182,13 +825,12 @@ begin
     );
   end loop;
 end
-$;
+$$;
 
 -- Trigger/event-trigger helpers are internal infrastructure and must not be callable
 -- through the Data API.
 revoke all on function public.handle_new_user() from public, anon, authenticated, service_role;
 revoke all on function public.rls_auto_enable() from public, anon, authenticated, service_role;
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================================
 -- PAYMENTS: browser may read its own rows, but must NEVER create/modify payment facts.
@@ -1301,14 +943,9 @@ begin
   end if;
 end $$;
 
-<<<<<<< HEAD
-create unique index if not exists coupon_usage_coupon_user_unique
-  on public.coupon_usage(coupon_id, user_id);
-=======
 -- public.coupon_usage already has UNIQUE (coupon_id, user_id) in the core schema,
 -- so do not create a duplicate unique index here.
 drop index if exists public.coupon_usage_coupon_user_unique;
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- ============================================================
 -- PROFILES: browser cannot alter ban fields or another identity. Public/profile UI only
@@ -1513,19 +1150,13 @@ revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, intege
 revoke all on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) from anon, authenticated;
 grant execute on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, integer, integer) to service_role;
 
-<<<<<<< HEAD
-commit;
-
-
--- ==================== 003_rewards.sql ====================
-=======
 
 -- ============================================================
 -- RLS PERFORMANCE: avoid re-evaluating auth.uid() for every row.
 -- Preserve each policy expression and only wrap direct auth.uid() calls in a scalar
 -- subquery so Postgres can use an initPlan.
 -- ============================================================
-do $
+do $$
 declare
   pol record;
   stmt text;
@@ -1555,7 +1186,7 @@ begin
     execute stmt;
   end loop;
 end
-$;
+$$;
 
 -- ============================================================
 -- SUPPORT HUB ACTIVITY STATE
@@ -1566,7 +1197,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = public, private
-as $
+as $$
 begin
   update public.support_tickets
   set
@@ -1580,7 +1211,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 revoke all on function private.touch_support_ticket() from public, anon, authenticated, service_role;
 
@@ -1592,11 +1223,7 @@ for each row execute function private.touch_support_ticket();
 commit;
 
 
--- ============================================================
--- SOURCE: supabase/bootstrap/003_rewards.sql
--- ============================================================
-
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
+-- SOURCE: 003_rewards.sql
 -- CRAZZY PROJECT - REWARDS / TRIAL SYSTEM
 -- Bootstrap step for a fresh CRAZZY database.
 
@@ -1741,30 +1368,6 @@ create policy "Users can view own reward deliveries"
 -- Admin policies. Normal browser users receive no INSERT/UPDATE/DELETE policy for server-owned state.
 drop policy if exists "Admins manage reward campaigns" on public.reward_campaigns;
 create policy "Admins manage reward campaigns" on public.reward_campaigns for all to authenticated
-<<<<<<< HEAD
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
-
-drop policy if exists "Admins manage reward products" on public.reward_campaign_products;
-create policy "Admins manage reward products" on public.reward_campaign_products for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
-
-drop policy if exists "Admins manage trial stock" on public.trial_stock_items;
-create policy "Admins manage trial stock" on public.trial_stock_items for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
-
-drop policy if exists "Admins manage reward sessions" on public.reward_sessions;
-create policy "Admins manage reward sessions" on public.reward_sessions for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
-
-drop policy if exists "Admins manage reward deliveries" on public.reward_deliveries;
-create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
-  using (public.has_role((select auth.uid()), 'admin'))
-  with check (public.has_role((select auth.uid()), 'admin'));
-=======
   using (private.has_role((select auth.uid()), 'admin'))
   with check (private.has_role((select auth.uid()), 'admin'));
 
@@ -1787,7 +1390,6 @@ drop policy if exists "Admins manage reward deliveries" on public.reward_deliver
 create policy "Admins manage reward deliveries" on public.reward_deliveries for all to authenticated
   using (private.has_role((select auth.uid()), 'admin'))
   with check (private.has_role((select auth.uid()), 'admin'));
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- Explicit grants: user cannot forge progress or claim inventory through Data API.
 revoke insert, update, delete on public.reward_sessions from anon, authenticated;
@@ -1799,32 +1401,19 @@ grant select on public.reward_sessions, public.reward_deliveries to authenticate
 commit;
 
 
-<<<<<<< HEAD
--- ==================== 004_access_grants.sql ====================
--- CRAZZY PROJECT - explicit Data API grants for fresh Supabase projects.
--- RLS remains the authorization layer. These grants only expose the operations that
--- each browser role may attempt; the policies decide which rows are actually allowed.
-=======
--- ============================================================
--- SOURCE: supabase/bootstrap/004_access_grants.sql
--- ============================================================
-
+-- SOURCE: 004_access_grants.sql
 -- CRAZZY PROJECT - explicit Data API grants for fresh Supabase projects.
 -- RLS remains the row-authorization layer, but grants are now an allowlist:
 -- browser roles lose all automatic table privileges first, then receive only what the app needs.
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 begin;
 
 grant usage on schema public to anon, authenticated, service_role;
 
-<<<<<<< HEAD
-=======
 -- Remove Supabase/Postgres automatic table exposure for browser roles.
 revoke all privileges on all tables in schema public from anon, authenticated;
 revoke all privileges on all sequences in schema public from anon, authenticated;
 
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- Public storefront catalog.
 grant select on table
   public.games,
@@ -1836,12 +1425,9 @@ grant select on table
   public.payment_settings
   to anon;
 
-<<<<<<< HEAD
-=======
 -- Public profile surface is intentionally column-limited.
 grant select (user_id, username, avatar_url) on public.profiles to anon, authenticated;
 
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 -- Authenticated storefront/customer reads.
 grant select on table
   public.games,
@@ -1872,10 +1458,7 @@ grant select on table
 grant insert, update, delete on public.product_reviews to authenticated;
 grant insert on public.user_login_ips to authenticated;
 grant insert on public.ticket_messages to authenticated;
-<<<<<<< HEAD
-=======
 grant update (username, avatar_url) on public.profiles to authenticated;
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 
 -- Admin panel mutations. Normal customers still fail RLS because every write policy on
 -- these tables is admin-only. Payment facts and coupon_usage are deliberately excluded.
@@ -1900,13 +1483,6 @@ grant insert, update, delete on table
   public.user_roles
   to authenticated;
 
-<<<<<<< HEAD
--- Only the Discord invite row is visible publicly, enforced by the RLS policy created in
--- the hardening step. Secrets never live in this table.
-grant select on public.system_credentials to anon;
-
--- Rewards: customers can read catalog + own status; admin policies permit management.
-=======
 -- Only the Discord invite row is visible publicly, enforced by RLS.
 grant select on public.system_credentials to anon;
 
@@ -1920,7 +1496,6 @@ grant select, insert, update, delete on table
 grant select on table public.promo_daily_reveals to authenticated;
 
 -- Rewards: public catalog + signed-in own state; admin writes are RLS-gated.
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
 grant select on public.reward_campaigns, public.reward_campaign_products to anon;
 grant select, insert, update, delete on table
   public.reward_campaigns,
@@ -1937,12 +1512,7 @@ grant all privileges on all sequences in schema public to service_role;
 commit;
 
 
-<<<<<<< HEAD
-=======
--- ============================================================
--- SOURCE: supabase/bootstrap/005_performance_indexes.sql
--- ============================================================
-
+-- SOURCE: 005_performance_indexes.sql
 -- CRAZZY PROJECT - PERFORMANCE INDEXES
 -- Covers every public-schema foreign key currently reported by Supabase as unindexed.
 
@@ -1995,10 +1565,7 @@ create index if not exists promo_daily_reveals_product_idx
   on public.promo_daily_reveals (product_id);
 
 
--- ============================================================
--- SOURCE: supabase/bootstrap/006_rls_policy_consolidation.sql
--- ============================================================
-
+-- SOURCE: 006_rls_policy_consolidation.sql
 -- CRAZZY PROJECT - CONSOLIDATE RLS POLICIES
 -- Keeps one permissive policy per role/action wherever possible and removes a weaker stock read path.
 
@@ -2239,5 +1806,3 @@ create policy "Users can insert own IPs" on public.user_login_ips for insert to 
 create policy "Users can view own IPs" on public.user_login_ips for select to authenticated using ((select auth.uid()) = user_id);
 
 commit;
-
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9

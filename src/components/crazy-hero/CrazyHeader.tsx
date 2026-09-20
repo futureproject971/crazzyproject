@@ -23,7 +23,7 @@ const mobileExtraLinks = [
   { label: "Meus Pedidos", to: "/meus-pedidos", icon: Grid2X2 },
 ];
 
-export function CrazyHeader() {
+export function CrazyHeader({ categories = [] }: { categories?: { id: string; name: string; slug: string }[] }) {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, isAdmin } = useAuth();
@@ -111,6 +111,10 @@ export function CrazyHeader() {
             />
           </form>
 
+          {categories.length > 0 && <nav className="store-sidebar-categories" aria-label="Categorias da loja">
+            <span>CATEGORIAS</span>
+            {categories.map(category => <Link key={category.id} to={`/produtos?game=${encodeURIComponent(category.slug)}`}><Grid2X2 aria-hidden="true" />{category.name}</Link>)}
+          </nav>}
           <div className="crazy-site-header__actions">
             <ThemeToggle />
             {isAdmin ? (

@@ -21,18 +21,18 @@ language sql
 stable
 security definer
 set search_path = public
-as $
+as $$
   select _user_id = (select auth.uid())
     and exists (
       select 1 from public.user_roles
       where user_id = _user_id and role = _role
     );
-$;
+$$;
 
 revoke all on function private.has_role(uuid, public.app_role) from public, anon;
 grant execute on function private.has_role(uuid, public.app_role) to authenticated, service_role;
 
-do $
+do $$
 declare
   pol record;
 begin
@@ -53,7 +53,7 @@ begin
     );
   end loop;
 end
-$;
+$$;
 
 -- Trigger/event-trigger helpers are internal infrastructure and must not be callable
 -- through the Data API.
@@ -384,7 +384,7 @@ grant execute on function public.claim_paid_delivery(uuid, uuid, uuid, uuid, int
 -- Preserve each policy expression and only wrap direct auth.uid() calls in a scalar
 -- subquery so Postgres can use an initPlan.
 -- ============================================================
-do $
+do $$
 declare
   pol record;
   stmt text;
@@ -414,7 +414,7 @@ begin
     execute stmt;
   end loop;
 end
-$;
+$$;
 
 -- ============================================================
 -- SUPPORT HUB ACTIVITY STATE
@@ -425,7 +425,7 @@ returns trigger
 language plpgsql
 security definer
 set search_path = public, private
-as $
+as $$
 begin
   update public.support_tickets
   set
@@ -439,7 +439,7 @@ begin
 
   return new;
 end;
-$;
+$$;
 
 revoke all on function private.touch_support_ticket() from public, anon, authenticated, service_role;
 

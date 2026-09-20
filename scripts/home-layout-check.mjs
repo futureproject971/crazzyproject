@@ -83,11 +83,11 @@ function overlap(a, b, tolerance = 2) {
   };
 }
 
-for (const viewport of viewports) {
+for (const viewport of viewports.flatMap(v => ["light", "dark"].map(theme => ({...v, theme, name: `${v.name}-${theme}`})))) {
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
     reducedMotion: "reduce",
-    colorScheme: "light",
+    colorScheme: viewport.theme,
   });
   const page = await context.newPage();
 
@@ -136,162 +136,28 @@ for (const viewport of viewports) {
   page.on("pageerror", (error) => consoleErrors.push(error.message));
 
   await page.goto("http://127.0.0.1:4173/", { waitUntil: "domcontentloaded", timeout: 30_000 });
-  await page.waitForSelector(".crazy-category-card", { timeout: 15_000 });
-  await page.waitForSelector(".crazy-home-featured .crazy-featured__card.is-active", { timeout: 15_000 });
-  await page.waitForTimeout(1200);
-
+  await page.waitForSelector(".store-product", { timeout: 15000 });
+  await page.evaluate(() => document.fonts.ready);
   const layout = await page.evaluate(() => {
-    const rect = (selector) => {
-      const el = document.querySelector(selector);
-      if (!el) return null;
-      const r = el.getBoundingClientRect();
-      const style = getComputedStyle(el);
-      if (style.display === "none" || style.visibility === "hidden" || r.width === 0 || r.height === 0) return null;
-      return {
-        left: r.left,
-        top: r.top,
-        right: r.right,
-        bottom: r.bottom,
-        width: r.width,
-        height: r.height,
-      };
-    };
-    const rects = (selector) =>
-      [...document.querySelectorAll(selector)].map((el, index) => {
-        const r = el.getBoundingClientRect();
-        const style = getComputedStyle(el);
-        return {
-          index,
-          text: (el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 90),
-          visible: style.display !== "none" && style.visibility !== "hidden" && r.width > 0 && r.height > 0,
-          left: r.left,
-          top: r.top,
-          right: r.right,
-          bottom: r.bottom,
-          width: r.width,
-          height: r.height,
-        };
-      }).filter((item) => item.visible);
-
-    return {
-      viewport: { width: innerWidth, height: innerHeight },
-      document: {
-        scrollWidth: document.documentElement.scrollWidth,
-        scrollHeight: document.documentElement.scrollHeight,
-      },
-      header: rect(".crazy-site-header"),
-      logo: rect(".crazy-logo"),
-      featured: rect(".crazy-home-featured"),
-      trustbar: rect(".crazy-trustbar"),
-      footer: rect(".crazy-hero-footer"),
-      support: rect(".crazzy-support-trigger"),
-      explore: rect(".crazy-hero__explore"),
-      categories: rects(".crazy-category-card"),
-      activeCard: rect(".crazy-home-featured .crazy-featured__card.is-active"),
-      sideCards: rects(".crazy-home-featured .crazy-featured__card:not(.is-active)"),
-    };
+    const box = selector => { const r = document.querySelector(selector).getBoundingClientRect(); return {left:r.left,right:r.right,top:r.top,bottom:r.bottom}; };
+    return { header: box('.crazy-site-header'), intro: box('.store-intro'), support: box('.crazzy-support-trigger'), overflow: document.documentElement.scrollWidth > innerWidth + 2, cards: document.querySelectorAll('.store-product').length };
   });
-
-  const collisions = [];
-  const cards = layout.categories;
-
-  for (let i = 0; i < cards.length; i += 1) {
-    for (let j = i + 1; j < cards.length; j += 1) {
-      const hit = overlap(cards[i], cards[j], 2);
-      if (hit) {
-        collisions.push({
-          type: "category-category",
-          a: cards[i].text,
-          b: cards[j].text,
-          overlap: hit,
-        });
-      }
-    }
-  }
-
-  const protectedRegions = [
-    ["header", layout.header],
-    ["logo", layout.logo],
-    ["featured", layout.featured],
-    ["trustbar", layout.trustbar],
-    ["footer", layout.footer],
-  ];
-
-  for (const card of cards) {
-    for (const [name, region] of protectedRegions) {
-      const hit = overlap(card, region, 3);
-      if (hit) {
-        collisions.push({
-          type: `category-${name}`,
-          a: card.text,
-          b: name,
-          overlap: hit,
-        });
-      }
-    }
-  }
-
-  for (const [aName, a, bName, b] of [
-    ["featured", layout.featured, "trustbar", layout.trustbar],
-    ["featured", layout.featured, "footer", layout.footer],
-    ["trustbar", layout.trustbar, "footer", layout.footer],
-    ["header", layout.header, "logo", layout.logo],
-    ["support", layout.support, "footer", layout.footer],
-    ["support", layout.support, "trustbar", layout.trustbar],
-    ["support", layout.support, "featured", layout.featured],
-    ["support", layout.support, "header", layout.header],
-  ]) {
-    const hit = overlap(a, b, 3);
-    if (hit) collisions.push({ type: `${aName}-${bName}`, a: aName, b: bName, overlap: hit });
-  }
-
-  const horizontalOverflow = layout.document.scrollWidth > layout.viewport.width + 2;
-  const blocking = collisions.length > 0 || horizontalOverflow || consoleErrors.length > 0;
-  if (blocking) hasBlockingCollision = true;
-
-  const entry = {
-    ...viewport,
-    layout,
-    collisions,
-    horizontalOverflow,
-    consoleErrors,
-    blocking,
-  };
-  report.push(entry);
-
-  await page.screenshot({
-    path: path.join(outputDir, `${viewport.name}.png`),
-    fullPage: true,
-  });
-
-  console.log("HOME_LAYOUT_RESULT", JSON.stringify({
-    viewport: viewport.name,
-    categories: cards.length,
-    collisions,
-    horizontalOverflow,
-    consoleErrors,
-    document: layout.document,
-    activeCard: layout.activeCard,
-  }));
-
+  const failures = [];
+  if (overlap(layout.header, layout.support)) failures.push('support overlaps navigation');
+  if (layout.overflow) failures.push('horizontal page overflow');
+  if (overlap(layout.header, layout.intro)) failures.push('header overlaps intro');
+  if (consoleErrors.length) failures.push(...consoleErrors);
+  if (!layout.cards) failures.push('catalog missing');
+  await page.screenshot({path:path.join(outputDir, `${viewport.name}.png`),fullPage:true});
+  const categoryLink = page.locator('.store-category-links a').first();
+  if (await categoryLink.getAttribute('href') !== '/produtos?game=warzone') failures.push('category route');
+  const productLink = page.locator('.store-product-button').first();
+  if (await productLink.getAttribute('href') !== '/produto/featured-1') failures.push('product route');
+  report.push({ viewport: viewport.name, ...layout, failures });
+  if (failures.length) hasBlockingCollision = true;
   await context.close();
 }
-
 await browser.close();
-
-fs.writeFileSync(path.join(outputDir, "report.json"), JSON.stringify(report, null, 2));
-
-const summary = {
-  checked: report.map(({ name, width, height, collisions, horizontalOverflow, consoleErrors }) => ({
-    name,
-    width,
-    height,
-    collisions: collisions.length,
-    horizontalOverflow,
-    consoleErrors: consoleErrors.length,
-  })),
-  passed: !hasBlockingCollision,
-};
-
-console.log("HOME_LAYOUT_SUMMARY", JSON.stringify(summary));
-if (hasBlockingCollision) process.exitCode = 1;
+fs.writeFileSync(path.join(outputDir,'report.json'),JSON.stringify(report,null,2));
+console.log(JSON.stringify(report,null,2));
+if (hasBlockingCollision) process.exit(1);
