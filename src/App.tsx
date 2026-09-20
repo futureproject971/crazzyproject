@@ -28,6 +28,7 @@ const PedidoChat = lazy(() => import("./pages/PedidoChat"));
 const Checkout = lazy(() => import("./pages/Checkout"));
 const Carrinho = lazy(() => import("./pages/Carrinho"));
 const Rewards = lazy(() => import("./pages/Rewards"));
+const Experiencias = lazy(() => import("./pages/Experiencias"));
 const Faq = lazy(() => import("./pages/Faq"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -75,6 +76,7 @@ const App = () => (
                   <Route path="/carrinho" element={<Carrinho />} />
                   <Route path="/checkout" element={<Checkout />} />
                   <Route path="/rewards" element={<Rewards />} />
+                  <Route path="/extras" element={<Experiencias />} />
                   <Route path="/faq" element={<Faq />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="*" element={<NotFound />} />
