@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "src/components/crazy-hero/**"
+      - "src/components/SupportHub.tsx"
       - "src/config/homeCategories.ts"
       - "src/pages/Index.tsx"
       - "src/App.tsx"
