@@ -602,6 +602,95 @@ ALTER TABLE public.system_credentials ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Admins can manage credentials" ON public.system_credentials FOR ALL USING (public.has_role(auth.uid(), 'admin'));
 
 -- ============================================
+-- SUPPORT HUB (Discord-style support, independent from paid orders)
+-- ============================================
+CREATE TABLE public.support_tickets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  subject TEXT NOT NULL CHECK (char_length(subject) BETWEEN 3 AND 120),
+  category TEXT NOT NULL DEFAULT 'general'
+    CHECK (category IN ('general','pre_sale','payment','product','technical','order')),
+  status TEXT NOT NULL DEFAULT 'open'
+    CHECK (status IN ('open','waiting_staff','waiting_user','resolved','closed')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  closed_at TIMESTAMPTZ
+);
+ALTER TABLE public.support_tickets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support tickets visible to owner or admin" ON public.support_tickets
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id OR public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Users create own support tickets" ON public.support_tickets
+  FOR INSERT TO authenticated
+  WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins update support tickets" ON public.support_tickets
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support tickets" ON public.support_tickets
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+CREATE TRIGGER update_support_tickets_updated_at
+  BEFORE UPDATE ON public.support_tickets
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+CREATE TABLE public.support_messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  ticket_id UUID NOT NULL REFERENCES public.support_tickets(id) ON DELETE CASCADE,
+  sender_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  sender_role TEXT NOT NULL CHECK (sender_role IN ('user','staff')),
+  message TEXT NOT NULL CHECK (char_length(message) BETWEEN 1 AND 4000),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+ALTER TABLE public.support_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Support messages visible to owner or admin" ON public.support_messages
+  FOR SELECT TO authenticated
+  USING (
+    public.has_role(auth.uid(), 'admin')
+    OR EXISTS (
+      SELECT 1 FROM public.support_tickets st
+      WHERE st.id = support_messages.ticket_id
+        AND st.user_id = auth.uid()
+    )
+  );
+CREATE POLICY "Support message insert user or admin" ON public.support_messages
+  FOR INSERT TO authenticated
+  WITH CHECK (
+    (
+      public.has_role(auth.uid(), 'admin')
+      AND sender_id = auth.uid()
+      AND sender_role = 'staff'
+    )
+    OR
+    (
+      sender_id = auth.uid()
+      AND sender_role = 'user'
+      AND EXISTS (
+        SELECT 1 FROM public.support_tickets st
+        WHERE st.id = support_messages.ticket_id
+          AND st.user_id = auth.uid()
+          AND st.status <> 'closed'
+      )
+    )
+  );
+CREATE POLICY "Admins update support messages" ON public.support_messages
+  FOR UPDATE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE POLICY "Admins delete support messages" ON public.support_messages
+  FOR DELETE TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'));
+
+CREATE INDEX support_tickets_user_created_idx
+  ON public.support_tickets (user_id, created_at DESC);
+CREATE INDEX support_tickets_status_updated_idx
+  ON public.support_tickets (status, updated_at DESC);
+CREATE INDEX support_messages_ticket_created_idx
+  ON public.support_messages (ticket_id, created_at);
+CREATE INDEX support_messages_sender_idx
+  ON public.support_messages (sender_id);
+
+-- ============================================
 -- RPC: increment reseller purchases
 -- ============================================
 CREATE OR REPLACE FUNCTION public.increment_reseller_purchases(_reseller_id UUID)
