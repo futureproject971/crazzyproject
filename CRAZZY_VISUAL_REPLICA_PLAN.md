@@ -334,7 +334,7 @@ Regra de ouro: **nada de componente órfão**. Se aparece na tela, precisa ter o
 - [x] U10. Desacoplar carrossel da categoria selecionada.
 - [x] U11. Carrossel passa a receber apenas produtos `is_new = true`.
 - [x] U12. Produto lateral passa a exibir nome/badge/CTA compacto.
-- [ ] U13. Aplicar migration no Supabase CRAZZY correto (`teyqtfdeugldgtzkyybg`) quando a conexão estiver disponível.
+- [x] U13. Confirmar `products.is_new` no Supabase CRAZZY correto (`nnmglkdpmffmaiuwbcct`); coluna e bootstrap/migrations do banco novo já foram verificados.
 - [ ] U14. Validar criação/edição real de um produto NOVO no Admin contra o banco correto.
 - [ ] U15. Validar que um produto NOVO aparece no carrossel de produção e um produto comum não aparece.
 - [x] U16. Validar em código que clicar em categoria não altera mais o conteúdo do carrossel.
