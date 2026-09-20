@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Header from "@/components/Header";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Minus, Plus, ShoppingCart, Trash2, Zap, Tag, Loader2, X } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,10 @@ const Carrinho = () => {
   const { items, removeItem, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [couponCode, setCouponCode] = useState("");
+  const [searchParams] = useSearchParams();
+  const wheelCoupon = (searchParams.get("coupon") || window.localStorage.getItem("crazzy:pending-coupon") || "").trim().toUpperCase();
+  const [couponCode, setCouponCode] = useState(wheelCoupon);
+  const autoCouponRef = useRef("");
   const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
 
@@ -34,8 +37,8 @@ const Carrinho = () => {
     setAppliedCoupon(null);
   }, [cartSignature]);
 
-  const applyCoupon = async () => {
-    const code = couponCode.trim().toUpperCase();
+  const applyCoupon = async (overrideCode?: string) => {
+    const code = (overrideCode || couponCode).trim().toUpperCase();
     if (!code) return;
     if (!user) {
       toast({ title: "Faça login para usar cupons", variant: "destructive" });
@@ -93,9 +96,10 @@ const Carrinho = () => {
         final,
       });
 
+      window.localStorage.removeItem("crazzy:pending-coupon");
       toast({
         title: "Cupom aplicado!",
-        description: `${result.coupon.code} · desconto de R$ ${discount.toFixed(2)}`,
+        description: result.coupon.code + " · desconto de R$ " + discount.toFixed(2),
       });
     } catch (error: any) {
       setAppliedCoupon(null);
@@ -108,6 +112,13 @@ const Carrinho = () => {
       setCouponLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!wheelCoupon || !user || items.length === 0 || appliedCoupon || couponLoading || autoCouponRef.current === wheelCoupon) return;
+    autoCouponRef.current = wheelCoupon;
+    setCouponCode(wheelCoupon);
+    void applyCoupon(wheelCoupon);
+  }, [wheelCoupon, user, items.length]);
 
   const summarySubtotal = appliedCoupon?.subtotal ?? totalPrice;
   const discountAmount = appliedCoupon?.discount ?? 0;
