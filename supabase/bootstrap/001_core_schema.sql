@@ -691,6 +691,31 @@ CREATE INDEX support_messages_sender_idx
   ON public.support_messages (sender_id);
 
 -- ============================================
+-- PROMO DAILY REVEAL (free daily scratch card)
+-- ============================================
+CREATE TABLE public.promo_daily_reveals (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  reveal_date DATE NOT NULL DEFAULT (timezone('UTC', now()))::date,
+  result_key TEXT NOT NULL CHECK (result_key IN ('rewards_trial','featured_product','try_tomorrow')),
+  product_id UUID REFERENCES public.products(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  UNIQUE (user_id, reveal_date)
+);
+ALTER TABLE public.promo_daily_reveals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users read own promo reveals" ON public.promo_daily_reveals
+  FOR SELECT TO authenticated
+  USING (auth.uid() = user_id);
+CREATE POLICY "Admins manage promo reveals" ON public.promo_daily_reveals
+  FOR ALL TO authenticated
+  USING (public.has_role(auth.uid(), 'admin'))
+  WITH CHECK (public.has_role(auth.uid(), 'admin'));
+CREATE INDEX promo_daily_reveals_user_created_idx
+  ON public.promo_daily_reveals (user_id, created_at DESC);
+CREATE INDEX promo_daily_reveals_product_idx
+  ON public.promo_daily_reveals (product_id);
+
+-- ============================================
 -- RPC: increment reseller purchases
 -- ============================================
 CREATE OR REPLACE FUNCTION public.increment_reseller_purchases(_reseller_id UUID)
