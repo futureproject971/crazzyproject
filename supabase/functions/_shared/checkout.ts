@@ -552,6 +552,14 @@ export async function fulfillOrder(supabaseAdmin: any, payment: any) {
       if (typeof count === "number") {
         await supabaseAdmin.from("coupons").update({ current_uses: count }).eq("id", payment.coupon_id);
       }
+
+      // If this coupon came from the daily wheel, bind the prize ledger to the
+      // payment that actually consumed it. Replays remain harmless.
+      await supabaseAdmin
+        .from("wheel_spins")
+        .update({ payment_id: payment.id })
+        .eq("coupon_id", payment.coupon_id)
+        .is("payment_id", null);
     }
   }
 }
