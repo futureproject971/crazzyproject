@@ -9,6 +9,7 @@ import { CartProvider } from "@/hooks/useCart";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { FuturisticBackground } from "@/components/crazy-hero/FuturisticBackground";
 import { SiteCursor } from "@/components/SiteCursor";
+import SupportHub from "@/components/SupportHub";
 import Index from "./pages/Index";
 
 const Produtos = lazy(() => import("./pages/Produtos"));
@@ -53,6 +54,7 @@ const App = () => (
             <Sonner />
             <FuturisticBackground />
             <SiteCursor />
+            <SupportHub />
             <BrowserRouter>
               <Suspense fallback={<RouteFallback />}>
                 <Routes>
