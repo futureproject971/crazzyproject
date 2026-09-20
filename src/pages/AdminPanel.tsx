@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Plus, Pencil, Trash2, GripVertical, ImageIcon, Loader2, ShieldAlert, Gift,
   Gamepad2, Users, Mail, Calendar, Clock, Search, Shield, Ban, ShieldCheck,
-  ShieldOff, Globe, RefreshCw, Upload, Link, Sparkles, X, Package, Tag, UserCheck, TrendingUp, Key, CreditCard, BarChart3, ShoppingBag
+  ShieldOff, Globe, RefreshCw, Upload, Link, Sparkles, X, Package, Tag, UserCheck, TrendingUp, Key, CreditCard, BarChart3, ShoppingBag, MessageCircle
 } from "lucide-react";
 import ProductsTab from "@/components/admin/ProductsTab";
 import CouponsTab from "@/components/admin/CouponsTab";
@@ -14,6 +14,7 @@ import StatusTab from "@/components/admin/StatusTab";
 import StockTab from "@/components/admin/StockTab";
 import ResellersTab from "@/components/admin/ResellersTab";
 import TicketsTab from "@/components/admin/TicketsTab";
+import SupportTicketsTab from "@/components/admin/SupportTicketsTab";
 import OverviewTab from "@/components/admin/OverviewTab";
 import CredentialsTab from "@/components/admin/CredentialsTab";
 import LztTab from "@/components/admin/LztTab";
@@ -59,7 +60,8 @@ const tabs = [
   { id: "lzt", label: "LZT Market", icon: Globe },
   { id: "estoque", label: "Estoque", icon: Package },
   { id: "revendedores", label: "Revendedores", icon: UserCheck },
-  { id: "tickets", label: "Tickets", icon: Mail },
+  { id: "tickets", label: "Pedidos/Tickets", icon: Mail },
+  { id: "support", label: "Suporte", icon: MessageCircle },
   { id: "status", label: "Status", icon: Shield },
   { id: "cupons", label: "Cupons", icon: Tag },
   { id: "usuarios", label: "UsuÃ¡rios", icon: Users },
@@ -797,6 +799,7 @@ const AdminPanel = () => {
           <div className={activeTab === "estoque" ? "" : "hidden"}><StockTab /></div>
           <div className={activeTab === "revendedores" ? "" : "hidden"}><ResellersTab /></div>
           <div className={activeTab === "tickets" ? "" : "hidden"}><TicketsTab /></div>
+          <div className={activeTab === "support" ? "" : "hidden"}><SupportTicketsTab /></div>
           <div className={activeTab === "status" ? "" : "hidden"}><StatusTab /></div>
           <div className={activeTab === "cupons" ? "" : "hidden"}><CouponsTab /></div>
           <div className={activeTab === "usuarios" ? "" : "hidden"}><UsersTab /></div>
