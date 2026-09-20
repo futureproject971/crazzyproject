@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Ban, Gift, Loader2, PackagePlus, Plus, RefreshCw, Save, Send, Settings2, ToggleLeft, ToggleRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { CRAZZY_SUPABASE_PUBLIC } from "@/config/supabasePublic";
 import { toast } from "@/hooks/use-toast";
 
 async function adminRewards(action: string, init?: RequestInit) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error("Sessão expirada");
-  const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/rewards?action=${action}`, {
+  const rewardsUrl = import.meta.env.VITE_SUPABASE_URL || CRAZZY_SUPABASE_PUBLIC.url;
+  const res = await fetch(`${rewardsUrl}/functions/v1/rewards?action=${action}`, {
     ...init,
     headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}`, ...(init?.headers || {}) },
   });
@@ -24,6 +26,7 @@ type Campaign = {
   cooldown_hours: number;
   active: boolean;
   sort_order: number;
+  requirements: Record<string, unknown>;
 };
 
 type CampaignProduct = {
@@ -73,6 +76,8 @@ export default function RewardsTab() {
   const [trialMinutes, setTrialMinutes] = useState(60);
   const [deliveryMode, setDeliveryMode] = useState<"manual" | "automatic">("manual");
   const [autoDelay, setAutoDelay] = useState(0);
+  const [attentionCheckpoint, setAttentionCheckpoint] = useState(true);
+  const [maxPlaybackRate, setMaxPlaybackRate] = useState(1.25);
 
   const [stockPlanId, setStockPlanId] = useState("");
   const [stockContent, setStockContent] = useState("");
@@ -135,7 +140,13 @@ export default function RewardsTab() {
         video_provider: "youtube",
         required_watch_seconds: Math.max(1, Math.trunc(watchSeconds)),
         cooldown_hours: Math.max(0, Math.trunc(cooldownHours)),
-        requirements: {},
+        requirements: {
+          attention_checkpoint: attentionCheckpoint,
+          checkpoint_min_percent: 45,
+          checkpoint_max_percent: 65,
+          max_playback_rate: Math.min(2, Math.max(1, Number(maxPlaybackRate) || 1.25)),
+          heartbeat_nonce: true,
+        },
         active: true,
         sort_order: nextSort,
       }).select("id").single();
@@ -276,6 +287,32 @@ export default function RewardsTab() {
             <option value="automatic">Entrega automática</option>
           </select>
           <label className="grid gap-1 text-xs text-muted-foreground md:col-span-2">Atraso da entrega automática (segundos)<input type="number" min={0} value={autoDelay} onChange={(e) => setAutoDelay(Number(e.target.value))} className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground" /></label>
+
+          <label className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background px-3 py-3 text-xs text-muted-foreground">
+            <span>
+              <strong className="block text-foreground">Checkpoint de atenção</strong>
+              Pausa o contador uma vez entre 45% e 65% da missão até o usuário confirmar presença.
+            </span>
+            <input
+              type="checkbox"
+              checked={attentionCheckpoint}
+              onChange={(e) => setAttentionCheckpoint(e.target.checked)}
+              className="h-4 w-4 accent-primary"
+            />
+          </label>
+
+          <label className="grid gap-1 text-xs text-muted-foreground">
+            Velocidade máxima que conta
+            <select
+              value={maxPlaybackRate}
+              onChange={(e) => setMaxPlaybackRate(Number(e.target.value))}
+              className="rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground"
+            >
+              <option value={1}>1.0x</option>
+              <option value={1.25}>1.25x</option>
+              <option value={1.5}>1.5x</option>
+            </select>
+          </label>
         </div>
         <button onClick={createCampaign} disabled={busy === "create-campaign"} className="mt-4 flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-bold text-primary-foreground disabled:opacity-50">
           {busy === "create-campaign" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />} Criar campanha
@@ -288,7 +325,15 @@ export default function RewardsTab() {
               return (
                 <div key={campaign.id} className="rounded-lg border border-border bg-background/50 p-3">
                   <div className="flex items-start justify-between gap-3">
-                    <div><div className="font-bold">{campaign.title}</div><div className="mt-1 text-xs text-muted-foreground">{campaign.required_watch_seconds}s • cooldown {campaign.cooldown_hours}h • {linked.length} recompensa(s)</div></div>
+                    <div>
+                      <div className="font-bold">{campaign.title}</div>
+                      <div className="mt-1 text-xs text-muted-foreground">
+                        {campaign.required_watch_seconds}s • cooldown {campaign.cooldown_hours}h • {linked.length} recompensa(s)
+                      </div>
+                      <div className="mt-1 text-[11px] text-muted-foreground">
+                        {(campaign.requirements as any)?.attention_checkpoint !== false ? "checkpoint ativo" : "sem checkpoint"} • máx. {(campaign.requirements as any)?.max_playback_rate || 1.25}x
+                      </div>
+                    </div>
                     <button onClick={() => toggleCampaign(campaign)} disabled={busy === `campaign-${campaign.id}`} className={campaign.active ? "text-emerald-500" : "text-muted-foreground"} aria-label={campaign.active ? "Desativar campanha" : "Ativar campanha"}>
                       {campaign.active ? <ToggleRight className="h-6 w-6" /> : <ToggleLeft className="h-6 w-6" />}
                     </button>
