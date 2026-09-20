@@ -630,6 +630,41 @@ export type Database = {
         }
         Relationships: []
       }
+      promo_daily_reveals: {
+        Row: {
+          created_at: string
+          id: string
+          product_id: string | null
+          result_key: string
+          reveal_date: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          result_key: string
+          reveal_date?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          result_key?: string
+          reveal_date?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "promo_daily_reveals_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reseller_products: {
         Row: {
           id: string
