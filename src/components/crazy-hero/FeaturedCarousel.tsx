@@ -1,98 +1,87 @@
-import { CSSProperties, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Heart, Play } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { CSSProperties, useEffect, useRef, useState } from "react";
+import { useReducedMotion } from "framer-motion";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
-export type FeaturedCarouselItem = {
+export interface FeaturedCarouselItem {
   id: string;
   title: string;
   subtitle: string;
   image: string | null;
   badge?: string | null;
-};
-
-const PLACEHOLDERS: FeaturedCarouselItem[] = [
-  { id: "ph-1", title: "Seu produto em destaque", subtitle: "Marque um produto como NOVO no admin", image: null },
-  { id: "ph-2", title: "Novidades", subtitle: "Os produtos novos aparecem aqui", image: null },
-  { id: "ph-3", title: "Destaques", subtitle: "Navegue entre eles e clique para abrir", image: null },
-];
-
-interface Props {
-  /** When provided, shows exactly these items (dock/category mode). */
-  items?: FeaturedCarouselItem[];
-  loading?: boolean;
-  /** Called with the product id when a card is opened. */
-  onOpen?: (id: string) => void;
-  emptyText?: string;
 }
 
-export function FeaturedCarousel({ items, loading = false, onOpen, emptyText }: Props) {
-  const navigate = useNavigate();
-  const controlled = items !== undefined;
-  const [fetched, setFetched] = useState<FeaturedCarouselItem[]>(PLACEHOLDERS);
+interface FeaturedCarouselProps {
+  items: FeaturedCarouselItem[];
+  loading?: boolean;
+  onOpen: (productId: string) => void;
+}
+
+export function FeaturedCarousel({ items, loading = false, onOpen }: FeaturedCarouselProps) {
+  const reducedMotion = useReducedMotion();
   const [active, setActive] = useState(0);
+  const [manualPause, setManualPause] = useState(false);
+  const resumeTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (controlled) return;
-    let mounted = true;
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from("products")
-          .select("id,name,description,image_url")
-          .eq("active", true)
-          .order("sort_order", { ascending: true })
-          .limit(8);
-        if (!mounted || error || !data || data.length === 0) return;
-        setFetched(
-          data.map((p: { id: string; name: string; description: string | null; image_url: string | null }) => ({
-            id: p.id,
-            title: p.name,
-            subtitle: p.description || "Novidade na loja",
-            image: p.image_url,
-          })),
-        );
-      } catch {
-        /* offline */
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [controlled]);
-
-  const slides = controlled ? (items as FeaturedCarouselItem[]) : fetched;
+    setActive((current) => Math.min(current, Math.max(0, items.length - 1)));
+  }, [items.length]);
 
   useEffect(() => {
-    setActive(0);
-  }, [controlled, slides.length]);
+    if (items.length < 2 || manualPause || reducedMotion) return;
+    const timer = window.setInterval(
+      () => setActive((current) => (current + 1) % items.length),
+      7200,
+    );
+    return () => window.clearInterval(timer);
+  }, [items.length, manualPause, reducedMotion]);
 
-  useEffect(() => {
-    if (slides.length < 2) return;
-    const t = setInterval(() => setActive((a) => (a + 1) % slides.length), 5200);
-    return () => clearInterval(t);
-  }, [slides.length]);
+  useEffect(() => () => {
+    if (resumeTimerRef.current !== null) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+  }, []);
 
-  if (loading) return <div className="crazy-featured__none">Carregando produtos...</div>;
-  if (controlled && slides.length === 0) {
-    return <div className="crazy-featured__none">{emptyText || "Nenhum produto ativo nesta categoria no momento."}</div>;
+  const pauseAfterManualSelection = () => {
+    setManualPause(true);
+    if (resumeTimerRef.current !== null) {
+      window.clearTimeout(resumeTimerRef.current);
+    }
+    resumeTimerRef.current = window.setTimeout(() => {
+      setManualPause(false);
+      resumeTimerRef.current = null;
+    }, 12000);
+  };
+
+  if (loading) {
+    return <div className="crazy-featured crazy-featured--empty">Carregando produtos...</div>;
   }
 
-  const go = (i: number) => setActive(((i % slides.length) + slides.length) % slides.length);
-  const openSlide = (slide: FeaturedCarouselItem) => {
-    if (onOpen) return onOpen(slide.id);
-    if (slide.id.startsWith("ph-")) return navigate("/produtos");
-    navigate(`/produto/${slide.id}`);
+  if (items.length === 0) {
+    return (
+      <div className="crazy-featured crazy-featured--empty crazy-featured--empty-showcase">
+        <div>
+          <strong>Produtos em destaque</strong>
+          <span>Marque produtos como NOVO no painel admin para exibi-los aqui.</span>
+        </div>
+      </div>
+    );
+  }
+
+  const go = (index: number, manual = false) => {
+    if (manual) pauseAfterManualSelection();
+    setActive(((index % items.length) + items.length) % items.length);
   };
-  const onCardClick = (i: number, slide: FeaturedCarouselItem) => {
-    if (i !== active) return go(i);
-    openSlide(slide);
+
+  const onCardClick = (index: number, item: FeaturedCarouselItem) => {
+    if (index !== active) {
+      go(index, true);
+      return;
+    }
+    pauseAfterManualSelection();
+    onOpen(item.id);
   };
 
   return (
-<<<<<<< HEAD
-    <div className="crazy-featured" aria-label="Destaques">
-=======
     <div
       className="crazy-featured"
       role="region"
@@ -118,87 +107,98 @@ export function FeaturedCarousel({ items, loading = false, onOpen, emptyText }: 
       <span className="sr-only" aria-live="polite">
         Produto {active + 1} de {items.length}: {items[active]?.title}
       </span>
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
       <div className="crazy-featured__stage">
-        {slides.map((slide, i) => {
-          const n = slides.length;
-          let offset = i - active;
-          if (offset > n / 2) offset -= n;
-          if (offset < -n / 2) offset += n;
-          const abs = Math.abs(offset);
-          const visible = abs <= 2;
-          const scale = offset === 0 ? 1 : Math.max(0.6, 0.82 - (abs - 1) * 0.1);
+        {items.map((item, index) => {
+          const count = items.length;
+          let offset = index - active;
+          if (offset > count / 2) offset -= count;
+          if (offset < -count / 2) offset += count;
+          const distance = Math.abs(offset);
+          const visible = distance <= 2;
+          const scale = offset === 0 ? 1 : distance === 1 ? 0.74 : 0.57;
+          const depth = offset === 0 ? 120 : distance === 1 ? -80 : -230;
+          const step = distance === 1 ? "var(--coverflow-step-1)" : "var(--coverflow-step-2)";
+          const x = offset === 0
+            ? "-50%"
+            : offset > 0
+              ? `calc(-50% + ${step})`
+              : `calc(-50% - ${step})`;
           const style: CSSProperties = {
-            transform: `translateX(calc(-50% + ${offset * 52}%)) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -22 : 22}deg)`,
-            opacity: visible ? (offset === 0 ? 1 : abs === 1 ? 0.72 : 0.38) : 0,
-            zIndex: 20 - abs,
+            transform: `translateX(${x}) translateZ(${depth}px) scale(${scale}) rotateY(${offset === 0 ? 0 : offset > 0 ? -34 : 34}deg) rotateZ(${offset === 0 ? 0 : offset > 0 ? 1.8 : -1.8}deg)`,
+            opacity: visible ? (offset === 0 ? 1 : distance === 1 ? 0.9 : 0.58) : 0,
+            zIndex: offset === 0 ? 30 : distance === 1 ? 20 : 10,
             pointerEvents: visible ? "auto" : "none",
           };
+
           return (
             <button
-              key={slide.id}
+              key={item.id}
               type="button"
               className={`crazy-featured__card ${offset === 0 ? "is-active" : ""}`}
               style={style}
-              onClick={() => onCardClick(i, slide)}
+              onClick={() => onCardClick(index, item)}
               aria-hidden={!visible}
               aria-label={offset === 0 ? `Abrir ${item.title}` : `Selecionar ${item.title}`}
               tabIndex={offset === 0 ? 0 : -1}
             >
               <div
                 className="crazy-featured__media"
-                style={slide.image ? { backgroundImage: `url(${slide.image})` } : undefined}
+                style={item.image && visible ? { backgroundImage: `url(${item.image})` } : undefined}
               />
               <div className="crazy-featured__shade" />
               {offset === 0 ? (
-                <>
-                  <span className="crazy-featured__fav" aria-hidden="true"><Heart /></span>
-                  <div className="crazy-featured__content">
-                    {slide.badge ? (
-                      <span
-                        style={{
-                          alignSelf: "flex-start",
-                          padding: "2px 10px",
-                          borderRadius: 999,
-                          background: "#1e6fff",
-                          fontSize: ".6rem",
-                          fontWeight: 800,
-                          letterSpacing: ".08em",
-                          marginBottom: ".5rem",
-                        }}
-                      >
-                        {slide.badge}
-                      </span>
-                    ) : null}
-                    <h3>{slide.title}</h3>
-                    <p>{slide.subtitle}</p>
-                    <div className="crazy-featured__actions">
-                      <span className="crazy-featured__cta">VER AGORA</span>
-                      <span className="crazy-featured__play" aria-hidden="true"><Play /></span>
-                    </div>
+                <div className="crazy-featured__content">
+                  {item.badge ? <span className="crazy-featured__badge">{item.badge}</span> : null}
+                  <h3>{item.title}</h3>
+                  <p>{item.subtitle}</p>
+                  <div className="crazy-featured__actions">
+                    <span className="crazy-featured__cta">Ver agora</span>
+                    <span className="crazy-featured__play" aria-hidden="true"><Play /></span>
                   </div>
-                </>
-              ) : null}
+                </div>
+              ) : (
+                <div className="crazy-featured__side-content">
+                  {item.badge ? <span className="crazy-featured__badge">{item.badge}</span> : null}
+                  <strong>{item.title}</strong>
+                  <span>Ver agora</span>
+                </div>
+              )}
             </button>
           );
         })}
-      </div>
-      {slides.length > 1 ? (
-        <div className="crazy-featured__dots">
-          {slides.map((s, i) => (
+
+        {items.length > 1 ? (
+          <>
             <button
-              key={s.id}
               type="button"
-<<<<<<< HEAD
-              className={i === active ? "is-active" : ""}
-              onClick={() => go(i)}
-              aria-label={`Ir para o destaque ${i + 1}`}
-=======
+              className="crazy-featured__arrow crazy-featured__arrow--left"
+              onClick={() => go(active - 1, true)}
+              aria-label="Produto anterior"
+            >
+              <ChevronLeft />
+            </button>
+            <button
+              type="button"
+              className="crazy-featured__arrow crazy-featured__arrow--right"
+              onClick={() => go(active + 1, true)}
+              aria-label="Próximo produto"
+            >
+              <ChevronRight />
+            </button>
+          </>
+        ) : null}
+      </div>
+
+      {items.length > 1 ? (
+        <div className="crazy-featured__dots">
+          {items.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
               className={index === active ? "is-active" : ""}
               onClick={() => go(index, true)}
               aria-label={`Ir para o produto ${index + 1}: ${item.title}`}
               aria-current={index === active ? "true" : undefined}
->>>>>>> 834f6e9560217c73dbabaa1f3fc6b47f6bb642a9
             />
           ))}
         </div>
