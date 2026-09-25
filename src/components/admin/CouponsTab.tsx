@@ -125,7 +125,7 @@ const CouponsTab = () => {
   };
 
   const handleDelete = async (coupon: Coupon) => {
-    if (!confirm(`Excluir cupom "${coupon.code}"?`)) return;
+    
     const { error } = await supabase.from("coupons").delete().eq("id", coupon.id);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else { toast({ title: "Cupom excluído!" }); fetchCoupons(); }
