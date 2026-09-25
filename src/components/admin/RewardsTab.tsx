@@ -254,8 +254,8 @@ export default function RewardsTab() {
     <div className="space-y-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h2 className="flex items-center gap-2 text-xl font-bold"><Gift className="h-5 w-5 text-primary" /> Crazzy Rewards</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Campanhas, estoque exclusivo de trial e fila de entrega.</p>
+          <h2 className="flex items-center gap-2 text-xl font-bold"><Gift className="h-5 w-5 text-primary" /> CRAZZY Club</h2>
+          <p className="mt-1 text-xs text-muted-foreground">FREE + Prêmios: campanhas, testes grátis e entregas em um único lugar.</p>
         </div>
         <button onClick={load} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground hover:text-foreground">
           <RefreshCw className="h-3.5 w-3.5" /> Atualizar
@@ -265,7 +265,7 @@ export default function RewardsTab() {
       <section className="rounded-xl border border-border bg-card p-5">
         <div className="mb-4 flex items-center gap-2">
           <Settings2 className="h-4 w-4 text-primary" />
-          <h3 className="font-bold">Nova campanha</h3>
+          <div><h3 className="font-bold">FREE + Prêmios</h3><p className="mt-1 text-xs text-muted-foreground">Crie missões de vídeo que liberam trial ou recompensa para o cliente.</p></div>
         </div>
         <div className="grid gap-3 md:grid-cols-2">
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Título da campanha" className="rounded-lg border border-border bg-background px-3 py-2 text-sm" />
@@ -347,7 +347,7 @@ export default function RewardsTab() {
 
       <section className="rounded-xl border border-border bg-card p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div><h3 className="flex items-center gap-2 font-bold"><PackagePlus className="h-4 w-4 text-primary" /> Estoque exclusivo de trial</h3><p className="mt-1 text-xs text-muted-foreground">{availableStock} disponível(is) • {usedStock} usado(s)</p></div>
+          <div><h3 className="flex items-center gap-2 font-bold"><PackagePlus className="h-4 w-4 text-primary" /> Prêmios / estoque de trial</h3><p className="mt-1 text-xs text-muted-foreground">{availableStock} disponível(is) • {usedStock} usado(s)</p></div>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-[1fr_140px]">
           <select value={stockPlanId} onChange={(e) => setStockPlanId(e.target.value)} className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
@@ -363,7 +363,7 @@ export default function RewardsTab() {
       </section>
 
       <section>
-        <h3 className="font-bold">Fila de entregas</h3>
+        <h3 className="font-bold">Entregas pendentes</h3>
         {sessions.length === 0 ? (
           <div className="mt-3 rounded-xl border border-dashed border-border p-12 text-center text-sm text-muted-foreground">Nenhuma solicitação pendente.</div>
         ) : (
@@ -371,7 +371,7 @@ export default function RewardsTab() {
             {sessions.map((s) => (
               <div key={s.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div><div className="font-mono text-xs text-muted-foreground">{s.id}</div><div className="mt-1 text-sm font-bold">Status: {s.status}</div><div className="mt-1 text-xs text-muted-foreground">Usuário: {s.user_id}</div></div>
+                  <div><div className="text-sm font-bold">Status: {s.status}</div><div className="mt-1 text-xs text-muted-foreground">Solicitação de recompensa</div></div>
                   <div className="text-right text-xs text-muted-foreground"><div>{Math.floor(Number(s.watched_seconds || 0))}s assistidos</div><div>{new Date(s.created_at).toLocaleString("pt-BR")}</div></div>
                 </div>
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row">

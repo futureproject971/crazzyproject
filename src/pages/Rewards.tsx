@@ -435,9 +435,9 @@ export default function Rewards() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-[.2em] text-primary">
-                <Gift className="h-4 w-4" /> CRAZZY Rewards
+                <Gift className="h-4 w-4" /> CRAZZY CLUB • FREE
               </div>
-              <h1 className="text-3xl font-black tracking-tight md:text-5xl">Ganhe um teste grátis de 1 hora</h1>
+              <h1 className="text-3xl font-black tracking-tight md:text-5xl">FREE • Ganhe testes e recompensas</h1>
               <p className="mt-3 max-w-2xl text-sm text-muted-foreground md:text-base">
                 Escolha um produto elegível e assista à missão. Se o vídeo parar, você trocar de aba,
                 perder o foco ou tentar pular trechos, o contador deixa de avançar.

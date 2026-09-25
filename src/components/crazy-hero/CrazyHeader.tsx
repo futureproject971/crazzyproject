@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { CircleHelp, Gift, Grid2X2, Home, Menu, Search, ShieldAlert, ShoppingCart, Star, UserRound, X } from "lucide-react";
+import { Gift, Grid2X2, Home, Menu, Search, ShieldAlert, ShoppingCart, UserRound, X } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import AuthModal from "@/components/AuthModal";
 import CartSheet from "@/components/CartSheet";
@@ -12,11 +12,8 @@ const links = [
   { label: "Início", to: "/", icon: Home },
   { label: "Produtos", to: "/produtos", icon: Grid2X2 },
   { label: "Contas", to: "/contas", icon: Grid2X2 },
-  { label: "Status", to: "/status", icon: CircleHelp },
-  { label: "Avaliações", to: "/avaliacoes", icon: Star },
-  { label: "Rewards", to: "/rewards", icon: Star },
-  { label: "Extras", to: "/extras", icon: Gift },
-  { label: "FAQ", to: "/faq", icon: CircleHelp },
+  { label: "FREE", to: "/rewards", icon: Gift, highlight: true },
+  { label: "Prêmios", to: "/rewards", icon: Gift, highlight: true },
 ];
 
 const mobileExtraLinks = [
@@ -94,10 +91,10 @@ export function CrazyHeader({ categories = [], storeLayout = false }: { categori
                 <Grid2X2 aria-hidden="true" />
                 <span>Categorias</span>
               </button>
-              {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon }) => (
-                <button key={label} type="button" onClick={() => goTo(to)} className={isActive(to) ? "is-active" : ""}>
+              {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon, highlight }) => (
+                <button key={label} type="button" onClick={() => goTo(to)} className={`${isActive(to) ? "is-active" : ""} ${highlight ? "text-blue-300 font-black" : ""}`}>
                   <Icon aria-hidden="true" />
-                  <span>{label}</span>
+                  <span>{label}{label === "FREE" ? " • GRÁTIS" : ""}</span>
                 </button>
               ))}
             </nav>
@@ -164,12 +161,12 @@ export function CrazyHeader({ categories = [], storeLayout = false }: { categori
               <Grid2X2 aria-hidden="true" />
               <span>Categorias</span>
             </button>
-            {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon }) => (
-              <button key={label} type="button" onClick={() => goTo(to)} className={isActive(to) ? "is-active" : ""}>
-                <Icon aria-hidden="true" />
-                <span>{label}</span>
-              </button>
-            ))}
+            {links.filter((item) => item.to !== "/").map(({ label, to, icon: Icon, highlight }) => (
+                <button key={label} type="button" onClick={() => goTo(to)} className={`${isActive(to) ? "is-active" : ""} ${highlight ? "text-blue-300 font-black" : ""}`}>
+                  <Icon aria-hidden="true" />
+                  <span>{label}{label === "FREE" ? " • GRÁTIS" : ""}</span>
+                </button>
+              ))}
           </nav>
 
           <form className="crazy-site-header__search" onSubmit={submitSearch} role="search">
@@ -237,9 +234,9 @@ export function CrazyHeader({ categories = [], storeLayout = false }: { categori
             <button type="button" onClick={openCategories}>
               <Grid2X2 aria-hidden="true" /> Categorias
             </button>
-            {links.map(({ label, to, icon: Icon }) => (
-              <button key={label} type="button" onClick={() => goTo(to)}>
-                <Icon aria-hidden="true" /> {label}
+            {links.map(({ label, to, icon: Icon, highlight }) => (
+              <button key={label} type="button" onClick={() => goTo(to)} className={highlight ? "text-blue-300 font-black" : ""}>
+                <Icon aria-hidden="true" /> {label}{label === "FREE" ? " • GRÁTIS" : ""}
               </button>
             ))}
             {mobileExtraLinks.map(({ label, to, icon: Icon }) => (

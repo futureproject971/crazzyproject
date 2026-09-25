@@ -50,25 +50,28 @@ interface UserData {
   total_spent: number; total_orders: number;
   recent_payments: RecentPayment[];
   orders: UserOrder[];
+  reward_sessions?: { id: string; status: string; watched_seconds: number; completed_at: string | null; created_at: string }[];
+  reward_deliveries?: { id: string; content: string; delivered_at: string; expires_at: string | null }[];
+  promo_reveals?: { id: string; result_key: string; product_id: string | null; created_at: string }[];
+  wheel_spins?: { id: string; spin_date: string; prize_id: string; coupon_id: string; payment_id: string | null; created_at: string }[];
 }
 
 const tabs = [
-  { id: "overview", label: "Overview", icon: TrendingUp },
-  { id: "financeiro", label: "Financeiro", icon: BarChart3 },
-  { id: "jogos", label: "Jogos", icon: Gamepad2 },
-  { id: "produtos", label: "Produtos", icon: Package },
-  { id: "lzt", label: "LZT Market", icon: Globe },
-  { id: "estoque", label: "Estoque", icon: Package },
-  { id: "revendedores", label: "Revendedores", icon: UserCheck },
-  { id: "tickets", label: "Pedidos/Tickets", icon: Mail },
-  { id: "support", label: "Suporte", icon: MessageCircle },
-  { id: "status", label: "Status", icon: Shield },
-  { id: "cupons", label: "Cupons", icon: Tag },
-  { id: "usuarios", label: "UsuÃ¡rios", icon: Users },
-  { id: "credenciais", label: "Credenciais", icon: Key },
-  { id: "vendas", label: "Vendas", icon: ShoppingBag },
-  { id: "pagamentos", label: "Pagamentos", icon: CreditCard },
-  { id: "rewards", label: "Rewards", icon: Gift },
+  { id: "overview", label: "Visão Geral", icon: TrendingUp, group: "Visão Geral" },
+  { id: "produtos", label: "Produtos", icon: Package, group: "Produtos" },
+  { id: "jogos", label: "Categorias", icon: Gamepad2, group: "Produtos" },
+  { id: "lzt", label: "Contas / LZT", icon: Globe, group: "Produtos" },
+  { id: "usuarios", label: "Clientes", icon: Users, group: "Clientes" },
+  { id: "support", label: "Suporte", icon: MessageCircle, group: "Clientes" },
+  { id: "tickets", label: "Pedidos", icon: Mail, group: "Vendas" },
+  { id: "vendas", label: "Vendas", icon: ShoppingBag, group: "Vendas" },
+  { id: "pagamentos", label: "Pagamentos", icon: CreditCard, group: "Vendas" },
+  { id: "financeiro", label: "Financeiro", icon: BarChart3, group: "Vendas" },
+  { id: "revendedores", label: "Revendedores", icon: UserCheck, group: "Vendas" },
+  { id: "rewards", label: "FREE + Prêmios", icon: Gift, group: "CRAZZY Club" },
+  { id: "cupons", label: "Cupons", icon: Tag, group: "CRAZZY Club" },
+  { id: "status", label: "Status", icon: Shield, group: "Sistema" },
+  { id: "credenciais", label: "Credenciais", icon: Key, group: "Sistema" },
 ] as const;
 type TabId = typeof tabs[number]["id"];
 
@@ -203,7 +206,7 @@ const GamesTab = () => {
   };
 
   const handleDelete = async (game: Game) => {
-    if (!confirm(`Excluir "${game.name}"?`)) return;
+    
     const { error } = await supabase.from("games").delete().eq("id", game.id);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else { toast({ title: "ExcluÃ­do!" }); fetchGames(); }
@@ -426,7 +429,7 @@ const UsersTab = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">UsuÃ¡rios ({users.length})</h2>
+        <h2 className="text-xl font-bold text-foreground">Customer 360 ({users.length})</h2>
         <button onClick={fetchUsers} className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:border-success hover:text-success">
           <RefreshCw className="h-3 w-3" /> Atualizar
         </button>
@@ -434,7 +437,7 @@ const UsersTab = () => {
 
       <div className="relative mt-4">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input type="text" placeholder="Buscar por email ou username..." value={searchQuery}
+        <input type="text" placeholder="Buscar por nome, Discord ou e-mail..." value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value.slice(0, 100))}
           className="w-full rounded-lg border border-border bg-secondary/50 py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-success/50" />
       </div>
@@ -481,7 +484,7 @@ const UsersTab = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="mx-4 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-foreground">Detalhes do UsuÃ¡rio</h3>
+              <h3 className="text-lg font-bold text-foreground">Customer 360</h3>
               <button onClick={() => setSelectedUser(null)} className="text-muted-foreground hover:text-foreground text-xl leading-none">Ã—</button>
             </div>
 
@@ -518,7 +521,7 @@ const UsersTab = () => {
 
               {/* Roles */}
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Roles</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1">Permissões</p>
                 <div className="flex gap-2">
                   {selectedUser.roles.length > 0 ? selectedUser.roles.map((r) => (
                     <span key={r} className="rounded bg-success/20 px-2 py-0.5 text-xs font-bold text-success">{r}</span>
@@ -580,11 +583,36 @@ const UsersTab = () => {
                 ) : <p className="text-xs text-muted-foreground">Nenhum IP registrado ainda</p>}
               </div>
 
-              {/* ID */}
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">ID</p>
-                <p className="rounded bg-secondary px-3 py-1.5 text-xs font-mono text-muted-foreground break-all">{selectedUser.id}</p>
+              <div className="grid grid-cols-3 gap-2">
+                <InfoCard icon={<Gift className="h-4 w-4 text-success" />} label="FREE / Rewards" value={String(selectedUser.reward_sessions?.length || 0)} />
+                <InfoCard icon={<Gift className="h-4 w-4 text-success" />} label="Prêmios entregues" value={String(selectedUser.reward_deliveries?.length || 0)} />
+                <InfoCard icon={<Sparkles className="h-4 w-4 text-success" />} label="Luck / Raspadinha" value={String((selectedUser.promo_reveals?.length || 0) + (selectedUser.wheel_spins?.length || 0))} />
               </div>
+
+              {(selectedUser.reward_deliveries?.length || selectedUser.promo_reveals?.length || selectedUser.wheel_spins?.length) ? (
+                <div>
+                  <p className="mb-2 text-xs font-medium text-muted-foreground">Histórico do CRAZZY Club</p>
+                  <div className="space-y-1.5">
+                    {(selectedUser.reward_deliveries || []).slice(0, 3).map((item) => (
+                      <div key={item.id} className="rounded border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
+                        Prêmio entregue · {formatDate(item.delivered_at)}
+                      </div>
+                    ))}
+                    {(selectedUser.promo_reveals || []).slice(0, 3).map((item) => (
+                      <div key={item.id} className="rounded border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
+                        Raspadinha · {item.result_key === "rewards_trial" ? "FREE" : item.result_key === "featured_product" ? "Produto em destaque" : "Tente amanhã"} · {formatDate(item.created_at)}
+                      </div>
+                    ))}
+                    {(selectedUser.wheel_spins || []).slice(0, 3).map((item) => (
+                      <div key={item.id} className="rounded border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
+                        Roleta · {item.prize_id} · {formatDate(item.created_at)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {/* Identificadores técnicos ficam internos. */}
 
               {/* Actions */}
               <div className="border-t border-border pt-4">
@@ -779,16 +807,21 @@ const AdminPanel = () => {
         <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Valorant', sans-serif" }}>PAINEL ADMIN</h1>
 
         <div className="mt-8">
-          <div className="flex flex-wrap gap-1 border-b border-border">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${activeTab === tab.id ? "border-success text-success" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-                  <Icon className="h-3.5 w-3.5" />{tab.label}
-                </button>
-              );
-            })}
+          <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+            {Array.from(new Set(tabs.map((tab) => tab.group))).map((group) => (
+              <div key={group} className="flex items-center gap-1 rounded-xl border border-border bg-card/60 p-1">
+                <span className="px-2 text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60">{group}</span>
+                {tabs.filter((tab) => tab.group === group).map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors ${activeTab === tab.id ? "bg-success/15 text-success" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}>
+                      <Icon className="h-3.5 w-3.5" />{tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
 

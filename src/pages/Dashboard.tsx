@@ -12,7 +12,7 @@ import {
   Smartphone, MessageSquare, Receipt, Clock,
   CheckCircle, XCircle, DollarSign, Key, LogOut, Mail,
   TrendingUp,
-  Info,
+  Info, Gift,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { AreaChart, Area, ResponsiveContainer } from "recharts";
@@ -22,7 +22,7 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-type Tab = "overview" | "purchases" | "security" | "settings";
+type Tab = "overview" | "purchases" | "club" | "security" | "settings";
 
 const Dashboard = () => {
   const { user, profile, loading: authLoading } = useAuth();
@@ -205,6 +205,7 @@ const Dashboard = () => {
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
     { id: "overview", label: "VisÃ£o Geral", icon: <BarChart3 className="h-4 w-4" /> },
     { id: "purchases", label: "Minhas Compras", icon: <Package className="h-4 w-4" /> },
+    { id: "club", label: "CRAZZY Club", icon: <Gift className="h-4 w-4" /> },
     { id: "security", label: "SeguranÃ§a", icon: <Shield className="h-4 w-4" /> },
     { id: "settings", label: "ConfiguraÃ§Ãµes", icon: <Settings className="h-4 w-4" /> },
   ];
@@ -387,6 +388,29 @@ const Dashboard = () => {
                     )}
                   </div>
                 </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* CRAZZY CLUB */}
+          {activeTab === "club" && (
+            <motion.div initial="hidden" animate="visible" variants={fadeUp} className="space-y-5">
+              <div>
+                <h2 className="text-xl font-bold text-foreground">CRAZZY Club</h2>
+                <p className="text-sm text-muted-foreground">FREE, prêmios e recompensas reunidos em um único lugar.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <button onClick={() => navigate("/rewards")} className="rounded-xl border border-success/30 bg-success/5 p-6 text-left transition hover:bg-success/10">
+                  <Gift className="mb-3 h-6 w-6 text-success" />
+                  <div className="text-base font-black text-foreground">FREE • GRÁTIS</div>
+                  <p className="mt-1 text-sm text-muted-foreground">Veja campanhas e libere recompensas disponíveis.</p>
+                </button>
+                <button onClick={() => navigate("/rewards")} className="rounded-xl border border-blue-500/30 bg-blue-500/5 p-6 text-left transition hover:bg-blue-500/10">
+                  <Gift className="mb-3 h-6 w-6 text-blue-400" />
+                  <div className="text-base font-black text-foreground">Prêmios</div>
+                  <p className="mt-1 text-sm text-muted-foreground">Acompanhe seus testes, recompensas e entregas.</p>
+                </button>
+                <button onClick={() => navigate("/extras")} className="rounded-xl border border-border bg-card p-6 text-left transition hover:bg-secondary/60"><Gift className="mb-3 h-6 w-6 text-primary" /><div className="text-base font-black text-foreground">Roleta + Raspadinha</div><p className="mt-1 text-sm text-muted-foreground">Seus benefícios diários dentro do CRAZZY Club.</p></button>
               </div>
             </motion.div>
           )}

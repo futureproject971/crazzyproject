@@ -283,11 +283,11 @@ export default function Experiencias() {
         <section className="overflow-hidden rounded-[2rem] border border-blue-500/20 bg-[radial-gradient(circle_at_top,#08245e_0%,#071226_35%,#050914_100%)] p-6 shadow-2xl md:p-10">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-blue-300">
-              <Sparkles className="h-4 w-4" /> CRAZZY LAB
+              <Sparkles className="h-4 w-4" /> CRAZZY CLUB
             </div>
-            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Roleta de prêmios + raspadinha diária</h1>
+            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Prêmios, roleta e raspadinha</h1>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-blue-100/65">
-              Benefícios extras da CRAZZY PROJECT. A roleta é validada no servidor e cada conta tem um giro por dia.
+              Seu espaço de prêmios da CRAZZY PROJECT. Gire a roleta, use a raspadinha e acompanhe seus benefícios.
             </p>
           </div>
 
@@ -301,29 +301,42 @@ export default function Experiencias() {
                 <RotateCw className={"h-5 w-5 text-blue-400 " + (spinning ? "animate-spin" : "")} />
               </div>
 
-              <div className="relative mt-6 h-[360px] overflow-hidden rounded-2xl border border-blue-300/10 bg-[radial-gradient(circle_at_center,rgba(0,0,255,.24),transparent_65%)] [perspective:1100px]">
-                <div className="pointer-events-none absolute left-1/2 top-3 z-20 h-0 w-0 -translate-x-1/2 border-x-[11px] border-t-[18px] border-x-transparent border-t-white drop-shadow-[0_0_10px_rgba(50,125,255,.9)]" />
+              <div className="relative mx-auto mt-6 aspect-square w-full max-w-[520px] select-none">
+                <div className="pointer-events-none absolute left-[-12px] top-1/2 z-30 -translate-y-1/2">
+                  <div className="h-0 w-0 border-y-[18px] border-l-[28px] border-y-transparent border-l-white drop-shadow-[0_0_12px_rgba(59,130,246,.85)]" />
+                </div>
                 {wheelLoading ? (
                   <div className="flex h-full items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-blue-400" /></div>
                 ) : (
                   <div
-                    className="absolute left-1/2 top-1/2 h-0 w-0 transition-transform duration-[1700ms] ease-[cubic-bezier(.16,.9,.2,1)] [transform-style:preserve-3d]"
-                    style={{ transform: "rotateY(" + rotation + "deg)" }}
+                    className="absolute inset-[4%] rounded-full border-[10px] border-white/90 shadow-[0_0_0_6px_rgba(255,255,255,.10),0_24px_70px_rgba(0,0,0,.55)] transition-transform duration-[2600ms] ease-[cubic-bezier(.12,.72,.12,1)]"
+                    style={{
+                      transform: `rotate(${rotation}deg)`,
+                      background: `conic-gradient(${wheelPrizes.map((_, index) => {
+                        const palette = ["#0000ff","#0284c7","#dc2626","#ea580c","#16a34a","#9333ea"];
+                        const from = (index / wheelPrizes.length) * 360;
+                        const to = ((index + 1) / wheelPrizes.length) * 360;
+                        return `${palette[index % palette.length]} ${from}deg ${to}deg`;
+                      }).join(",")})`,
+                    }}
                   >
                     {wheelPrizes.map((prize, index) => {
-                      const angle = (360 / wheelPrizes.length) * index;
+                      const angle = (360 / wheelPrizes.length) * index + (180 / wheelPrizes.length);
                       return (
                         <div
                           key={prize.id}
-                          className="absolute left-[-72px] top-[-94px] flex h-[188px] w-[144px] flex-col items-center justify-center overflow-hidden rounded-2xl border border-blue-300/35 bg-[linear-gradient(155deg,#0d3b99,#0000ff_48%,#03164e)] px-3 text-center shadow-[0_22px_50px_rgba(0,0,0,.45)]"
-                          style={{ transform: "rotateY(" + angle + "deg) translateZ(245px)" }}
+                          className="absolute left-1/2 top-1/2 z-10 w-[42%] origin-left text-left"
+                          style={{ transform: `rotate(${angle}deg) translateX(14%)` }}
                         >
-                          <Gift className="h-8 w-8 text-white" />
-                          <strong className="mt-4 text-xl font-black text-white">{prize.label}</strong>
-                          <span className="mt-2 text-[9px] font-bold uppercase tracking-[.18em] text-blue-100/70">CUPOM CRAZZY</span>
+                          <span className="block truncate pl-4 text-[11px] font-black uppercase tracking-wide text-white drop-shadow md:text-sm" style={{ transform: "rotate(90deg)", transformOrigin: "left center" }}>
+                            {prize.label}
+                          </span>
                         </div>
                       );
                     })}
+                    <div className="absolute left-1/2 top-1/2 z-20 grid h-[22%] w-[22%] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border-[7px] border-white bg-[#071226] shadow-[inset_0_0_20px_rgba(0,0,0,.65),0_0_22px_rgba(255,255,255,.35)]">
+                      <Gift className="h-7 w-7 text-white" />
+                    </div>
                   </div>
                 )}
               </div>
@@ -335,7 +348,7 @@ export default function Experiencias() {
                 className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#0000ff] text-sm font-black text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <RotateCw className="h-4 w-4" />
-                {spinning ? "Validando e girando..." : wheelResult ? "Giro de hoje concluído" : user ? "Girar roleta" : "Entrar para girar"}
+                {spinning ? "Girando..." : wheelResult ? "Giro de hoje concluído" : user ? "GIRAR" : "ENTRAR PARA GIRAR"}
               </button>
 
               {wheelResult ? (

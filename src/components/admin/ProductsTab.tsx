@@ -7,6 +7,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { getYouTubeId, getYouTubeThumbnail, detectMediaType } from "@/lib/videoUtils";
 import { DEFAULT_HOME_CATEGORIES, normalizeSlug } from "@/config/homeCategories";
+import StockTab from "@/components/admin/StockTab";
 
 interface Game {
   id: string;
@@ -53,10 +54,11 @@ interface Product {
 }
 
 const defaultPlans: ProductPlan[] = [
-  { name: "Diário", price: 0, active: true, sort_order: 0 },
-  { name: "Semanal", price: 0, active: true, sort_order: 1 },
-  { name: "Mensal", price: 0, active: true, sort_order: 2 },
+  { name: "7 Dias", price: 0, active: true, sort_order: 0 },
+  { name: "30 Dias", price: 0, active: true, sort_order: 1 },
 ];
+
+const PLAN_PRESETS = ["Trial", "1 Dia", "3 Dias", "7 Dias", "15 Dias", "30 Dias", "90 Dias", "Lifetime"] as const;
 
 const defaultFeatures: FeatureItem[] = [
   { label: "GPU", value: "Compatible with AMD & NVIDIA", sort_order: 0 },
@@ -82,6 +84,9 @@ const ProductsTab = () => {
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [workspace, setWorkspace] = useState<"catalog" | "stock">("catalog");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "new">("all");
 
   const homeCategoryGames = games
     .filter(isHomeCategory)
@@ -202,6 +207,11 @@ const ProductsTab = () => {
 
   const addPlan = () => {
     setFormPlans([...formPlans, { name: "", price: 0, active: true, sort_order: formPlans.length }]);
+  };
+
+  const addPlanPreset = (name: string) => {
+    if (formPlans.some((plan) => plan.name.toLowerCase() === name.toLowerCase())) return;
+    setFormPlans([...formPlans, { name, price: 0, active: true, sort_order: formPlans.length }]);
   };
 
   const removePlan = (index: number) => {
@@ -443,7 +453,7 @@ const ProductsTab = () => {
   };
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`Excluir "${product.name}"?`)) return;
+    
     const { error } = await supabase.from("products").delete().eq("id", product.id);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else { toast({ title: "Excluído!" }); fetchData(); }
@@ -451,11 +461,18 @@ const ProductsTab = () => {
 
   const getGameName = (gameId: string) => games.find(g => g.id === gameId)?.name || "—";
 
-  const filtered = filterGameId === "all" ? products : products.filter(p => p.game_id === filterGameId);
+  const filtered = products.filter((p) => {
+    if (filterGameId !== "all" && p.game_id !== filterGameId) return false;
+    if (statusFilter === "active" && !p.active) return false;
+    if (statusFilter === "inactive" && p.active) return false;
+    if (statusFilter === "new" && !p.is_new) return false;
+    const q = search.trim().toLocaleLowerCase("pt-BR");
+    return !q || p.name.toLocaleLowerCase("pt-BR").includes(q) || getGameName(p.game_id).toLocaleLowerCase("pt-BR").includes(q);
+  });
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginatedProducts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  useEffect(() => { setCurrentPage(1); }, [filterGameId]);
+  useEffect(() => { setCurrentPage(1); }, [filterGameId, statusFilter, search]);
 
   const handleDragStart = (index: number) => { setDragIndex(index); };
   const handleDragEnter = (index: number) => { setDragOverIndex(index); };
@@ -476,13 +493,20 @@ const ProductsTab = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">Gerenciar Produtos</h2>
-        <button onClick={() => { resetForm(); setShowForm(true); }}
-          className="flex items-center gap-2 rounded-lg bg-success px-5 py-2.5 text-sm font-semibold text-success-foreground transition-all hover:shadow-[0_0_24px_hsl(130,99%,41%,0.45)]">
-          <Plus className="h-4 w-4" /> Novo Produto
-        </button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="text-xl font-bold text-foreground">Product Manager</h2><p className="mt-1 text-xs text-muted-foreground">Produto, planos, mídia, compatibilidade e estoque em uma única central.</p></div>
+          {workspace === "catalog" && <button onClick={() => { resetForm(); setShowForm(true); }}
+            className="flex items-center gap-2 rounded-lg bg-success px-5 py-2.5 text-sm font-semibold text-success-foreground transition-all hover:shadow-[0_0_24px_hsl(130,99%,41%,0.45)]">
+            <Plus className="h-4 w-4" /> Novo Produto
+          </button>}
+        </div>
+        <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-2">
+          <button type="button" onClick={() => setWorkspace("catalog")} className={`rounded-lg px-4 py-2 text-xs font-bold ${workspace === "catalog" ? "bg-success text-success-foreground" : "text-muted-foreground hover:bg-secondary"}`}>Produtos + Planos + Mídia</button>
+          <button type="button" onClick={() => { setWorkspace("stock"); setShowForm(false); }} className={`rounded-lg px-4 py-2 text-xs font-bold ${workspace === "stock" ? "bg-success text-success-foreground" : "text-muted-foreground hover:bg-secondary"}`}>Estoque</button>
+        </div>
       </div>
+      {workspace === "stock" ? <div className="mt-5"><StockTab /></div> : <>
 
       {/* Form */}
       {showForm && (
@@ -510,9 +534,14 @@ const ProductsTab = () => {
                   </optgroup>
                 ) : null}
               </select>
-              <p className="mt-1 text-[10px] text-muted-foreground/70">
-                As categorias oficiais aparecem na Home e levam o cliente aos produtos correspondentes.
-              </p>
+              <div className="mt-2 flex flex-wrap gap-1.5">
+                {homeCategoryGames.slice(0, 12).map((game) => (
+                  <button key={game.id} type="button" onClick={() => setFormGameId(game.id)}
+                    className={`rounded-md border px-2.5 py-1 text-[10px] font-semibold transition-colors ${formGameId === game.id ? "border-success bg-success/15 text-success" : "border-border bg-secondary/30 text-muted-foreground hover:text-foreground"}`}>
+                    {game.name}
+                  </button>
+                ))}
+              </div>
             </div>
 
             {/* Name */}
@@ -574,11 +603,25 @@ const ProductsTab = () => {
             {/* Plans (sub-products) */}
             <div className="sm:col-span-2">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-medium text-muted-foreground">Planos / Sub-produtos</label>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Planos</label>
+                  <p className="mt-0.5 text-[10px] text-muted-foreground/60">Clique nos períodos que o produto oferece. Digite apenas o preço.</p>
+                </div>
                 <button type="button" onClick={addPlan}
                   className="flex items-center gap-1 rounded-lg bg-secondary/50 border border-border px-3 py-1 text-xs font-medium text-muted-foreground hover:text-foreground">
                   <Plus className="h-3 w-3" /> Adicionar
                 </button>
+              </div>
+              <div className="mb-3 flex flex-wrap gap-2">
+                {PLAN_PRESETS.map((preset) => {
+                  const selected = formPlans.some((plan) => plan.name.toLowerCase() === preset.toLowerCase());
+                  return (
+                    <button key={preset} type="button" onClick={() => addPlanPreset(preset)} disabled={selected}
+                      className={`rounded-lg border px-3 py-1.5 text-xs font-semibold transition-colors ${selected ? "border-success/30 bg-success/10 text-success opacity-60" : "border-border bg-secondary/40 text-muted-foreground hover:border-success/40 hover:text-foreground"}`}>
+                      {selected ? "✓ " : "+ "}{preset}
+                    </button>
+                  );
+                })}
               </div>
               <div className="space-y-2">
                 {formPlans.map((plan, index) => (
@@ -827,7 +870,11 @@ const ProductsTab = () => {
 
       {/* Filter */}
       {!showForm && games.length > 0 && (
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar produto ou categoria..." className="min-w-[240px] flex-1 rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50" />
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)} className="rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50">
+            <option value="all">Todos os status</option><option value="active">Online</option><option value="inactive">Offline</option><option value="new">Novos</option>
+          </select>
           <select value={filterGameId} onChange={(e) => setFilterGameId(e.target.value)}
             className="rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50">
             <option value="all">Todas as categorias</option>
@@ -918,6 +965,7 @@ const ProductsTab = () => {
           </div>
         )}
       </div>
+      </>}
     </div>
   );
 };
