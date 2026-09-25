@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, ArrowRight, Headphones, Package, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ArrowRight, Gift, Headphones, Package, ShieldCheck, Sparkles, ShoppingBag } from "lucide-react";
 import { CrazyHeader } from "@/components/crazy-hero/CrazyHeader";
 import { FuturisticBackground } from "@/components/crazy-hero/FuturisticBackground";
 import { supabase } from "@/integrations/supabase/client";
@@ -49,7 +49,7 @@ export default function Index() {
     <CrazyHeader categories={data?.games} storeLayout />
     <main className="store-main">
       <section className="store-intro">
-        <div><span className="store-eyebrow">BEM-VINDO À CRAZZY PROJECT</span><h1>Seu próximo nível<br />começa aqui.</h1><p>Explore nossos produtos, encontre seu plano e conte com a gente antes e depois da compra.</p><div className="store-intro-actions"><a href="#categorias" className="store-primary"><ShoppingBag size={18} /> Ver produtos</a><Link to="/faq">Como comprar? <ArrowRight size={17} /></Link></div></div>
+        <div><span className="store-eyebrow">BEM-VINDO À CRAZZY PROJECT</span><h1>Seu próximo nível<br />começa aqui.</h1><p>Explore nossos produtos, encontre seu plano e conte com a gente antes e depois da compra.</p><div className="store-intro-actions"><a href="#categorias" className="store-primary"><ShoppingBag size={18} /> Ver produtos</a><Link to="/rewards"><Gift size={17} /> FREE • GRÁTIS</Link><Link to="/rewards">🎁 Prêmios</Link></div></div>
         <div className="store-benefits">{[{ icon: Package, title: "Tudo em um só lugar", text: "Encontre produtos e planos para você." }, { icon: Sparkles, title: "Novidades", text: "Confira os destaques do catálogo." }, { icon: ShieldCheck, title: "Sua conta", text: "Acompanhe suas compras e pedidos." }, { icon: Headphones, title: "Suporte humano", text: "Fale com a equipe quando precisar." }].map(({ icon: Icon, title, text }) => <div key={title}><Icon size={22} /><div><strong>{title}</strong><p>{text}</p></div></div>)}</div>
       </section>
       {featured.length > 0 && <ProductRow title="Novidades e destaques" products={featured} href="/produtos" />}
@@ -59,7 +59,7 @@ export default function Index() {
           {products.some(p => !data?.games.some(g => g.id === p.game_id)) && <ProductRow title="Mais produtos" products={products.filter(p => !data?.games.some(g => g.id === p.game_id))} href="/produtos" />}
         </>}
       </section>
-      <footer className="store-footer"><strong>CRAZZY PROJECT</strong><nav aria-label="Links da loja"><Link to="/rewards">Rewards</Link><Link to="/extras">Extras</Link><Link to="/avaliacoes">Avaliações</Link><Link to="/meus-pedidos">Meus pedidos</Link><Link to="/faq">Ajuda</Link></nav></footer>
+      <footer className="store-footer"><strong>CRAZZY PROJECT</strong><nav aria-label="Links da loja"><Link to="/rewards">FREE + Prêmios</Link><Link to="/meus-pedidos">Minhas compras</Link><Link to="/dashboard">Minha conta</Link></nav></footer>
     </main>
   </div>;
 }
