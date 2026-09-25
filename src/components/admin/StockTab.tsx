@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Package, ChevronDown, ChevronRight, Plus, Trash2, Loader2, Sparkles, AlertTriangle } from "lucide-react";
+import { Package, ChevronDown, ChevronRight, Plus, Trash2, Loader2, AlertTriangle } from "lucide-react";
 
 interface Product {
   id: string;
@@ -39,8 +39,6 @@ const StockTab = () => {
   const [loadingStock, setLoadingStock] = useState<string | null>(null);
   const [newStockText, setNewStockText] = useState("");
   const [addingStock, setAddingStock] = useState(false);
-  const [generatingAI, setGeneratingAI] = useState(false);
-  const [aiLines, setAiLines] = useState(5);
 
   const fetchProducts = async () => {
     const { data, error } = await supabase
@@ -115,25 +113,6 @@ const StockTab = () => {
     setAddingStock(false);
   };
 
-  const handleGenerateAI = async (planId: string) => {
-    setGeneratingAI(true);
-    try {
-      // Generate fake stock lines
-      const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      const generated: string[] = [];
-      for (let i = 0; i < aiLines; i++) {
-        const segments = [4, 4, 4, 4].map(() =>
-          Array.from({ length: 4 }, () => chars[Math.floor(Math.random() * chars.length)]).join("")
-        );
-        generated.push(segments.join("-"));
-      }
-      setNewStockText(prev => prev ? prev + "\n" + generated.join("\n") : generated.join("\n"));
-      toast({ title: `${aiLines} chaves geradas!` });
-    } catch {
-      toast({ title: "Erro ao gerar", variant: "destructive" });
-    }
-    setGeneratingAI(false);
-  };
 
   const handleDeleteStock = async (stockId: string, planId: string) => {
     const { error } = await supabase.from("stock_items" as any).delete().eq("id", stockId);
@@ -164,7 +143,7 @@ const StockTab = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-foreground mb-6">Gerenciar Estoque</h2>
+      <div className="mb-6"><h2 className="text-xl font-bold text-foreground">Estoque por Produto</h2><p className="mt-1 text-xs text-muted-foreground">Abra o produto e o plano. Cole somente chaves reais, uma por linha.</p></div>
 
       {products.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-border py-20 text-muted-foreground">
@@ -251,31 +230,10 @@ const StockTab = () => {
                             <div className="px-6 pb-4 space-y-4">
                               {/* Add stock area */}
                               <div className="rounded-lg border border-border bg-secondary/20 p-4 space-y-3">
-                                <div className="flex items-center justify-between">
-                                  <label className="text-xs font-medium text-muted-foreground">Adicionar estoque (uma chave por linha)</label>
-                                  <div className="flex items-center gap-2">
-                                    <input
-                                      type="number"
-                                      min={1}
-                                      max={100}
-                                      value={aiLines}
-                                      onChange={e => setAiLines(Math.max(1, Math.min(100, parseInt(e.target.value) || 1)))}
-                                      className="w-14 rounded border border-border bg-secondary/50 px-2 py-1 text-xs text-foreground text-center outline-none"
-                                    />
-                                    <button
-                                      onClick={() => handleGenerateAI(plan.id)}
-                                      disabled={generatingAI}
-                                      className="flex items-center gap-1.5 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground hover:opacity-90 disabled:opacity-50"
-                                    >
-                                      {generatingAI ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                                      Gerar
-                                    </button>
-                                  </div>
-                                </div>
-                                <textarea
+                                <label className="text-xs font-medium text-muted-foreground">Adicionar chaves reais, uma por linha</label>\n                                <textarea
                                   value={newStockText}
                                   onChange={e => setNewStockText(e.target.value)}
-                                  placeholder={"XXXX-XXXX-XXXX-XXXX\nYYYY-YYYY-YYYY-YYYY\n..."}
+                                  placeholder={"Cole aqui as chaves recebidas do fornecedor...\numa por linha"}
                                   rows={5}
                                   className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground font-mono placeholder:text-muted-foreground/40 outline-none focus:border-success/50 resize-y"
                                 />
