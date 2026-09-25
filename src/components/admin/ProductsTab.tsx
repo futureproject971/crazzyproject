@@ -7,6 +7,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { getYouTubeId, getYouTubeThumbnail, detectMediaType } from "@/lib/videoUtils";
 import { DEFAULT_HOME_CATEGORIES, normalizeSlug } from "@/config/homeCategories";
+import StockTab from "@/components/admin/StockTab";
 
 interface Game {
   id: string;
@@ -83,6 +84,9 @@ const ProductsTab = () => {
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [workspace, setWorkspace] = useState<"catalog" | "stock">("catalog");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive" | "new">("all");
 
   const homeCategoryGames = games
     .filter(isHomeCategory)
@@ -457,11 +461,18 @@ const ProductsTab = () => {
 
   const getGameName = (gameId: string) => games.find(g => g.id === gameId)?.name || "—";
 
-  const filtered = filterGameId === "all" ? products : products.filter(p => p.game_id === filterGameId);
+  const filtered = products.filter((p) => {
+    if (filterGameId !== "all" && p.game_id !== filterGameId) return false;
+    if (statusFilter === "active" && !p.active) return false;
+    if (statusFilter === "inactive" && p.active) return false;
+    if (statusFilter === "new" && !p.is_new) return false;
+    const q = search.trim().toLocaleLowerCase("pt-BR");
+    return !q || p.name.toLocaleLowerCase("pt-BR").includes(q) || getGameName(p.game_id).toLocaleLowerCase("pt-BR").includes(q);
+  });
   const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   const paginatedProducts = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
-  useEffect(() => { setCurrentPage(1); }, [filterGameId]);
+  useEffect(() => { setCurrentPage(1); }, [filterGameId, statusFilter, search]);
 
   const handleDragStart = (index: number) => { setDragIndex(index); };
   const handleDragEnter = (index: number) => { setDragOverIndex(index); };
@@ -482,13 +493,20 @@ const ProductsTab = () => {
 
   return (
     <div>
-      <div className="flex items-center justify-between">
-        <div><h2 className="text-xl font-bold text-foreground">Central de Produtos</h2><p className="mt-1 text-xs text-muted-foreground">Crie, edite, organize planos e prepare a entrega sem sair deste módulo.</p></div>
-        <button onClick={() => { resetForm(); setShowForm(true); }}
-          className="flex items-center gap-2 rounded-lg bg-success px-5 py-2.5 text-sm font-semibold text-success-foreground transition-all hover:shadow-[0_0_24px_hsl(130,99%,41%,0.45)]">
-          <Plus className="h-4 w-4" /> Novo Produto
-        </button>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="text-xl font-bold text-foreground">Product Manager</h2><p className="mt-1 text-xs text-muted-foreground">Produto, planos, mídia, compatibilidade e estoque em uma única central.</p></div>
+          {workspace === "catalog" && <button onClick={() => { resetForm(); setShowForm(true); }}
+            className="flex items-center gap-2 rounded-lg bg-success px-5 py-2.5 text-sm font-semibold text-success-foreground transition-all hover:shadow-[0_0_24px_hsl(130,99%,41%,0.45)]">
+            <Plus className="h-4 w-4" /> Novo Produto
+          </button>}
+        </div>
+        <div className="flex flex-wrap gap-2 rounded-xl border border-border bg-card p-2">
+          <button type="button" onClick={() => setWorkspace("catalog")} className={`rounded-lg px-4 py-2 text-xs font-bold ${workspace === "catalog" ? "bg-success text-success-foreground" : "text-muted-foreground hover:bg-secondary"}`}>Produtos + Planos + Mídia</button>
+          <button type="button" onClick={() => { setWorkspace("stock"); setShowForm(false); }} className={`rounded-lg px-4 py-2 text-xs font-bold ${workspace === "stock" ? "bg-success text-success-foreground" : "text-muted-foreground hover:bg-secondary"}`}>Estoque</button>
+        </div>
       </div>
+      {workspace === "stock" ? <div className="mt-5"><StockTab /></div> : <>
 
       {/* Form */}
       {showForm && (
@@ -852,7 +870,11 @@ const ProductsTab = () => {
 
       {/* Filter */}
       {!showForm && games.length > 0 && (
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar produto ou categoria..." className="min-w-[240px] flex-1 rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50" />
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as any)} className="rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50">
+            <option value="all">Todos os status</option><option value="active">Online</option><option value="inactive">Offline</option><option value="new">Novos</option>
+          </select>
           <select value={filterGameId} onChange={(e) => setFilterGameId(e.target.value)}
             className="rounded-lg border border-border bg-secondary/50 px-4 py-2 text-sm text-foreground outline-none focus:border-success/50">
             <option value="all">Todas as categorias</option>
@@ -943,6 +965,7 @@ const ProductsTab = () => {
           </div>
         )}
       </div>
+      </>}
     </div>
   );
 };
