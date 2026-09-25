@@ -53,22 +53,22 @@ interface UserData {
 }
 
 const tabs = [
-  { id: "overview", label: "Overview", icon: TrendingUp },
-  { id: "financeiro", label: "Financeiro", icon: BarChart3 },
-  { id: "jogos", label: "Jogos", icon: Gamepad2 },
-  { id: "produtos", label: "Produtos", icon: Package },
-  { id: "lzt", label: "LZT Market", icon: Globe },
-  { id: "estoque", label: "Estoque", icon: Package },
-  { id: "revendedores", label: "Revendedores", icon: UserCheck },
-  { id: "tickets", label: "Pedidos/Tickets", icon: Mail },
-  { id: "support", label: "Suporte", icon: MessageCircle },
-  { id: "status", label: "Status", icon: Shield },
-  { id: "cupons", label: "Cupons", icon: Tag },
-  { id: "usuarios", label: "UsuÃ¡rios", icon: Users },
-  { id: "credenciais", label: "Credenciais", icon: Key },
-  { id: "vendas", label: "Vendas", icon: ShoppingBag },
-  { id: "pagamentos", label: "Pagamentos", icon: CreditCard },
-  { id: "rewards", label: "Rewards", icon: Gift },
+  { id: "overview", label: "Visão Geral", icon: TrendingUp, group: "Início" },
+  { id: "produtos", label: "Produtos", icon: Package, group: "Catálogo" },
+  { id: "jogos", label: "Categorias", icon: Gamepad2, group: "Catálogo" },
+  { id: "estoque", label: "Estoque", icon: Package, group: "Catálogo" },
+  { id: "lzt", label: "Contas / LZT", icon: Globe, group: "Catálogo" },
+  { id: "usuarios", label: "Clientes", icon: Users, group: "Clientes" },
+  { id: "support", label: "Suporte", icon: MessageCircle, group: "Clientes" },
+  { id: "tickets", label: "Pedidos", icon: Mail, group: "Vendas" },
+  { id: "vendas", label: "Vendas", icon: ShoppingBag, group: "Vendas" },
+  { id: "pagamentos", label: "Pagamentos", icon: CreditCard, group: "Vendas" },
+  { id: "financeiro", label: "Financeiro", icon: BarChart3, group: "Vendas" },
+  { id: "revendedores", label: "Revendedores", icon: UserCheck, group: "Vendas" },
+  { id: "rewards", label: "CRAZZY Club", icon: Gift, group: "Benefícios" },
+  { id: "cupons", label: "Cupons", icon: Tag, group: "Benefícios" },
+  { id: "status", label: "Status", icon: Shield, group: "Sistema" },
+  { id: "credenciais", label: "Credenciais", icon: Key, group: "Sistema" },
 ] as const;
 type TabId = typeof tabs[number]["id"];
 
@@ -580,11 +580,7 @@ const UsersTab = () => {
                 ) : <p className="text-xs text-muted-foreground">Nenhum IP registrado ainda</p>}
               </div>
 
-              {/* ID */}
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">ID</p>
-                <p className="rounded bg-secondary px-3 py-1.5 text-xs font-mono text-muted-foreground break-all">{selectedUser.id}</p>
-              </div>
+              {/* Identificadores técnicos ficam internos. */}
 
               {/* Actions */}
               <div className="border-t border-border pt-4">
@@ -779,16 +775,21 @@ const AdminPanel = () => {
         <h1 className="text-3xl font-bold text-foreground" style={{ fontFamily: "'Valorant', sans-serif" }}>PAINEL ADMIN</h1>
 
         <div className="mt-8">
-          <div className="flex flex-wrap gap-1 border-b border-border">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${activeTab === tab.id ? "border-success text-success" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-                  <Icon className="h-3.5 w-3.5" />{tab.label}
-                </button>
-              );
-            })}
+          <div className="flex flex-wrap gap-2 border-b border-border pb-3">
+            {Array.from(new Set(tabs.map((tab) => tab.group))).map((group) => (
+              <div key={group} className="flex items-center gap-1 rounded-xl border border-border bg-card/60 p-1">
+                <span className="px-2 text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60">{group}</span>
+                {tabs.filter((tab) => tab.group === group).map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button key={tab.id} onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-colors ${activeTab === tab.id ? "bg-success/15 text-success" : "text-muted-foreground hover:bg-secondary hover:text-foreground"}`}>
+                      <Icon className="h-3.5 w-3.5" />{tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
 
