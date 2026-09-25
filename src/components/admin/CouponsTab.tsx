@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Tag, X } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Tag } from "lucide-react";
 
 interface Coupon {
   id: string;
@@ -44,6 +44,7 @@ const CouponsTab = () => {
   const [formActive, setFormActive] = useState(true);
   const [formExpires, setFormExpires] = useState("");
   const [formProductIds, setFormProductIds] = useState<string[]>([]);
+  const [productMode, setProductMode] = useState<"all" | "selected">("all");
 
   const fetchCoupons = async () => {
     const { data } = await supabase.from("coupons").select("*").order("created_at", { ascending: false });
@@ -60,7 +61,7 @@ const CouponsTab = () => {
 
   const resetForm = () => {
     setFormCode(""); setFormType("percentage"); setFormValue(""); setFormMaxUses("");
-    setFormMinOrder(""); setFormActive(true); setFormExpires(""); setFormProductIds([]);
+    setFormMinOrder(""); setFormActive(true); setFormExpires(""); setFormProductIds([]); setProductMode("all");
     setEditing(null); setShowForm(false);
   };
 
@@ -75,7 +76,9 @@ const CouponsTab = () => {
     setFormExpires(coupon.expires_at ? coupon.expires_at.slice(0, 16) : "");
     // Load associated products
     const { data } = await supabase.from("coupon_products").select("product_id").eq("coupon_id", coupon.id);
-    setFormProductIds(data ? data.map((p: any) => p.product_id) : []);
+    const ids = data ? data.map((p: any) => p.product_id) : [];
+    setFormProductIds(ids);
+    setProductMode(ids.length ? "selected" : "all");
     setShowForm(true);
   };
 
@@ -109,7 +112,7 @@ const CouponsTab = () => {
 
     // Update product associations
     await supabase.from("coupon_products").delete().eq("coupon_id", couponId);
-    if (formProductIds.length > 0) {
+    if (productMode === "selected" && formProductIds.length > 0) {
       await supabase.from("coupon_products").insert(
         formProductIds.map(pid => ({ coupon_id: couponId, product_id: pid }))
       );
@@ -197,22 +200,33 @@ const CouponsTab = () => {
 
             {/* Product filter */}
             <div className="sm:col-span-2">
-              <label className="text-xs font-medium text-muted-foreground mb-2 block">
-                Produtos permitidos (vazio = todos)
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {products.map((p) => (
-                  <button key={p.id} onClick={() => toggleProduct(p.id)}
-                    className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${
-                      formProductIds.includes(p.id)
-                        ? "border-success bg-success/10 text-success"
-                        : "border-border text-muted-foreground hover:text-foreground"
-                    }`}>
-                    {p.name}
-                  </button>
-                ))}
-                {products.length === 0 && <p className="text-xs text-muted-foreground">Nenhum produto cadastrado</p>}
+              <label className="text-xs font-medium text-muted-foreground mb-2 block">Onde este cupom funciona?</label>
+              <div className="mb-3 flex gap-2">
+                <button type="button" onClick={() => { setProductMode("all"); setFormProductIds([]); }}
+                  className={`rounded-lg border px-4 py-2 text-xs font-bold ${productMode === "all" ? "border-success bg-success/10 text-success" : "border-border text-muted-foreground"}`}>
+                  Todos os produtos
+                </button>
+                <button type="button" onClick={() => setProductMode("selected")}
+                  className={`rounded-lg border px-4 py-2 text-xs font-bold ${productMode === "selected" ? "border-success bg-success/10 text-success" : "border-border text-muted-foreground"}`}>
+                  Escolher produtos
+                </button>
               </div>
+              {productMode === "selected" && (
+                <>
+                  <div className="mb-2 flex gap-2">
+                    <button type="button" onClick={() => setFormProductIds(products.map((p) => p.id))} className="text-[10px] font-bold text-success hover:underline">Selecionar todos</button>
+                    <button type="button" onClick={() => setFormProductIds([])} className="text-[10px] font-bold text-muted-foreground hover:underline">Limpar seleção</button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {products.map((p) => (
+                      <button key={p.id} type="button" onClick={() => toggleProduct(p.id)}
+                        className={`rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${formProductIds.includes(p.id) ? "border-success bg-success/10 text-success" : "border-border text-muted-foreground hover:text-foreground"}`}>
+                        {formProductIds.includes(p.id) ? "✓ " : ""}{p.name}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
 
             <label className="flex cursor-pointer items-center gap-3">
