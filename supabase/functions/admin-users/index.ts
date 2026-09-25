@@ -66,7 +66,10 @@ serve(async (req) => {
       const { data: tickets } = await supabase.from("order_tickets").select("id, user_id, product_id, product_plan_id, status, created_at, stock_content");
       const { data: rewardSessions } = await supabase.from("reward_sessions").select("id, user_id, status, watched_seconds, completed_at, created_at").order("created_at", { ascending: false });
       const { data: rewardDeliveries } = await supabase.from("reward_deliveries").select("id, user_id, content, delivered_at, expires_at").order("delivered_at", { ascending: false });
-      const { data: promoReveals } = await supabase.from("promo_daily_reveals").select("id, user_id, prize_type, prize_value, created_at").order("created_at", { ascending: false });
+      const { data: promoReveals } = await supabase.from("promo_daily_reveals").select("id, user_id, result_key, product_id, created_at").order("created_at", { ascending: false });
+      const { data: wheelSpins } = await supabase.from("wheel_spins").select("id, user_id, spin_date, prize_id, coupon_id, payment_id, created_at").order("created_at", { ascending: false });
+      const { data: products } = await supabase.from("products").select("id, name, image_url");
+      const { data: plans } = await supabase.from("product_plans").select("id, name, price");
 
       const profileMap = new Map((profiles || []).map((p: any) => [p.user_id, p]));
       const roleMap = new Map<string, string[]>();
@@ -126,6 +129,27 @@ serve(async (req) => {
       const rewardSessionMap = groupByUser(rewardSessions);
       const rewardDeliveryMap = groupByUser(rewardDeliveries);
       const promoRevealMap = groupByUser(promoReveals);
+      const wheelSpinMap = groupByUser(wheelSpins);
+      const productMap = new Map((products || []).map((p: any) => [p.id, p]));
+      const planMap = new Map((plans || []).map((p: any) => [p.id, p]));
+      const orderDetailMap = new Map<string, any[]>();
+      (tickets || []).forEach((t: any) => {
+        const product = productMap.get(t.product_id) as any;
+        const plan = planMap.get(t.product_plan_id) as any;
+        const current = orderDetailMap.get(t.user_id) || [];
+        current.push({
+          id: t.id,
+          product_name: product?.name || "Produto",
+          product_image: product?.image_url || null,
+          plan_name: plan?.name || "Plano",
+          plan_price: Number(plan?.price || 0),
+          status: t.status,
+          status_label: t.status === "delivered" ? "Entregue" : t.status === "resolved" ? "Resolvido" : t.status === "open" ? "Aberto" : t.status,
+          created_at: t.created_at,
+          stock_content: t.stock_content,
+        });
+        orderDetailMap.set(t.user_id, current);
+      });
 
       const result = (users || []).map((u: any) => {
         const profile = profileMap.get(u.id);
@@ -148,6 +172,8 @@ serve(async (req) => {
           reward_sessions: rewardSessionMap.get(u.id) || [],
           reward_deliveries: rewardDeliveryMap.get(u.id) || [],
           promo_reveals: promoRevealMap.get(u.id) || [],
+          wheel_spins: wheelSpinMap.get(u.id) || [],
+          orders: orderDetailMap.get(u.id) || [],
           provider: u.app_metadata?.provider || "email",
         };
       });

@@ -52,7 +52,8 @@ interface UserData {
   orders: UserOrder[];
   reward_sessions?: { id: string; status: string; watched_seconds: number; completed_at: string | null; created_at: string }[];
   reward_deliveries?: { id: string; content: string; delivered_at: string; expires_at: string | null }[];
-  promo_reveals?: { id: string; prize_type: string; prize_value: unknown; created_at: string }[];
+  promo_reveals?: { id: string; result_key: string; product_id: string | null; created_at: string }[];
+  wheel_spins?: { id: string; spin_date: string; prize_id: string; coupon_id: string; payment_id: string | null; created_at: string }[];
 }
 
 const tabs = [
@@ -585,10 +586,10 @@ const UsersTab = () => {
               <div className="grid grid-cols-3 gap-2">
                 <InfoCard icon={<Gift className="h-4 w-4 text-success" />} label="FREE / Rewards" value={String(selectedUser.reward_sessions?.length || 0)} />
                 <InfoCard icon={<Gift className="h-4 w-4 text-success" />} label="Prêmios entregues" value={String(selectedUser.reward_deliveries?.length || 0)} />
-                <InfoCard icon={<Sparkles className="h-4 w-4 text-success" />} label="Luck / Raspadinha" value={String(selectedUser.promo_reveals?.length || 0)} />
+                <InfoCard icon={<Sparkles className="h-4 w-4 text-success" />} label="Luck / Raspadinha" value={String((selectedUser.promo_reveals?.length || 0) + (selectedUser.wheel_spins?.length || 0))} />
               </div>
 
-              {(selectedUser.reward_deliveries?.length || selectedUser.promo_reveals?.length) ? (
+              {(selectedUser.reward_deliveries?.length || selectedUser.promo_reveals?.length || selectedUser.wheel_spins?.length) ? (
                 <div>
                   <p className="mb-2 text-xs font-medium text-muted-foreground">Histórico do CRAZZY Club</p>
                   <div className="space-y-1.5">
@@ -599,7 +600,12 @@ const UsersTab = () => {
                     ))}
                     {(selectedUser.promo_reveals || []).slice(0, 3).map((item) => (
                       <div key={item.id} className="rounded border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
-                        Luck / Raspadinha · {item.prize_type} · {formatDate(item.created_at)}
+                        Raspadinha · {item.result_key === "rewards_trial" ? "FREE" : item.result_key === "featured_product" ? "Produto em destaque" : "Tente amanhã"} · {formatDate(item.created_at)}
+                      </div>
+                    ))}
+                    {(selectedUser.wheel_spins || []).slice(0, 3).map((item) => (
+                      <div key={item.id} className="rounded border border-border bg-secondary/30 px-3 py-2 text-xs text-foreground">
+                        Roleta · {item.prize_id} · {formatDate(item.created_at)}
                       </div>
                     ))}
                   </div>
