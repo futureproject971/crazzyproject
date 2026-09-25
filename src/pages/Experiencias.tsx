@@ -283,11 +283,11 @@ export default function Experiencias() {
         <section className="overflow-hidden rounded-[2rem] border border-blue-500/20 bg-[radial-gradient(circle_at_top,#08245e_0%,#071226_35%,#050914_100%)] p-6 shadow-2xl md:p-10">
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-blue-400/25 bg-blue-500/10 px-4 py-2 text-xs font-black uppercase tracking-[.22em] text-blue-300">
-              <Sparkles className="h-4 w-4" /> CRAZZY LAB
+              <Sparkles className="h-4 w-4" /> CRAZZY CLUB
             </div>
-            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Roleta de prêmios + raspadinha diária</h1>
+            <h1 className="mt-5 text-3xl font-black text-white md:text-5xl">Prêmios, roleta e raspadinha</h1>
             <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-blue-100/65">
-              Benefícios extras da CRAZZY PROJECT. A roleta é validada no servidor e cada conta tem um giro por dia.
+              Seu espaço de prêmios da CRAZZY PROJECT. Gire a roleta, use a raspadinha e acompanhe seus benefícios.
             </p>
           </div>
 
