@@ -56,7 +56,6 @@ const tabs = [
   { id: "overview", label: "Visão Geral", icon: TrendingUp, group: "Visão Geral" },
   { id: "produtos", label: "Produtos", icon: Package, group: "Produtos" },
   { id: "jogos", label: "Categorias", icon: Gamepad2, group: "Produtos" },
-  { id: "estoque", label: "Estoque", icon: Package, group: "Produtos" },
   { id: "lzt", label: "Contas / LZT", icon: Globe, group: "Produtos" },
   { id: "usuarios", label: "Clientes", icon: Users, group: "Clientes" },
   { id: "support", label: "Suporte", icon: MessageCircle, group: "Clientes" },
