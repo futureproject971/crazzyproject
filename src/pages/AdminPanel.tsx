@@ -425,7 +425,7 @@ const UsersTab = () => {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold text-foreground">UsuÃ¡rios ({users.length})</h2>
+        <h2 className="text-xl font-bold text-foreground">Customer 360 ({users.length})</h2>
         <button onClick={fetchUsers} className="flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-xs font-medium text-muted-foreground hover:border-success hover:text-success">
           <RefreshCw className="h-3 w-3" /> Atualizar
         </button>
@@ -433,7 +433,7 @@ const UsersTab = () => {
 
       <div className="relative mt-4">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <input type="text" placeholder="Buscar por email ou username..." value={searchQuery}
+        <input type="text" placeholder="Buscar por nome, Discord ou e-mail..." value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value.slice(0, 100))}
           className="w-full rounded-lg border border-border bg-secondary/50 py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:border-success/50" />
       </div>
@@ -480,7 +480,7 @@ const UsersTab = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={() => setSelectedUser(null)}>
           <div className="mx-4 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-xl border border-border bg-card p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-foreground">Detalhes do UsuÃ¡rio</h3>
+              <h3 className="text-lg font-bold text-foreground">Customer 360</h3>
               <button onClick={() => setSelectedUser(null)} className="text-muted-foreground hover:text-foreground text-xl leading-none">Ã—</button>
             </div>
 
@@ -517,7 +517,7 @@ const UsersTab = () => {
 
               {/* Roles */}
               <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">Roles</p>
+                <p className="text-xs font-medium text-muted-foreground mb-1">Permissões</p>
                 <div className="flex gap-2">
                   {selectedUser.roles.length > 0 ? selectedUser.roles.map((r) => (
                     <span key={r} className="rounded bg-success/20 px-2 py-0.5 text-xs font-bold text-success">{r}</span>
