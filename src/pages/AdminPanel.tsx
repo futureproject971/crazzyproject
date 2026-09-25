@@ -53,11 +53,11 @@ interface UserData {
 }
 
 const tabs = [
-  { id: "overview", label: "Visão Geral", icon: TrendingUp, group: "Início" },
-  { id: "produtos", label: "Produtos", icon: Package, group: "Catálogo" },
-  { id: "jogos", label: "Categorias", icon: Gamepad2, group: "Catálogo" },
-  { id: "estoque", label: "Estoque", icon: Package, group: "Catálogo" },
-  { id: "lzt", label: "Contas / LZT", icon: Globe, group: "Catálogo" },
+  { id: "overview", label: "Visão Geral", icon: TrendingUp, group: "Visão Geral" },
+  { id: "produtos", label: "Produtos", icon: Package, group: "Produtos" },
+  { id: "jogos", label: "Categorias", icon: Gamepad2, group: "Produtos" },
+  { id: "estoque", label: "Estoque", icon: Package, group: "Produtos" },
+  { id: "lzt", label: "Contas / LZT", icon: Globe, group: "Produtos" },
   { id: "usuarios", label: "Clientes", icon: Users, group: "Clientes" },
   { id: "support", label: "Suporte", icon: MessageCircle, group: "Clientes" },
   { id: "tickets", label: "Pedidos", icon: Mail, group: "Vendas" },
@@ -65,8 +65,8 @@ const tabs = [
   { id: "pagamentos", label: "Pagamentos", icon: CreditCard, group: "Vendas" },
   { id: "financeiro", label: "Financeiro", icon: BarChart3, group: "Vendas" },
   { id: "revendedores", label: "Revendedores", icon: UserCheck, group: "Vendas" },
-  { id: "rewards", label: "CRAZZY Club", icon: Gift, group: "Benefícios" },
-  { id: "cupons", label: "Cupons", icon: Tag, group: "Benefícios" },
+  { id: "rewards", label: "FREE + Prêmios", icon: Gift, group: "CRAZZY Club" },
+  { id: "cupons", label: "Cupons", icon: Tag, group: "CRAZZY Club" },
   { id: "status", label: "Status", icon: Shield, group: "Sistema" },
   { id: "credenciais", label: "Credenciais", icon: Key, group: "Sistema" },
 ] as const;
