@@ -399,7 +399,7 @@ const Dashboard = () => {
                 <h2 className="text-xl font-bold text-foreground">CRAZZY Club</h2>
                 <p className="text-sm text-muted-foreground">FREE, prêmios e recompensas reunidos em um único lugar.</p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-3">
                 <button onClick={() => navigate("/rewards")} className="rounded-xl border border-success/30 bg-success/5 p-6 text-left transition hover:bg-success/10">
                   <Gift className="mb-3 h-6 w-6 text-success" />
                   <div className="text-base font-black text-foreground">FREE • GRÁTIS</div>
@@ -410,6 +410,7 @@ const Dashboard = () => {
                   <div className="text-base font-black text-foreground">Prêmios</div>
                   <p className="mt-1 text-sm text-muted-foreground">Acompanhe seus testes, recompensas e entregas.</p>
                 </button>
+                <button onClick={() => navigate("/extras")} className="rounded-xl border border-border bg-card p-6 text-left transition hover:bg-secondary/60"><Gift className="mb-3 h-6 w-6 text-primary" /><div className="text-base font-black text-foreground">Roleta + Raspadinha</div><p className="mt-1 text-sm text-muted-foreground">Seus benefícios diários dentro do CRAZZY Club.</p></button>
               </div>
             </motion.div>
           )}
