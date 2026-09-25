@@ -449,7 +449,7 @@ const ProductsTab = () => {
   };
 
   const handleDelete = async (product: Product) => {
-    if (!confirm(`Excluir "${product.name}"?`)) return;
+    
     const { error } = await supabase.from("products").delete().eq("id", product.id);
     if (error) toast({ title: "Erro", description: error.message, variant: "destructive" });
     else { toast({ title: "Excluído!" }); fetchData(); }
